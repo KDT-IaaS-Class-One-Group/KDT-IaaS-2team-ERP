@@ -16,7 +16,7 @@
 #root > div:nth-child(1) {
   width: 40vw;
   height: 15vh;
-  color: #865DFF;
+  color: black;
   font-size: 2rem;
   text-align: center;
   line-height: 20vh;
@@ -30,7 +30,7 @@
   padding: 10px;
   justify-content: center;
   align-items: center;
-  border: 1px solid #865DFF;
+  border: 1px solid black;
   padding-top: 30px;
 }
 
@@ -45,9 +45,9 @@ input {
 button {
   width: 100px;
   height: 30px;
-  background-color: #E384FF;
+  background-color: black;
   border: 0;
-  color: black;
+  color: white;
   cursor: pointer;
 }
 
