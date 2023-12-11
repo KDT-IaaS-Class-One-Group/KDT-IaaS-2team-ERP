@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div id="root">
+    <div>
+      <h3>LOGIN</h3>
+    </div>
+
+    <!-- 로그인 폼 -->
+    <form id="loginForm" method="post" action="/login">
+      <label for="userId"></label>
+      <input type="text" id="userId" name="userId" placeholder="ID를 입력하세요">
+      <label for="userPassword"></label>
+      <input type="password" id="userPassword" name="userPassword" placeholder="PASSWORD를 입력하세요">
+      <button id="loginBtn" type="button">LOGIN</button>
+    </form>
+    
+    <!-- 로그아웃 버튼 -->
+    <button style="display: none;" id="logoutBtn">LOGOUT</button>
+    
+    <!-- ID 출력 창 -->
+    <div id="loggedInUserId" style="display: none;"></div>
+    
+    <button id="signupBtn">SIGN UP</button>
+    <!-- 회원가입 모달 창 -->
+    <div id="signupModal">
+      <form method="post" action="/signUp" id="signupForm">
+        <h2>SIGN UP</h2>
+        <br>
+        <label for="signupId"></label>
+        <input type="text" id="signupId" name="signupId" placeholder="ID를 입력하세요" required>
+        <button id="idCheckBtn" type="button">중복확인</button>
+        <br>
+        <label for="signupPassword"></label>
+        <input type="password" id="signupPassword" name="signupPassword" placeholder="PASSWORD 입력하세요" required>
+        <br>
+        <label for="email"></label>
+        <input id="email" name="email" placeholder="EMAIL을 입력하세요" required></input>
+        <br>
+        <button type="submit">SUBMIT</button>
+      </form>
+      <button id="closeSignupModal">CLOSE</button>
+    </div>
+
+    <div id="indexOverlay"></div>
+  </div>
+
+  <script src="index.mjs" type="module"></script>
+</body>
+</html>
