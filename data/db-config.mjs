@@ -1,0 +1,14 @@
+import mysql2 from "mysql2/promise"
+
+const dbConfig = {
+  host: "localhost",
+  user: "root",
+  password: "1234",
+  database: "test",
+};
+
+// 데이터베이스 연결을 관리하기 위한 데이터베이스 풀을 생성하는 메서드
+// mysql2.createPool()을 호출하면 MySQL 데이터베이스 풀이 생성 -> 여러 연결을 관리
+const pool = mysql2.createPool(dbConfig);
+
+export { pool };
