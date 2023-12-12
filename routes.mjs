@@ -51,6 +51,34 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Serve admin.html
+router.get("/admin.html", async (req, res) => {
+  try {
+    const indexPath = path.resolve(__dirname, "./public/admin.html");
+    // fs/promises 모듈을 사용하여 파일을 읽어오는 비동기 코드
+    const indexData = await fs.readFile(indexPath, "utf-8");
+    // 클라이언트에 읽은 파일 데이터를 응답
+    res.send(indexData);
+  } catch (error) {
+    console.error("Error reading admin.html:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Serve member.html
+router.get("/member.html", async (req, res) => {
+  try {
+    const indexPath = path.resolve(__dirname, "./public/member.html");
+    // fs/promises 모듈을 사용하여 파일을 읽어오는 비동기 코드
+    const indexData = await fs.readFile(indexPath, "utf-8");
+    // 클라이언트에 읽은 파일 데이터를 응답
+    res.send(indexData);
+  } catch (error) {
+    console.error("Error reading member.html:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 // login 요청
 router.post("/login", async (req, res) => {
   try {
@@ -165,6 +193,20 @@ router.post("/check-id-duplicate", async (req, res) => {
   } catch (error) {
     console.error("Error checking ID duplicate:", error);
     res.status(500).send("Internal Server Error");
+  }
+});
+
+// GET /get-posts 엔드포인트에 대한 처리
+router.get("/get-posts", async (req, res) => {
+  try {
+    const query =
+      "SELECT signupId, signupPassword, email, timestamp FROM users ORDER BY timestamp DESC";
+    const [results] = await pool.query(query);
+    console.log(results)
+    res.json(results);
+  } catch (err) {
+    console.error("목록 조회 오류:", err);
+    res.status(500).json({ error: "서버 오류" });
   }
 });
 
