@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "clsx": "^2.0.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.5",
     "next": "14.0.4",
