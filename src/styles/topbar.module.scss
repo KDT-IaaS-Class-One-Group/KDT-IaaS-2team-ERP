@@ -23,5 +23,14 @@
 .div3 {
   width:20vw;
   height:15vh;
-  background-color: lightblue
+  background-color: lightblue;
+  display:flex;
+  align-items: center;
+  font-size: 2vw;
+}
+
+.link{
+  text-decoration: none;
+  color: black;
+  margin-left:2vw;
 }

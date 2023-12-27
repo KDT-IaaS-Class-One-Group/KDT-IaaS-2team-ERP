@@ -13,6 +13,7 @@
     "mysql2": "^3.6.5",
     "next": "14.0.4",
     "react": "^18",
+    "react-datepicker": "^4.25.0",
     "react-dom": "^18",
     "sass": "^1.69.5"
   },
@@ -21,6 +22,7 @@
     "@types/next": "^9.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
+    "@types/react-datepicker": "^4.19.4",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",

@@ -50,7 +50,7 @@ app.prepare().then(() => {
 
         const [rows, fields] = await db.query(
           `INSERT INTO users (userId, password, name, birthdate, phoneNumber, email, address, gender, cash, joinDate, isWithdrawn, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [userId, password, name, birthdate, phoneNumber, email, address, gender, cash, joinDate, isWithdrawn, isAdmin]
+          [userId, password, name, new Date(birthdate), phoneNumber, email, address, gender, cash, joinDate, isWithdrawn, isAdmin]
         );
   
 

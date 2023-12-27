@@ -50,8 +50,8 @@ function Topbar() {
           </>
         ) : (
           <>
-            <Link href="/signup">SignUp</Link>
-            <Link href="/login">Login</Link>
+            <Link className={styles.link} href="/signup">SignUp</Link>
+            <Link className={styles.link} href="/login">Login</Link>
           </>
         )}
       </div>
