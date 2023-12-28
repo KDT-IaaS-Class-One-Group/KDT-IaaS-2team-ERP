@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
+import styles from  '@/styles/login.module.scss';
 
 const LoginForm = () => {
   const [userId, setUserId] = useState("");
@@ -44,11 +45,33 @@ const LoginForm = () => {
   }, [isLoggedIn, router]);
 
   return (
-    <div>
-      <h2>로그인</h2>
-      <input type="text" placeholder="사용자 ID" value={userId} onChange={(e) => setUserId(e.target.value)} />
-      <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <button onClick={handleLogin}>로그인</button>
+    <div className={styles.container}>
+      <h1 className={styles.h1}>로그인</h1>
+      <form className={styles.form}>
+        <label className={styles.label}>
+          아이디:
+          <input
+            type="text"
+            className={styles.input}
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+          />
+        </label>
+        <br />
+        <label className={styles.label}>
+          비밀번호:
+          <input
+            type="password"
+            className={styles.input}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+        <br />
+        <button type="button" className={styles.button} onClick={handleLogin}>
+          로그인
+        </button>
+      </form>
     </div>
   );
 };
