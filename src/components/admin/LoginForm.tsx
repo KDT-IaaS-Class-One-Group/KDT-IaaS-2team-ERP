@@ -22,18 +22,26 @@ const LoginForm = () => {
         password,
       }),
     });
-  
+
+    const data = await response.json();
+
     if (response.status === 200) {
-      const data = await response.json();
-  
-      // 로그인 성공
-      setIsLoggedIn(true);
-      setToken(data.token);
+      const { token } = data;
+        localStorage.setItem('token', token);
+        console.log('로그인 성공');
+        router.push("/admin/dashboard");
+        setIsLoggedIn(true);
     } else {
       // 로그인 실패
       alert("로그인 실패!");
     }
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/admin/dashboard");
+    }
+  }, [isLoggedIn, router]);
 
   return (
     <div>
