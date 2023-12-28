@@ -3,7 +3,6 @@
 import React from "react";
 import { useState } from "react";
 
-import  MenuTab  from  "@/components/admin/MenuTab"
 import  LoginForm  from  "@/components/admin/LoginForm"
 
 const Admin = () => {
@@ -12,11 +11,7 @@ const Admin = () => {
   return (
     <>
       <h1>관리자 페이지</h1>
-      {isLoggedIn ? (
-        <MenuTab />
-      ) : (
         <LoginForm />
-      )}
     </>
   );
 };
