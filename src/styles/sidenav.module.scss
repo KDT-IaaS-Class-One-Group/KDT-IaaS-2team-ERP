@@ -1,0 +1,18 @@
+.sidemenu{
+  width: 20vw;
+  height: 85vh;
+  display: flex;
+}
+
+.sidelink{
+  font-size: 2vw;
+  text-decoration: none;
+  color: white;
+  width:20vw;
+  height:85vh;
+  display:flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+
+}

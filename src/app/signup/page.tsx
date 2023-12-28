@@ -52,7 +52,6 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
         birthdate: event,
       });
     } else {
-      // Otherwise, it's a regular input change
       setFormData({
         ...formData,
         [event.target.name]: event.target.value,
