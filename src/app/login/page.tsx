@@ -22,7 +22,7 @@ const Login: React.FC = () => {
         // 로그인 성공
         const { token, name } = data;
         localStorage.setItem('token', token);
-        sessionStorage.setItem('name', name); // 사용자 이름 세션에 저장
+        // sessionStorage.setItem('name', name);
         console.log('로그인 성공');
 
         window.location.href = '/';

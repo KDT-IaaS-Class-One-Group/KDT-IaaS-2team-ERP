@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/uuid": "^9.0.7",
     "clsx": "^2.0.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.5",
@@ -16,7 +17,9 @@
     "react": "^18",
     "react-datepicker": "^4.25.0",
     "react-dom": "^18",
-    "sass": "^1.69.5"
+    "react-query": "^3.39.3",
+    "sass": "^1.69.5",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.5",

@@ -9,13 +9,17 @@
 }
 
 .div1 {
-  width:20vw;
+  width:10vw;
   height:15vh;
   background-color: lightblue;
+  font-size:2vw;
+  display:flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .div2 {
-  width:20vw;
+  width:40vw;
   height:15vh;
   background-color: lightblue
 }
@@ -26,7 +30,7 @@
   background-color: lightblue;
   display:flex;
   align-items: center;
-  font-size: 2vw;
+  font-size: 1vw;
 }
 
 .link{

@@ -31,6 +31,32 @@ app.prepare().then(() => {
   const server = express();
   server.use(bodyParser.json());
 
+  server.get('/api/classroom', async (req, res) => {
+    try {
+      const classrooms = await db.query('SELECT * from classrooms');
+      
+      console.log('Classrooms data from the server:', classrooms);
+  
+      res.json(classrooms);
+    } catch (error) {
+      console.error('Error fetching classrooms:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  server.get('/api/users', async (req, res) => {
+    try {
+      const users = await db.query('SELECT * from users');
+      
+      console.log('Classrooms data from the server:', users);
+  
+      res.json(users);
+    } catch (error) {
+      console.error('Error fetching classrooms:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
   // 기본적인 Next.js 페이지 핸들링
   server.get('*', (req, res) => {
     return handle(req, res);
@@ -46,14 +72,12 @@ app.prepare().then(() => {
         const cash = 1000000;
         const joinDate = new Date();
         const isWithdrawn = false;
-        const isAdmin = false;
 
         const [rows, fields] = await db.query(
-          `INSERT INTO users (userId, password, name, birthdate, phoneNumber, email, address, gender, cash, joinDate, isWithdrawn, isAdmin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [userId, password, name, new Date(birthdate), phoneNumber, email, address, gender, cash, joinDate, isWithdrawn, isAdmin]
+          `INSERT INTO users (userId, password, name, birthdate, phoneNumber, email, address, gender, cash, joinDate, isWithdrawn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [userId, password, name, new Date(birthdate), phoneNumber, email, address, gender, cash, joinDate, isWithdrawn]
         );
   
-
         res.status(200).json({ message: '회원가입 성공' });
       } else {
         res.status(405).json({ error: '허용되지 않은 메서드' });
@@ -62,7 +86,7 @@ app.prepare().then(() => {
       console.error(error);
       res.status(500).json({ error: '서버 에러' });
     }
-  });
+});
 
   server.post('/api/login', async (req, res) => {
     try {
@@ -96,7 +120,30 @@ app.prepare().then(() => {
     }
   });
   
+  server.post('/api/insertData', async (req, res) => {
+    try {
+      const rooms = req.body;
+  
+      for (const roomKey of Object.keys(rooms)) {
+        const room = rooms[roomKey];
+        const { instructor, field, computers, students } = room;
+  
+        await pool.execute(
+          'INSERT INTO classrooms (room_id, instructor, field, computers, students) VALUES (?, ?, ?, ?, ?)',
+          [roomKey, instructor, field, computers, JSON.stringify(students)]
+        );
+      }
+  
+      res.json({ message: '데이터 삽입 성공' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: '내부 서버 오류' });
+    }
+  });
 
+  
+  
+  
   const PORT = process.env.PORT || 3000;
 
   server.listen(PORT, (err) => {

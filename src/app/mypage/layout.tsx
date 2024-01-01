@@ -1,6 +1,6 @@
 import SideNav from '@/components/mypage/sidenav';
 import styles from "@/styles/mypage.module.scss";
-import Topbar from "@/components/Topbar";
+import Topbar from "@/components/Topbar/Topbar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
