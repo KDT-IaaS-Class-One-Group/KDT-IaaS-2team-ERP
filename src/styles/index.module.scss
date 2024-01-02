@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.div {
+  width: 100vw;
+  height: 100vh;
+}
+
+.red {
+  background-color: red;
+  position: absolute;
+  width: 100vw;
+  height: 15vh;
+  opacity: 0.3;
+}
+
+.gray {
+  background-color: gray;
+}
+
+.blue {
+  background-color: blue;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.purple {
+  background-color: purple;
+}
