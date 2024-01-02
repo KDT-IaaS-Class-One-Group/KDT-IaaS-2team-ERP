@@ -1,12 +1,13 @@
-import SideNav from '@/components/dashboard/side-nav';
-import styles from '@/styles/dashboard.module.scss'
-export default async function Page({ children }: { children: React.ReactNode }) {
+export default async function Page() {
   return (
-      <div className={styles.main}>
-      <div className={styles.side}>
-        <SideNav />
+    <main>
+      <h1 className={`mb-4 text-xl md:text-2xl`}>
+        Dashboard
+      </h1>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       </div>
-      <div className={styles.content}>{children}</div>
-    </div>
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
+      </div>
+    </main>
   );
 }
