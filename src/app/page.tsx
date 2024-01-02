@@ -10,9 +10,9 @@ function Index() {
     <div className={styles.container}>
       <Topbar />
       <div className={`${styles.div} ${styles.gray}`}>
-
-        </div>
-      <div className={`${styles.div} ${styles.blue}`} />
+      <div className={styles.box}>kjawjoiewjifojwajfoiaiou</div>
+      </div>
+      <div className={`${styles.div} ${styles.blue}`} >안녕하세요</div>
       <div className={`${styles.div} ${styles.yellow}`} />
       <div className={`${styles.div} ${styles.purple}`} />
     </div>
