@@ -88,6 +88,20 @@ app.prepare().then(() => {
     }
 });
 
+server.post("/api/admin/login", async (req, res) => {
+  if (req.method === "POST") {
+    const { userId, password } = req.body;
+    console.log(req.body);
+    if (userId === "admin" && password === "1234") {
+      const token = jwt.sign({ userId }, secretKey, { expiresIn: '1h' });
+      res.status(200).json({ token: "my-secret-token" });
+    } else {
+      res.status(401).json({ error: "invalid credentials" });
+    }
+  }
+});
+
+
   server.post('/api/login', async (req, res) => {
     try {
       if (req.method === 'POST') {
