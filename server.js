@@ -11,8 +11,8 @@ const secretKey = 'nts9604';
 const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
-  user: "yuan",
-  password: "1234",
+  user: "root",
+  password: "723546",
   database: "erp",
   connectionLimit: 5,
 });
@@ -134,24 +134,31 @@ server.post("/api/admin/login", async (req, res) => {
     }
   });
   
-  server.post('/api/insertData', async (req, res) => {
+  server.post('/api/approveUser/:userId', async (req, res) => {
     try {
-      const rooms = req.body;
+      if (req.method === 'POST') {
+        const { userId } = req.params;
   
-      for (const roomKey of Object.keys(rooms)) {
-        const room = rooms[roomKey];
-        const { instructor, field, computers, students } = room;
-  
-        await pool.execute(
-          'INSERT INTO classrooms (room_id, instructor, field, computers, students) VALUES (?, ?, ?, ?, ?)',
-          [roomKey, instructor, field, computers, JSON.stringify(students)]
+        // 데이터베이스에서 사용자 정보 삭제
+        const [result] = await db.query(
+          'DELETE FROM users WHERE userId = ?',
+          [userId]
         );
-      }
   
-      res.json({ message: '데이터 삽입 성공' });
+        if (result.affectedRows === 1) {
+          // 성공적으로 삭제된 경우
+          res.status(200).json({ message: '사용자 승인 성공' });
+        } else {
+          // 삭제 실패 시
+          res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: '허용되지 않은 메서드' });
+      }
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: '내부 서버 오류' });
+      console.error('Error approving user:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   });
 
