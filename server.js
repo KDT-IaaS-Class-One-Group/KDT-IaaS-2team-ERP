@@ -11,8 +11,8 @@ const secretKey = 'nts9604';
 const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
-  user: "root",
-  password: "723546",
+  user: "yuan",
+  password: "1234",
   database: "erp",
   connectionLimit: 5,
 });
@@ -35,7 +35,7 @@ app.prepare().then(() => {
     try {
       const classrooms = await db.query('SELECT * from classrooms');
       
-      console.log('Classrooms data from the server:', classrooms);
+      // console.log('Classrooms data from the server:', classrooms);
   
       res.json(classrooms);
     } catch (error) {
@@ -48,7 +48,7 @@ app.prepare().then(() => {
     try {
       const users = await db.query('SELECT * from users');
       
-      console.log('Classrooms data from the server:', users);
+      // console.log('Classrooms data from the server:', users);
   
       res.json(users);
     } catch (error) {
@@ -148,6 +148,34 @@ server.post("/api/admin/login", async (req, res) => {
         if (result.affectedRows === 1) {
           // 성공적으로 삭제된 경우
           res.status(200).json({ message: '사용자 승인 성공' });
+        } else {
+          // 삭제 실패 시
+          res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: '허용되지 않은 메서드' });
+      }
+    } catch (error) {
+      console.error('Error approving user:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  server.post('/api/approveUser/:inputValue', async (req, res) => {
+    try {
+      if (req.method === 'POST') {
+        const { cash, userId } = req.params;
+  
+        // 데이터베이스에서 사용자 캐쉬 정보 수정
+        const [result] = await db.query(
+          'UPDATE users SET cash = ? WHERE userId = ?',
+          [cash, userId]
+        );
+  
+        if (result.affectedRows === 1) {
+          // 성공적으로 삭제된 경우
+          res.status(200).json({ message: '사용자 캐쉬 정보 수정 성공' });
         } else {
           // 삭제 실패 시
           res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
