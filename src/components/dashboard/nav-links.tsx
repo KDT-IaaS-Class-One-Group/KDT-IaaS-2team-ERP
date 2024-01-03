@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import styles from "@/styles/navlink.module.scss";
 
 const links = [
-  { name: '회원관리', href: 'dashboard/member' },
+  { name: '회원목록', href: '/admin/dashboard/member/info' },
   { name: '구독관리', href: 'dashboard/subscribe' },
   { name: '고객지원', href: 'dashboard/service' },
   { name: '통계분석', href: 'dashboard/analysis' }
