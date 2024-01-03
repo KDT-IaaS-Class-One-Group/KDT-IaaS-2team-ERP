@@ -1,14 +1,14 @@
+import NavLinks from "@/components/dashboard/service/Service-nav-links-b"
+import styles from "@/styles/adminsidenav.module.scss";
+import QA from "@/components/dashboard/service/QA-b";
+
 export default async function Page() {
   return (
-    <main>
-      <h1 className={`mb-4 text-xl md:text-2xl`}>
-        고객지원
-      </h1>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        dfdf
+    <>
+      <div className={styles.sidelink}>
+        <NavLinks />
       </div>
-      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-      </div>
-    </main>
+      <QA />
+    </>
   );
 }
