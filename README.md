@@ -32,6 +32,7 @@ CREATE TABLE Subscription (
     User_Index INT NOT NULL,
     week INT NOT NULL,
     price INT NOT NULL,
+    name VARCHAR(50) NOT NULL,
     FOREIGN KEY (product_Index) REFERENCES Products(Product_Index),
     FOREIGN KEY (User_Index) REFERENCES User(User_Index)
 );

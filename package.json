@@ -20,6 +20,7 @@
     "react-dom": "^18",
     "react-query": "^3.39.3",
     "sass": "^1.69.5",
+    "swiper": "^6.8.4",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
