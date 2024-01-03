@@ -40,7 +40,7 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.push("/admin/dashboard");
+      router.push("/admin/dashboard/member/info");
     }
   }, [isLoggedIn, router]);
 

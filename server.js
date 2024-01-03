@@ -11,8 +11,8 @@ const secretKey = 'nts9604';
 const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
-  user: "yuan",
-  password: "1234",
+  user: "root",
+  password: "723546",
   database: "erp",
   connectionLimit: 5,
 });
