@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useState } from "react";
-import  LoginForm  from  "@/components/admin/LoginForm"
+import  LoginForm  from  "@/components/admin/LoginForm-b"
 
 const Admin = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
