@@ -57,6 +57,25 @@ app.prepare().then(() => {
     }
   });
 
+  /** 
+  * ! 상품페이지 앤드포인트
+  */
+
+  server.get('/api/data', async (req, res) => {
+    try {
+      const [rows] = await db.execute('SELECT name FROM subscription');
+      const dataFromDB = rows.map((row) => row.name);
+      res.json(dataFromDB);
+    } catch (error) {
+      console.error('쿼리 실행 중 오류 발생:', error);
+      res.status(500).send('데이터베이스 오류');
+    }
+  });
+
+  /**
+   * ! 끝
+   */
+
   // 기본적인 Next.js 페이지 핸들링
   server.get('*', (req, res) => {
     return handle(req, res);
@@ -153,10 +172,7 @@ server.post("/api/admin/login", async (req, res) => {
       console.error(error);
       res.status(500).json({ error: '내부 서버 오류' });
     }
-  });
-
-  
-  
+  });  
   
   const PORT = process.env.PORT || 3000;
 
@@ -165,3 +181,4 @@ server.post("/api/admin/login", async (req, res) => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });
 });
+
