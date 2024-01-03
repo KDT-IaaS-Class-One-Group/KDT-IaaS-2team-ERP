@@ -7,7 +7,7 @@ npm install react-query
 
 ### 메모장
 CREATE TABLE subscription (
-    Subs_Index INT PRIMARY KEY,
+    Subs_Index INT AUTO_INCREMENT PRIMARY KEY,
     User_Index INT NOT NULL,
     Detail_Index INT NOT NULL,
     price INT NOT NULL,
