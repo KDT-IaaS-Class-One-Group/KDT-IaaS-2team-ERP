@@ -1,22 +1,26 @@
-.main{
-  width:100vw;
-  height:100vh;
-  margin:0;
-  padding:0;
-  display:flex;
+.main {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
   flex-wrap: wrap;
 }
-.side{
+
+.side {
   width: 20vw;
   height: 85vh;
   background-color: lightgray;
   color: lightblue;
-  margin-top:15vh;
+  margin-top: 15vh;
   justify-content: center;
   align-items: center;
 }
-.content{
-  width:80vw;
-  height:85vh;
+
+.content {
+  width: 80vw;
+  height: 85vh;
   background-color: bisque;
-  margin-top:15vh;}
+  margin-top: 15vh;
+  display: flex;
+}
