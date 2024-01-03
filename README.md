@@ -21,6 +21,6 @@ CREATE TABLE subscription (
     req VARCHAR(300),
     status VARCHAR(16),
     UNIQUE (Subs_Index),
-    FOREIGN KEY (User_Index) REFERENCES user(User_Index),
-    FOREIGN KEY (Detail_Index) REFERENCES detail(Detail_Index)
+    <!-- FOREIGN KEY (User_Index) REFERENCES user(User_Index),
+    FOREIGN KEY (Detail_Index) REFERENCES detail(Detail_Index) -->
 );
