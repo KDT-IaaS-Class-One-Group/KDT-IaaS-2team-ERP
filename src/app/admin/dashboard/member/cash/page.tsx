@@ -9,10 +9,6 @@ interface UserInfo {
   userId: string;
   name: string;
   birthdate: string;
-  phoneNumber: string;
-  email: string;
-  address: string;
-  gender: string;
   cash: string;
   isWithdrawn: number;
 }
@@ -80,10 +76,6 @@ export default function UserinfoPage() {
                 <th>User ID</th>
                 <th>Name</th>
                 <th>Birthdate</th>
-                <th>Phone Number</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>Gender</th>
                 <th>Cash</th>
                 <th>수정</th>
               </tr>
@@ -95,10 +87,6 @@ export default function UserinfoPage() {
                   <td>{user.userId}</td>
                   <td>{user.name}</td>
                   <td>{formatBirthdate(user.birthdate)}</td>
-                  <td>{user.phoneNumber}</td>
-                  <td>{user.email}</td>
-                  <td>{user.address}</td>
-                  <td>{user.gender}</td>
                   <td>{user.cash}</td>
                   <td>
                     <input
