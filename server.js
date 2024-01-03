@@ -63,8 +63,12 @@ app.prepare().then(() => {
 
   server.get('/api/data', async (req, res) => {
     try {
-      const [rows] = await db.execute('SELECT name FROM subscription');
-      const dataFromDB = rows.map((row) => row.name);
+      const [rows] = await db.execute('SELECT name, price, week FROM subscription');
+      const dataFromDB = rows.map((row) => ({
+        name: row.name,
+        price: row.price,
+        week: row.week,
+      }));
       res.json(dataFromDB);
     } catch (error) {
       console.error('쿼리 실행 중 오류 발생:', error);

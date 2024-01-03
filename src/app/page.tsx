@@ -26,14 +26,17 @@ function Index() {
   return (
     <div className={styles.container}>
       <Topbar />
-      <div className={`${styles.div} ${styles.gray}`} />
       <div className={`${styles.div} ${styles.blue}`} />
       <div className={`${styles.div} ${styles.yellow}`}>
-        <ul>
+        <div className={`${styles.sliderContainer}`}>
           {data.map((item, index) => (
-            <li key={index}>{item}</li>
+            <div key={index} className={styles.subscriptionItem}>
+              <p>Name: {item.name}</p>
+              <p>Price: {item.price}</p>
+              <p>Week: {item.week}</p>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
       <div className={`${styles.div} ${styles.purple}`} />
     </div>
