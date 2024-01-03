@@ -147,55 +147,62 @@ server.post("/api/admin/login", async (req, res) => {
 });
 
 
-  server.post('/api/login', async (req, res) => {
-    try {
-      if (req.method === 'POST') {
-        const { userId, password } = req.body;
-  
-        const [rows, fields] = await db.query(
-          'SELECT * FROM users WHERE userId = ?',
-          [userId]
-        );
-  
-        if (rows.length === 1) {
-          const user = rows[0];
-  
-          if (password === user.password) {
+server.post('/api/login', async (req, res) => {
+  try {
+    if (req.method === 'POST') {
+      const { userId, password } = req.body;
 
-            const token = jwt.sign(
-              {
-                userId,
-                name: user.name,
-                birthdate: user.birthdate,
-                phoneNumber: user.phoneNumber,
-                email: user.email,
-                address: user.address,
-                gender: user.gender,
-                cash: user.cash,
-              },
-              secretKey,
-              { expiresIn: '1h' }
-            );
-              const verified = jwt.verify(token,secretKey);
-            console.log(verified)
-            console.log('토큰 정보:', token);
-            console.log('시크릿 키:', secretKey);
+      const [rows, fields] = await db.query(
+        'SELECT * FROM users WHERE userId = ?',
+        [userId]
+      );
 
-            res.status(200).json({ token });
-          } else {
-            res.status(401).json({ error: '아이디 또는 비밀번호가 일치하지 않습니다.' });
-          }
+      if (rows.length === 1) {
+        const user = rows[0];
+
+        if (user.isWithdrawn) {
+          // 회원이 탈퇴한 경우
+          res.status(401).json({ error: '이미 탈퇴한 회원입니다.' });
+        } else if (password === user.password) {
+          // 로그인 성공
+          const token = jwt.sign(
+            {
+              userId,
+              name: user.name,
+              birthdate: user.birthdate,
+              phoneNumber: user.phoneNumber,
+              email: user.email,
+              address: user.address,
+              gender: user.gender,
+              cash: user.cash,
+            },
+            secretKey,
+            { expiresIn: '1h' }
+          );
+
+          const verified = jwt.verify(token, secretKey);
+          console.log(verified);
+          console.log('토큰 정보:', token);
+          console.log('시크릿 키:', secretKey);
+
+          res.status(200).json({ token });
         } else {
+          // 비밀번호 불일치
           res.status(401).json({ error: '아이디 또는 비밀번호가 일치하지 않습니다.' });
         }
       } else {
-        res.status(405).json({ error: '허용되지 않은 메서드' });
+        // 사용자를 찾을 수 없음
+        res.status(401).json({ error: '아이디 또는 비밀번호가 일치하지 않습니다.' });
       }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: '서버 에러' });
+    } else {
+      // 허용되지 않은 메서드
+      res.status(405).json({ error: '허용되지 않은 메서드' });
     }
-  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: '서버 에러' });
+  }
+});
   
   server.post('/api/insertData', async (req, res) => {
     try {
@@ -315,6 +322,41 @@ server.post('/api/refreshToken', async (req, res) => {
     res.status(200).json({ token: newToken });
   } catch (error) {
     console.error('Error refreshing token:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+server.post('/api/withdraw', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+
+    if (!token) {
+      return res.status(401).json({ error: '토큰이 제공되지 않았습니다.' });
+    }
+
+    const decodedToken = jwt.verify(token, secretKey);
+
+    if (!decodedToken) {
+      throw new JsonWebTokenError('jwt malformed');
+    }
+
+    const userId = decodedToken.userId;
+
+    // 데이터베이스에서 isWithdrawn 상태를 true로 변경
+    const [result] = await db.query(
+      'UPDATE users SET isWithdrawn = true WHERE userId = ?',
+      [userId]
+    );
+
+    if (result.affectedRows === 1) {
+      // 성공적으로 업데이트된 경우
+      res.status(200).json({ message: '회원 탈퇴 성공' });
+    } else {
+      // 업데이트 실패 시
+      res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
+    }
+  } catch (error) {
+    console.error('Error withdrawing user:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
