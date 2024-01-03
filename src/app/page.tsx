@@ -29,7 +29,6 @@ function Index() {
       <div className={`${styles.div} ${styles.gray}`} />
       <div className={`${styles.div} ${styles.blue}`} />
       <div className={`${styles.div} ${styles.yellow}`}>
-        <h2>데이터 목록</h2>
         <ul>
           {data.map((item, index) => (
             <li key={index}>{item}</li>

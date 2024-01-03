@@ -6,9 +6,9 @@ npm install clsx
 npm install react-query
 
 ### 메모장
-CREATE TABLE subscription (
-    Subs_Index INT AUTO_INCREMENT PRIMARY KEY,
-    User_Index INT NOT NULL,
+CREATE TABLE order (
+    Order INT AUTO_INCREMENT PRIMARY KEY,
+    User_Indexerp INT NOT NULL,
     Detail_Index INT NOT NULL,
     price INT NOT NULL,
     Subs_Start TIMESTAMP NOT NULL,
@@ -23,4 +23,12 @@ CREATE TABLE subscription (
     UNIQUE (Subs_Index),
     <!-- FOREIGN KEY (User_Index) REFERENCES user(User_Index),
     FOREIGN KEY (Detail_Index) REFERENCES detail(Detail_Index) -->
+);
+
+CREATE TABLE subscription (
+    Subs_Index INT AUTO_INCREMENT PRIMARY KEY,
+    Product_Index INT NOT NULL,
+    Name VARCHAR(50) NOT NULL,
+    Price INT NOT NULL,
+    Week INT NOT NULL
 );
