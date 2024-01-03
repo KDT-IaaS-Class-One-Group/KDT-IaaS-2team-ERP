@@ -17,25 +17,38 @@ interface UserInfo {
 export default function UserinfoPage() {
 
 
-  const [users, setUsers] = useState<UserInfo[]>([]);;
+  const [users, setUsers] = useState<UserInfo[]>([]);
 
   useEffect(() => {
-
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/users');
-        const data = await response.json();
-  
-        const userList = Array.isArray(data) && data.length > 0 ? data[0] : [];
-        setUsers(userList);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-  
-  
     fetchData();
   }, []); 
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('/api/users');
+      const data = await response.json();
+      const userList = Array.isArray(data) && data.length > 0 ? data[0] : [];
+      setUsers(userList);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  const handleApproval = async (userId: string) => {
+    try {
+      // API 호출하여 승인 처리
+      await fetch(`/api/approveUser/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      // 승인 후 데이터 다시 불러오기
+      fetchData();
+    } catch (error) {
+      console.error('Error approving user:', error);
+    }
+  };
   
 
   const formatBirthdate = (birthdate: string) => {
@@ -64,6 +77,7 @@ export default function UserinfoPage() {
               <th>Gender</th>
               <th>Cash</th>
               <th>탈퇴신청</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -79,6 +93,11 @@ export default function UserinfoPage() {
                 <td>{user.gender}</td>
                 <td>{user.cash}</td>
                 <td>{user.isWithdrawn === 1 ? '신청' : '미신청'}</td>
+                <td>
+                  {user.isWithdrawn === 1 && (
+                    <button onClick={() => handleApproval(user.userId)}>승인</button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
