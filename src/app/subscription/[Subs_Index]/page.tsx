@@ -1,6 +1,7 @@
-'use client'
+"use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 
 function Subscription() {
   const [data, setData] = useState({});
@@ -9,9 +10,8 @@ function Subscription() {
     const fetchData = async () => {
       try {
         // 현재 URL에서 끝 부분 추출
-        const pathSegments = window.location.pathname.split('/');
-        const Subs_Index = pathSegments.length >= 3 ? pathSegments[2] : null
-        console.log(Subs_Index);
+        const pathSegments = window.location.pathname.split("/");
+        const Subs_Index = pathSegments.length >= 3 ? pathSegments[2] : null;
         // API 호출
         const response = await fetch(`/api/test/${Subs_Index}`);
         const dataFromServer = await response.json();
@@ -44,6 +44,9 @@ function Subscription() {
           <p> 일치하는 index가 없어서 그런듯??</p>
         </>
       )}
+      <Link href={`/order`}>
+        <button>주문하기</button>
+      </Link>
     </div>
   );
 }
