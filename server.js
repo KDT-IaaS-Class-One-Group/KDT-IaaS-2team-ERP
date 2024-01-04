@@ -120,8 +120,8 @@ app.prepare().then(() => {
     }
   });
 
-  server.get('/api/test/:subs_index', async (req, res) => {
-    const subsIndex = req.params.subs_index;
+  server.get('/api/test/:subsIndex', async (req, res) => {
+    const subsIndex = req.params.subsIndex;
   
     try {
       const [rows] = await db.execute('SELECT * FROM subscription WHERE Subs_Index = ?', [subsIndex]);

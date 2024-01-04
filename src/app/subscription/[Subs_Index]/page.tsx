@@ -3,13 +3,18 @@
 import React, { useState, useEffect } from "react";
 
 function Subscription() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({});
+  console.log(data);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // 현재 URL에서 끝 부분 추출
+        const pathSegments = window.location.pathname.split('/');
+        const Subs_Index = pathSegments.length >= 3 ? pathSegments[2] : null
+        console.log(Subs_Index);
         // API 호출
-        const response = await fetch('/api/test');
+        const response = await fetch(`/api/test/${Subs_Index}`);
         const dataFromServer = await response.json();
         setData(dataFromServer);
       } catch (error) {
@@ -24,9 +29,22 @@ function Subscription() {
   return (
     <div>
       <h1>Subscription</h1>
-      <p>Name: {data.name}</p>
-      <p>Price: {data.price}</p>
-      <p>Week: {data.week}</p>
+      {Array.isArray(data) ? (
+        data.map((item, index) => (
+          <div key={index}>
+            <p>Name: {item.name}</p>
+            <p>Price: {item.price}</p>
+            <p>Week: {item.week}</p>
+          </div>
+        ))
+      ) : (
+        <>
+          <p>Name: 오류</p>
+          <p>Price: 확인</p>
+          <p>Week: 바람</p>
+          <p> 일치하는 index가 없어서 그런듯??</p>
+        </>
+      )}
     </div>
   );
 }
