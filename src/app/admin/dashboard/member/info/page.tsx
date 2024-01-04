@@ -1,4 +1,3 @@
-
 'use client'
 import React, { useState, useEffect } from 'react';
 import NavLinks from "@/components/dashboard/member/Member-nav-links-b";
@@ -17,25 +16,38 @@ interface UserInfo {
   cash: string;
   isWithdrawn: number;
 }
+const pageSize = 10; // 페이지당 표시할 항목 수
 
 export default function UserinfoPage() {
-
-
   const [users, setUsers] = useState<UserInfo[]>([]);
+  const [pageInfo, setPageInfo] = useState({ currentPage: 1, pageSize: 10, totalPages: 1 });
 
   useEffect(() => {
-    fetchData();
-  }, []); 
+    fetchData(pageInfo.currentPage);
+  }, [pageInfo.currentPage]);
 
-  const fetchData = async () => {
+  const fetchData = async (page: number) => {
     try {
-      const response = await fetch('/api/users');
+      const response = await fetch(`/api/users?page=${page}&pageSize=${pageSize}`);
       const data = await response.json();
-      const userList = Array.isArray(data) && data.length > 0 ? data[0] : [];
-      setUsers(userList);
+
+      setUsers(data.users);
+      setPageInfo({
+        currentPage: data.pageInfo.currentPage,
+        pageSize: data.pageInfo.pageSize,
+        totalPages: data.pageInfo.totalPages,
+      });
     } catch (error) {
       console.error('Error fetching users:', error);
     }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPageInfo({
+      ...pageInfo,
+      currentPage: newPage,
+    });
+    
   };
 
   const handleApproval = async (userId: string) => {
@@ -48,7 +60,7 @@ export default function UserinfoPage() {
         },
       });
       // 승인 후 데이터 다시 불러오기
-      fetchData();
+      fetchData(pageInfo.currentPage);
     } catch (error) {
       console.error('Error approving user:', error);
     }
@@ -110,6 +122,17 @@ export default function UserinfoPage() {
             ))}
           </tbody>
         </table>
+        <div className="pagination">
+        {Array.from({ length: pageInfo.totalPages }, (_, index) => index + 1).map((pageNumber) => (
+          <button
+            key={pageNumber}
+            className={`pagination-button ${pageNumber === pageInfo.currentPage ? 'active' : ''}`}
+            onClick={() => handlePageChange(pageNumber)}
+          >
+            {pageNumber}
+          </button>
+        ))}
+        </div>
       </div>
     </main>
     </>

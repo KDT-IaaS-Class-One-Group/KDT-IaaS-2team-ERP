@@ -11,8 +11,8 @@ const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
-  user: "yuan",
-  password: "1234",
+  user: "root",
+  password: "723546",
   database: "erp",
   connectionLimit: 5,
 });
@@ -43,17 +43,28 @@ app.prepare().then(() => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
-
-  server.get("/api/users", async (req, res) => {
+  server.get('/api/users', async (req, res) => {
     try {
-      const users = await db.query("SELECT * from users");
-
-      // console.log('Classrooms data from the server:', users);
-
-      res.json(users);
+      const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
+      const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
+  
+      const offset = (page - 1) * pageSize;
+  
+      const [users] = await db.query('SELECT * FROM users LIMIT ?, ?', [offset, pageSize]);
+      const [totalCount] = await db.query('SELECT COUNT(*) AS totalCount FROM users');
+      const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
+  
+      res.json({
+        users,
+        pageInfo: {
+          currentPage: page,
+          pageSize,
+          totalPages,
+        },
+      });
     } catch (error) {
-      console.error("Error fetching classrooms:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+      console.error('Error fetching users:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   });
 
@@ -211,6 +222,26 @@ app.prepare().then(() => {
     } catch (error) {
       console.error("Error approving user:", error);
       res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  server.post('/api/subscribe', async (req, res) => {
+    try {
+      if (req.method === 'POST') {
+        const { productIndex, name, price, week } = req.body;
+  
+        const [rows, fields] = await db.query(
+          `INSERT INTO subscription (Product_Index, Name, Price, Week) VALUES (?, ?, ?, ?)`,
+          [productIndex, name, price, week]
+        );
+  
+        res.status(200).json({ message: '구독 상품 추가 성공' });
+      } else {
+        res.status(405).json({ error: '허용되지 않은 메서드' });
+      }
+    } catch (error) {
+      console.error('Error adding subscription:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   });
 
