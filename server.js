@@ -58,6 +58,22 @@ app.prepare().then(() => {
     }
   });
 
+  server.get('/testPage/getData', async (req, res) => {
+    try {
+      const connection = await pool.getConnection();
+      const [rows, fields] = await connection.query('SELECT title, content, password FROM board');
+
+      // 데이터베이스에서 가져온 정보를 클라이언트에게 반환합니다.
+      res.json(rows);
+
+      // 연결 해제
+      connection.release();
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  })
+
   // 기본적인 Next.js 페이지 핸들링
   server.get('*', (req, res) => {
     return handle(req, res);
