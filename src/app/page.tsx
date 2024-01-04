@@ -29,8 +29,8 @@ function Index() {
     // Swiper 초기화
     const swiper = new Swiper('.swiper-container', {
       // 여기에 Swiper 옵션을 추가하세요
-      spaceBetween: 50,
-      slidesPerView: 1,
+      spaceBetween: 70,
+      slidesPerView:  3,
       navigation: {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev',
@@ -54,10 +54,24 @@ function Index() {
         <div className="swiper-container">
           <div className="swiper-wrapper">
             {data.map((item, index) => (
-              <div key={index} className={`swiper-slide ${styles.subscriptionItem}`}>
-                <p>Name: {item.name}</p>
-                <p>Price: {item.price}</p>
-                <p>Week: {item.week}</p>
+              <div
+                key={index}
+                className={`swiper-slide ${styles.subscriptionItem}`}
+                style={{
+                  width: '30vw', // 슬라이드 너비
+                  height: '80vh', // 슬라이드 높이
+                  backgroundColor: 'lightgray', // 슬라이드 배경색
+                  marginTop: '10vh', // 위쪽 margin
+                  
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center', // 텍스트 수직 가운데 정렬
+                  alignItems: 'center', // 텍스트 수평 가운데 정렬
+                }}
+              >
+                <p style={{ margin: 0 }}>Name: {item.name}</p>
+                <p style={{ margin: 0 }}>Price: {item.price}</p>
+                <p style={{ margin: 0 }}>Week: {item.week}</p>
               </div>
             ))}
           </div>
