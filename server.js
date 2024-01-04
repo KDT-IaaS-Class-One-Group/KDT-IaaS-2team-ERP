@@ -2,17 +2,17 @@ const express = require('express');
 const next = require('next');
 const bodyParser = require('body-parser');
 const dev = process.env.NODE_ENV !== 'production';
-const jwt = require('jsonwebtoken'); 
+const jwt = require('jsonwebtoken');
 const app = next({ dev });
 const handle = app.getRequestHandler();
 const mysql = require('mysql2/promise');
 
-const secretKey = 'nts9604';
+
 const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "723546",
+  password: "1245",
   database: "erp",
   connectionLimit: 5,
 });
@@ -26,6 +26,7 @@ pool.getConnection()
     console.error('데이터베이스 연결 실패:', err.message);
   });
 
+const db = pool;
 
 app.prepare().then(() => {
   const server = express();
@@ -34,9 +35,9 @@ app.prepare().then(() => {
   server.get('/api/classroom', async (req, res) => {
     try {
       const classrooms = await db.query('SELECT * from classrooms');
-      
+
       console.log('Classrooms data from the server:', classrooms);
-  
+
       res.json(classrooms);
     } catch (error) {
       console.error('Error fetching classrooms:', error);
@@ -47,9 +48,9 @@ app.prepare().then(() => {
   server.get('/api/users', async (req, res) => {
     try {
       const users = await db.query('SELECT * from users');
-      
+
       console.log('Classrooms data from the server:', users);
-  
+
       res.json(users);
     } catch (error) {
       console.error('Error fetching classrooms:', error);
@@ -62,8 +63,26 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
-  const db = pool;
-  
+
+  server.post('/testPage/writingPage/create-post', async (req, res) => {
+    const { title, content, password } = req.body;
+    const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+    try {
+      const conn = await pool.getConnection();
+      await conn.query(
+        `INSERT INTO board (title, content, date, password)
+        VALUES (?, ?, ?, ?)`,
+        [title, content, currentDate, password]
+      );
+      conn.release();
+      res.status(201).send('board create successfully');
+    } catch (err) {
+      console.error('Error creating board:', err);
+      res.status(500).send('Error creating board');
+    }
+  });
+
   server.post('/api/signup/signup', async (req, res) => {
     try {
       if (req.method === 'POST') {
@@ -77,7 +96,7 @@ app.prepare().then(() => {
           `INSERT INTO users (userId, password, name, birthdate, phoneNumber, email, address, gender, cash, joinDate, isWithdrawn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [userId, password, name, new Date(birthdate), phoneNumber, email, address, gender, cash, joinDate, isWithdrawn]
         );
-  
+
         res.status(200).json({ message: '회원가입 성공' });
       } else {
         res.status(405).json({ error: '허용되지 않은 메서드' });
@@ -86,35 +105,35 @@ app.prepare().then(() => {
       console.error(error);
       res.status(500).json({ error: '서버 에러' });
     }
-});
+  });
 
-server.post("/api/admin/login", async (req, res) => {
-  if (req.method === "POST") {
-    const { userId, password } = req.body;
-    console.log(req.body);
-    if (userId === "admin" && password === "1234") {
-      const token = jwt.sign({ userId }, secretKey, { expiresIn: '1h' });
-      res.status(200).json({ token: "my-secret-token" });
-    } else {
-      res.status(401).json({ error: "invalid credentials" });
+  server.post("/api/admin/login", async (req, res) => {
+    if (req.method === "POST") {
+      const { userId, password } = req.body;
+      console.log(req.body);
+      if (userId === "admin" && password === "1234") {
+        const token = jwt.sign({ userId }, secretKey, { expiresIn: '1h' });
+        res.status(200).json({ token: "my-secret-token" });
+      } else {
+        res.status(401).json({ error: "invalid credentials" });
+      }
     }
-  }
-});
+  });
 
 
   server.post('/api/login', async (req, res) => {
     try {
       if (req.method === 'POST') {
         const { userId, password } = req.body;
-  
+
         const [rows, fields] = await db.query(
           'SELECT * FROM users WHERE userId = ?',
           [userId]
         );
-  
+
         if (rows.length === 1) {
           const user = rows[0];
-  
+
           if (password === user.password) {
 
             const token = jwt.sign({ userId, name: user.name }, secretKey, { expiresIn: '1h' });
@@ -133,21 +152,21 @@ server.post("/api/admin/login", async (req, res) => {
       res.status(500).json({ error: '서버 에러' });
     }
   });
-  
+
   server.post('/api/insertData', async (req, res) => {
     try {
       const rooms = req.body;
-  
+
       for (const roomKey of Object.keys(rooms)) {
         const room = rooms[roomKey];
         const { instructor, field, computers, students } = room;
-  
+
         await pool.execute(
           'INSERT INTO classrooms (room_id, instructor, field, computers, students) VALUES (?, ?, ?, ?, ?)',
           [roomKey, instructor, field, computers, JSON.stringify(students)]
         );
       }
-  
+
       res.json({ message: '데이터 삽입 성공' });
     } catch (error) {
       console.error(error);
@@ -155,9 +174,9 @@ server.post("/api/admin/login", async (req, res) => {
     }
   });
 
-  
-  
-  
+
+
+
   const PORT = process.env.PORT || 3000;
 
   server.listen(PORT, (err) => {
