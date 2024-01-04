@@ -72,7 +72,6 @@ app.prepare().then(() => {
     try {
       const users = await db.query("SELECT * from users");
 
-      // console.log('Classrooms data from the server:', users);
 
       res.json(users);
     } catch (error) {
@@ -101,7 +100,7 @@ app.prepare().then(() => {
   });
 
   /** 
-  * ! 상품페이지 앤드포인트
+  * ! 구독페이지 앤드포인트
   */
 
   server.get('/api/data', async (req, res) => {
@@ -123,61 +122,19 @@ app.prepare().then(() => {
    * ! 끝
    */
 
-  // server.get('/api/userinfo', async (req, res) => {
-  //   try {
-  //     const token = req.headers.authorization?.replace('Bearer ', '');
+ 
+/** 
 
-  //     console.log('전송된 토큰:', token);
-      
-  
-  //     if (!token) {
-  //       return res.status(401).json({ error: '토큰이 제공되지 않았습니다.' });
-  //     }
-  
-  //     const decodedToken = jwt.verify(token, secretKey);
-  //     console.log('Token from client:', token);
-  //     console.log('Decoded Token:', decodedToken);
-
-  //     if (!decodedToken) {
-  //       throw new JsonWebTokenError('jwt malformed');
-  //     }
-  
-  //     if (decodedToken && decodedToken.exp < Date.now()) {
-  //       return res.status(401).json({ error: '토큰이 만료되었습니다.' });
-  //     }
-  //     console.log('Decoded Token:', decodedToken);
-
-  //      // 토큰을 검증하고 사용자 정보 가져오기
-  //      const userId = decodedToken.userId;
-  
-  //     const [rows, fields] = await db.query(
-  //       'SELECT userId, name, birthdate, phoneNumber, email, address, gender, cash, FROM users WHERE userId = ?',
-  //       [userId]
-  //     );
-  
-  //     if (rows.length === 1) {
-  //       const userInfo = rows[0];
-  //       res.status(200).json(userInfo);
-  //     } else {
-  //       res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching user info:', error);
-  //     res.status(500).json({ error: 'Internal Server Error' });
-  //   }
-  // });
-
-  /** 
   * ! 상품페이지 앤드포인트
   */
 
-  server.get('/api/data', async (req, res) => {
+  server.get('/api/products', async (req, res) => {
     try {
-      const [rows] = await db.execute('SELECT name, price, week FROM subscription');
+      const [rows] = await db.execute('SELECT category_id, product_name,stock_quantity FROM product');
       const dataFromDB = rows.map((row) => ({
-        name: row.name,
-        price: row.price,
-        week: row.week,
+        id: row.category_id,
+        name: row.product_name,
+        stock: row.stock_quantity,
       }));
       res.json(dataFromDB);
     } catch (error) {
@@ -190,72 +147,6 @@ app.prepare().then(() => {
    * ! 끝
    */
 
-  // server.get('/api/userinfo', async (req, res) => {
-  //   try {
-  //     const token = req.headers.authorization?.replace('Bearer ', '');
-
-  //     console.log('전송된 토큰:', token);
-      
-  
-  //     if (!token) {
-  //       return res.status(401).json({ error: '토큰이 제공되지 않았습니다.' });
-  //     }
-  
-  //     const decodedToken = jwt.verify(token, secretKey);
-  //     console.log('Token from client:', token);
-  //     console.log('Decoded Token:', decodedToken);
-
-  //     if (!decodedToken) {
-  //       throw new JsonWebTokenError('jwt malformed');
-  //     }
-  
-  //     if (decodedToken && decodedToken.exp < Date.now()) {
-  //       return res.status(401).json({ error: '토큰이 만료되었습니다.' });
-  //     }
-  //     console.log('Decoded Token:', decodedToken);
-
-  //      // 토큰을 검증하고 사용자 정보 가져오기
-  //      const userId = decodedToken.userId;
-  
-  //     const [rows, fields] = await db.query(
-  //       'SELECT userId, name, birthdate, phoneNumber, email, address, gender, cash, FROM users WHERE userId = ?',
-  //       [userId]
-  //     );
-  
-  //     if (rows.length === 1) {
-  //       const userInfo = rows[0];
-  //       res.status(200).json(userInfo);
-  //     } else {
-  //       res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching user info:', error);
-  //     res.status(500).json({ error: 'Internal Server Error' });
-  //   }
-  // });
-
-  /** 
-  * ! 상품페이지 앤드포인트
-  */
-
-  server.get('/api/data', async (req, res) => {
-    try {
-      const [rows] = await db.execute('SELECT name, price, week FROM subscription');
-      const dataFromDB = rows.map((row) => ({
-        name: row.name,
-        price: row.price,
-        week: row.week,
-      }));
-      res.json(dataFromDB);
-    } catch (error) {
-      console.error('쿼리 실행 중 오류 발생:', error);
-      res.status(500).send('데이터베이스 오류');
-    }
-  });
-
-  /**
-   * ! 끝
-   */
 
   // 기본적인 Next.js 페이지 핸들링
   server.get("*", (req, res) => {

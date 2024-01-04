@@ -1,10 +1,11 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import Swiper from 'swiper/bundle'; // Swiper를 전체 번들로 가져옵니다.
 import 'swiper/swiper-bundle.css'; // Swiper 스타일을 불러옵니다.
 import styles from "@/styles/index.module.scss";
 import Topbar from "@/components/Topbar/Topbar";
+import Footbar from '@/components/Footer/Footer';
+import SlideComponent from '@/components/productslide/slide';
 
 function Index() {
   const [data, setData] = useState([]);
@@ -49,7 +50,9 @@ function Index() {
   return (
     <div className={styles.container}>
       <Topbar />
-      <div className={`${styles.div} ${styles.gray}`}></div>
+      <div className={`${styles.div} ${styles.gray}`}>
+      <div className={styles.box}>kjawjoiewjifojwajfoiaiou</div>
+      </div>
       <div className={`${styles.div} ${styles.blue}`} />
       <div className={`${styles.div} ${styles.yellow}`}>
         <div className="swiper-container">
@@ -76,13 +79,27 @@ function Index() {
               </div>
             ))}
           </div>
-          <div className="swiper-pagination"></div>
-          <div className="swiper-button-next"></div>
-          <div className="swiper-button-prev"></div>
-          <div className="swiper-scrollbar"></div>
+          <div className="swiper-pagination"  style={{
+                  top:'290vh'
+                }}></div>
+          <div className="swiper-button-next" style={{
+                  top:'250vh'
+                }}></div>
+          <div className="swiper-button-prev"
+          style={{
+            top:'250vh'
+          }}
+          ></div>
+          <div className="swiper-scrollbar" 
+          style={{
+            top:'290vh'
+          }}></div>
         </div>
       </div>
-      <div className={`${styles.div} ${styles.purple}`} />
+      <div className={`${styles.div} ${styles.purple}`}>
+        {/* <SlideComponent/> */}
+      </div>
+      <Footbar/>
     </div>
   );
 }

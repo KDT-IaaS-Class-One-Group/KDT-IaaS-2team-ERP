@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import styles from "@/styles/toplink.module.scss"
 
 const links = [
   { name: '회사소개', href: '/info' },
@@ -27,7 +28,7 @@ export default function TopNavLinks() {
             },
           )}
         >
-          <p className="linkname">{link.name}</p>
+          <p className={`${styles.linkname}`}>{link.name}</p>
         </Link>
       ))}
     </>

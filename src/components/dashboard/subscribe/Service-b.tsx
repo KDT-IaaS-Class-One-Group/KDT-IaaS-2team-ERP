@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, ChangeEvent } from 'react';
+import styles from "@/styles/service-b.module.scss"
 
 interface SubscriptionInfo {
   productIndex: string;
@@ -59,6 +60,7 @@ export default function Service() {
 
   return (
     <>
+    <div className={styles.container}>
       <h1>구독 서비스 관리</h1>
       <button onClick={() => setShowForm(!showForm)}>구독 상품 추가</button>
       {showForm && (
@@ -82,6 +84,7 @@ export default function Service() {
           <button onClick={handleSubmit}>추가</button>
         </div>
       )}
+      </div>
     </>
   );
 }

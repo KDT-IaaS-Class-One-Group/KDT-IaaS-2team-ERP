@@ -18,6 +18,10 @@
 
 .gray {
   background-color: gray;
+  background: url("../public/image/커피.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .blue {
@@ -35,4 +39,12 @@
 .box{
   display:flex;
   margin-top:15vh;
+}
+
+.swiperpagination{
+  top: 200vh;
+}
+
+.swiperbuttonnext{
+  margin-top:200vh;
 }

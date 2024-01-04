@@ -1,0 +1,51 @@
+.footbar{
+  width:100vw;
+  height:55vh;
+  display:flex;
+  flex-direction: column;
+  background-color: orange;
+  color:white;
+}
+.footdiv1{
+  width:100vw;
+  height:5vh;
+  border:1px solid lightgray;
+}
+.footdiv2{
+  width:100vw;
+  height:40vh;
+  border:1px solid lightgray;
+  display:flex;
+  justify-content: space-around;
+}
+.suvdiv1{
+  width:10vw;
+  height:30vh;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  font-size:5vw;
+  font-weight: 900;
+}
+.suvdiv2{
+  font-size:1rem;
+  width:50vw;
+  height:30vh;
+  line-height:120%;
+}
+.footdiv3{
+  width:100vw;
+  height:10vh;
+  border:1px solid lightgray;
+  display:flex;
+  justify-content: center;
+}
+.suvdiv3{
+  width:40vw;
+  height:10vh;
+  font-size:1vw;
+}
+.suvdiv4{
+  width:10vw;
+  height:10vh;
+}
