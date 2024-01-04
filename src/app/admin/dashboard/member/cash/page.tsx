@@ -27,7 +27,7 @@ export default function UserinfoPage() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("/api/users");
+      const response = await fetch("/api/users/cash");
       const data = await response.json();
       const userList = Array.isArray(data) && data.length > 0 ? data[0] : [];
       setUsers(userList);
