@@ -9,7 +9,7 @@ function Subscription() {
     const fetchData = async () => {
       try {
         // API 호출
-        const response = await fetch(`/api/test/:subs_index`);
+        const response = await fetch('/api/test');
         const dataFromServer = await response.json();
         setData(dataFromServer);
       } catch (error) {
