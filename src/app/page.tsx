@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Swiper from 'swiper/bundle'; // Swiper를 전체 번들로 가져옵니다.
-import 'swiper/swiper-bundle.css'; // Swiper 스타일을 불러옵니다.
+import React, { useState, useEffect } from "react";
+import Swiper from 'swiper/bundle';
+import 'swiper/swiper-bundle.css';
 import styles from "@/styles/index.module.scss";
 import Topbar from "@/components/Topbar/Topbar";
 
@@ -13,11 +13,11 @@ function Index() {
     const fetchData = async () => {
       try {
         // API 호출
-        const response = await fetch('/api/data');
+        const response = await fetch("/api/data");
         const dataFromServer = await response.json();
         setData(dataFromServer);
       } catch (error) {
-        console.error('데이터를 불러오는 도중 오류 발생:', error);
+        console.error("데이터를 불러오는 도중 오류 발생:", error);
       }
     };
 
@@ -26,11 +26,9 @@ function Index() {
   }, []);
 
   useEffect(() => {
-    // Swiper 초기화
     const swiper = new Swiper('.swiper-container', {
-      // 여기에 Swiper 옵션을 추가하세요
       spaceBetween: 70,
-      slidesPerView:  3,
+      slidesPerView: 3,
       navigation: {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev',
@@ -44,7 +42,16 @@ function Index() {
         draggable: true,
       },
     });
-  }, [data]); // 데이터가 업데이트될 때마다 Swiper를 초기화합니다.
+  }, []);
+
+  const handleSlideClick = (Subs_Index : any) => {
+    // 슬라이드를 클릭했을 때의 동작을 정의합니다.
+    // 예를 들어, 클릭한 상품의 ID를 이용하여 해당 상품의 상세 정보 페이지로 이동할 수 있습니다.
+    // 페이지 이동은 React Router의 useHistory 를 사용하거나, 다른 라우팅 방법을 사용하여 구현할 수 있습니다.
+    
+    // 여기에서는 console.log로 클릭한 상품의 ID를 출력하도록 예시를 작성했습니다.
+    console.log(`Clicked on product with ID: ${Subs_Index}`);
+  };
 
   return (
     <div className={styles.container}>
@@ -59,17 +66,18 @@ function Index() {
                 key={index}
                 className={`swiper-slide ${styles.subscriptionItem}`}
                 style={{
-                  width: '30vw',
-                  height: '80vh',
-                  backgroundColor: 'lightgray', 
-                  marginTop: '10vh', // 위쪽 margin, 이게 잘 적용이 안됨 -> 나중에 scss로 빼서 확인해보기
-
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
+                  width: "30vw",
+                  height: "80vh",
+                  backgroundColor: "lightgray",
+                  marginTop: "10vh",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
                 }}
-              >
+                onClick={() => handleSlideClick(item.Subs_Index)}
+                >
                 <p style={{ margin: 0 }}>Name: {item.name}</p>
                 <p style={{ margin: 0 }}>Price: {item.price}</p>
                 <p style={{ margin: 0 }}>Week: {item.week}</p>

@@ -12,7 +12,7 @@ const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "723546",
+  password: "0000",
   database: "erp",
   connectionLimit: 5,
 });
@@ -106,8 +106,9 @@ app.prepare().then(() => {
 
   server.get('/api/data', async (req, res) => {
     try {
-      const [rows] = await db.execute('SELECT name, price, week FROM subscription');
+      const [rows] = await db.execute('SELECT * FROM subscription');
       const dataFromDB = rows.map((row) => ({
+        Subs_Index: row.Subs_Index,
         name: row.name,
         price: row.price,
         week: row.week,
@@ -240,8 +241,9 @@ app.prepare().then(() => {
 
   server.get('/api/data', async (req, res) => {
     try {
-      const [rows] = await db.execute('SELECT name, price, week FROM subscription');
+      const [rows] = await db.execute('SELECT Subs_Index, name, price, week FROM subscription');
       const dataFromDB = rows.map((row) => ({
+        Subs_Index: row.Subs_Index,
         name: row.name,
         price: row.price,
         week: row.week,
