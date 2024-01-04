@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 
 function Subscription() {
   const [data, setData] = useState({});
-  console.log(data);
 
   useEffect(() => {
     const fetchData = async () => {
