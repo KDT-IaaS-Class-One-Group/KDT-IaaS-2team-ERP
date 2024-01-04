@@ -58,15 +58,15 @@ function Index() {
                 key={index}
                 className={`swiper-slide ${styles.subscriptionItem}`}
                 style={{
-                  width: '30vw', // 슬라이드 너비
-                  height: '80vh', // 슬라이드 높이
-                  backgroundColor: 'lightgray', // 슬라이드 배경색
-                  marginTop: '10vh', // 위쪽 margin
-                  
+                  width: '30vw',
+                  height: '80vh',
+                  backgroundColor: 'lightgray', 
+                  marginTop: '10vh', // 위쪽 margin, 이게 잘 적용이 안됨 -> 나중에 scss로 빼서 확인해보기
+
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'center', // 텍스트 수직 가운데 정렬
-                  alignItems: 'center', // 텍스트 수평 가운데 정렬
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
                 <p style={{ margin: 0 }}>Name: {item.name}</p>
