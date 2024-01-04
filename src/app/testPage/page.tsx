@@ -1,11 +1,12 @@
 import React from "react";
 import Link from "next/link";
 
-export default function Page() {
+export default async function App() {
   return (
-    <div>
+    <div id="root">
+      <p></p>
       <Link href="/testPage/writingPage">
-        <button>글쓰기</button>
+        <button>Go to Writing Page</button>
       </Link>
     </div>
   );
