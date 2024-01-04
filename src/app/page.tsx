@@ -1,16 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Swiper from 'swiper/bundle';
-import 'swiper/swiper-bundle.css';
+import Swiper from "swiper/bundle";
+import "swiper/swiper-bundle.css";
 import styles from "@/styles/index.module.scss";
 import Topbar from "@/components/Topbar/Topbar";
-import Link from 'next/link';
-
+import Link from "next/link";
 
 function Index() {
   const [data, setData] = useState([]);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,19 +27,19 @@ function Index() {
   }, []);
 
   useEffect(() => {
-    const swiper = new Swiper('.swiper-container', {
+    const swiper = new Swiper(".swiper-container", {
       spaceBetween: 70,
       slidesPerView: 3,
       navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
       },
       pagination: {
-        el: '.swiper-pagination',
+        el: ".swiper-pagination",
         clickable: true,
       },
       scrollbar: {
-        el: '.swiper-scrollbar',
+        el: ".swiper-scrollbar",
         draggable: true,
       },
     });
@@ -69,10 +68,13 @@ function Index() {
                   alignItems: "center",
                   cursor: "pointer",
                 }}
-                >
+              >
                 <p style={{ margin: 0 }}>Name: {item.name}</p>
                 <p style={{ margin: 0 }}>Price: {item.price}</p>
                 <p style={{ margin: 0 }}>Week: {item.week}</p>
+                <Link href={`/subscription/${item.Subs_Index}`}>
+                  <button>자세히 보기</button>
+                </Link>
               </div>
             ))}
           </div>
