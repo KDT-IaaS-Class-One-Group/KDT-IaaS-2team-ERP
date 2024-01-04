@@ -30,9 +30,9 @@ CREATE TABLE Subscription (
     Subs_Index INT AUTO_INCREMENT PRIMARY KEY,
     product_Index INT NOT NULL,
     User_Index INT NOT NULL,
+    name VARCHAR(50) NOT NULL,
     week INT NOT NULL,
     price INT NOT NULL,
-    name VARCHAR(50) NOT NULL,
     FOREIGN KEY (product_Index) REFERENCES Products(Product_Index),
     FOREIGN KEY (User_Index) REFERENCES User(User_Index)
 );
