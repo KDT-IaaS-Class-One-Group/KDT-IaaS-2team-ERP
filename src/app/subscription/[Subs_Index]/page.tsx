@@ -4,13 +4,12 @@ import React, { useState, useEffect } from "react";
 
 function Subscription() {
   const [data, setData] = useState([]);
-  console.log(data[0]);
-  const test = data[0];
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         // API 호출
-        const response = await fetch(`/api/data`);
+        const response = await fetch(`/api/test/:subs_index`);
         const dataFromServer = await response.json();
         setData(dataFromServer);
       } catch (error) {
@@ -25,9 +24,9 @@ function Subscription() {
   return (
     <div>
       <h1>Subscription</h1>
-      <p>Name: {test.name}</p>
-      <p>Price: {test.price}</p>
-      <p>Week: {test.week}</p>
+      <p>Name: {data.name}</p>
+      <p>Price: {data.price}</p>
+      <p>Week: {data.week}</p>
     </div>
   );
 }

@@ -120,6 +120,25 @@ app.prepare().then(() => {
     }
   });
 
+  server.get('/api/test/:subs_index', async (req, res) => {
+    const subsIndex = req.params.subs_index;
+  
+    try {
+      const [rows] = await db.execute('SELECT * FROM subscription WHERE Subs_Index = ?', [subsIndex]);
+      const dataFromDB = rows.map((row) => ({
+        Subs_Index: row.Subs_Index,
+        name: row.name,
+        price: row.price,
+        week: row.week,
+      }));
+      res.json(dataFromDB);
+    } catch (error) {
+      console.error('쿼리 실행 중 오류 발생:', error);
+      res.status(500).send('데이터베이스 오류');
+    }
+  });
+
+
   /**
    * ! 끝
    */
