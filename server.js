@@ -57,16 +57,28 @@ app.prepare().then(() => {
     }
   });
 
-  server.get("/api/cash", async (req, res) => {
+  server.get('/api/cash', async (req, res) => {
     try {
-      const users = await db.query("SELECT * from users");
-
-      // console.log('Classrooms data from the server:', users);
-
-      res.json(users);
+      const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
+      const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
+  
+      const offset = (page - 1) * pageSize;
+  
+      const [users] = await db.query('SELECT * FROM users LIMIT ?, ?', [offset, pageSize]);
+      const [totalCount] = await db.query('SELECT COUNT(*) AS totalCount FROM users');
+      const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
+  
+      res.json({
+        users,
+        pageInfo: {
+          currentPage: page,
+          pageSize,
+          totalPages,
+        },
+      });
     } catch (error) {
-      console.error("Error fetching classrooms:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+      console.error('Error fetching users:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   });
 
