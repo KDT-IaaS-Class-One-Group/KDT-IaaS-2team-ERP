@@ -5,6 +5,8 @@ import Swiper from 'swiper/bundle';
 import 'swiper/swiper-bundle.css';
 import styles from "@/styles/index.module.scss";
 import Topbar from "@/components/Topbar/Topbar";
+import Link from 'next/link';
+
 
 function Index() {
   const [data, setData] = useState([]);
@@ -44,15 +46,6 @@ function Index() {
     });
   }, []);
 
-  const handleSlideClick = (Subs_Index : any) => {
-    // 슬라이드를 클릭했을 때의 동작을 정의합니다.
-    // 예를 들어, 클릭한 상품의 ID를 이용하여 해당 상품의 상세 정보 페이지로 이동할 수 있습니다.
-    // 페이지 이동은 React Router의 useHistory 를 사용하거나, 다른 라우팅 방법을 사용하여 구현할 수 있습니다.
-    
-    // 여기에서는 console.log로 클릭한 상품의 ID를 출력하도록 예시를 작성했습니다.
-    console.log(`Clicked on product with ID: ${Subs_Index}`);
-  };
-
   return (
     <div className={styles.container}>
       <Topbar />
@@ -76,7 +69,6 @@ function Index() {
                   alignItems: "center",
                   cursor: "pointer",
                 }}
-                onClick={() => handleSlideClick(item.Subs_Index)}
                 >
                 <p style={{ margin: 0 }}>Name: {item.name}</p>
                 <p style={{ margin: 0 }}>Price: {item.price}</p>
