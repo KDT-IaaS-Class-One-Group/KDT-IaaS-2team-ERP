@@ -80,9 +80,9 @@ export default function UsercashPage() {
         <NavLinks />
       </div>
       <main>
-        <h1 className={`mb-4 text-xl md:text-2xl`}>회원 캐시 관리</h1>
+        <h1>회원 캐시 관리</h1>
         <div className={styles.userinfocontent}>
-          <table className="min-w-full">
+          <table className={styles.userTable}>
             <thead>
               <tr>
                 <th>ID</th>
@@ -113,7 +113,7 @@ export default function UsercashPage() {
               ))}
             </tbody>
           </table>
-          <div className="pagination">
+          <div className={styles.pagination}>
             {Array.from({ length: pageInfo.totalPages }, (_, index) => index + 1).map((pageNumber) => (
               <button
                 key={pageNumber}
