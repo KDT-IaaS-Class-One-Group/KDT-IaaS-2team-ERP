@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import NavLinks from "@/components/dashboard/member/Member-nav-links-b";
 import styles from "@/styles/adminsidenav.module.scss";
-import Info from "@/components/dashboard/member/Info-b";
 
 interface UserInfo {
   id: string;
@@ -67,12 +66,12 @@ export default function UserinfoPage() {
       <div className={styles.sidelink}>
         <NavLinks />
       </div>
-    <main>
-      <h1 className={`mb-4 text-xl md:text-2xl`}>
+    <main className={styles.main}>
+      <h1>
         회원 정보 관리
       </h1>
       <div className={styles.userinfocontent}>
-        <table className="min-w-full">
+        <table className={styles.userTable}>
           <thead>
             <tr>
               <th>ID</th>
