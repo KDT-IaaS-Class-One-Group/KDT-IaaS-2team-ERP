@@ -57,6 +57,19 @@ app.prepare().then(() => {
     }
   });
 
+  server.get("/api/cash", async (req, res) => {
+    try {
+      const users = await db.query("SELECT * from users");
+
+      // console.log('Classrooms data from the server:', users);
+
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching classrooms:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
   // 기본적인 Next.js 페이지 핸들링
   server.get("*", (req, res) => {
     return handle(req, res);

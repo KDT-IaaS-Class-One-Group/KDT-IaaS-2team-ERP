@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import NavLinks from "@/components/dashboard/member/Member-nav-links-b";
 import styles from "@/styles/adminsidenav.module.scss";
-import Info from "@/components/dashboard/member/Info-b";
 
 interface UserInfo {
   id: string;
@@ -23,7 +22,7 @@ export default function UserinfoPage() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("/api/users");
+      const response = await fetch("/api/cash");
       const data = await response.json();
       const userList = Array.isArray(data) && data.length > 0 ? data[0] : [];
       setUsers(userList);
@@ -57,10 +56,6 @@ export default function UserinfoPage() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedCash(e.target.value);
-  };
-
   return (
     <>
       <div className={styles.sidelink}>
@@ -92,7 +87,7 @@ export default function UserinfoPage() {
                     <input
                       type="text"
                       value={editedCash}
-                      onChange={(e) => setEditedCash(e.target.value)}
+                      onChange={(e) =>                    (e.target.value)}
                     />
                     <button onClick={() => handleCashEdit(user.userId)}>
                       수정
