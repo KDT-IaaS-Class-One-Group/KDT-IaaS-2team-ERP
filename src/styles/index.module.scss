@@ -21,7 +21,7 @@
 }
 
 .blue {
-  background-color: blue;
+  background-color: lightblue
 }
 
 .yellow {
@@ -35,4 +35,38 @@
 .box{
   display:flex;
   margin-top:15vh;
+}
+
+.subscriptionItem {
+  height: 90vh; 
+  background-color: violet;
+  border: 5px solid blue;
+  display:flex;
+
+
+  p{
+    color:lime;
+    justify-content: center;
+  align-items: center;
+  display:flex;
+  width:30vw;
+  height:20vh;
+  }
+
+}
+
+.sliderContainer {
+  height:100vh;
+}
+
+.slick-dots {
+  /* 여기에 스타일을 추가하세요 */
+  ul {
+    margin: 0 4px; /* 각 도트 사이의 간격 조절 예시 */
+    margin-block-end:0;
+  }
+  
+  button {
+    font-size: 16px; /* 도트 크기 조절 예시 */
+  }
 }

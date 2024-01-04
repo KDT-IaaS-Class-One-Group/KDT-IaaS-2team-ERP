@@ -57,6 +57,49 @@ app.prepare().then(() => {
     }
   });
 
+  server.get('/api/signup/checkDuplicate/:userId', async (req, res) => {
+    try {
+      const userId = req.params.userId;
+  
+      const [rows] = await db.query('SELECT * FROM users WHERE userId = ?', [userId]);
+  
+      if (rows.length > 0) {
+        // 이미 존재하는 ID인 경우
+        res.json({ isDuplicate: true });
+      } else {
+        // 존재하지 않는 ID인 경우
+        res.json({ isDuplicate: false });
+      }
+    } catch (error) {
+      console.error('Error checking duplicate:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  /** 
+  * ! 상품페이지 앤드포인트
+  */
+
+  server.get('/api/data', async (req, res) => {
+    try {
+      const [rows] = await db.execute('SELECT name, price, week FROM subscription');
+      const dataFromDB = rows.map((row) => ({
+        name: row.name,
+        price: row.price,
+        week: row.week,
+      }));
+      res.json(dataFromDB);
+    } catch (error) {
+      console.error('쿼리 실행 중 오류 발생:', error);
+      res.status(500).send('데이터베이스 오류');
+    }
+  });
+
+  /**
+   * ! 끝
+   */
+
+
 
   // server.get('/api/userinfo', async (req, res) => {
   //   try {
@@ -362,7 +405,7 @@ server.post('/api/withdraw', async (req, res) => {
 });
 
 
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 3001;
 
   server.listen(PORT, (err) => {
     if (err) throw err;
