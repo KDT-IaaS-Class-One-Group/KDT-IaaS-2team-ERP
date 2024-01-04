@@ -10,7 +10,7 @@ const mysql = require('mysql2/promise');
 const secretKey = 'nts9604';
 const pool = mysql.createPool({
   host: "localhost",
-  port: "3307",
+  port: "3306",
   user: "root",
   password: "0000",
   database: "erp",
