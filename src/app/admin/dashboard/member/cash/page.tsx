@@ -12,23 +12,41 @@ interface UserInfo {
   isWithdrawn: number;
 }
 
-export default function UserinfoPage() {
+export default function UsercashPage() {
   const [editedCash, setEditedCash] = useState<string>("");
   const [users, setUsers] = useState<UserInfo[]>([]);
+  const [pageInfo, setPageInfo] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalPages: 1,
+  });
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(pageInfo.currentPage, 10);
+  }, [pageInfo.currentPage]);
 
-  const fetchData = async () => {
+  const fetchData = async (page: number, pageSize:number) => {
     try {
-      const response = await fetch("/api/cash");
+      const response = await fetch(
+        `/api/cash?page=${page}&pageSize=${pageSize}`
+      );
       const data = await response.json();
-      const userList = Array.isArray(data) && data.length > 0 ? data[0] : [];
-      setUsers(userList);
+      setUsers(data.users);
+      setPageInfo({
+        currentPage: data.pageInfo.currentPage,
+        pageSize: data.pageInfo.pageSize,
+        totalPages: data.pageInfo.totalPages,
+      });
     } catch (error) {
       console.error("Error fetching users:", error);
     }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPageInfo({
+      ...pageInfo,
+      currentPage: newPage,
+    });
   };
 
   const formatBirthdate = (birthdate: string) => {
@@ -48,7 +66,7 @@ export default function UserinfoPage() {
         body: JSON.stringify({ cash: editedCash }),
       });
       // 수정 후 데이터 다시 불러오기
-      fetchData();
+      fetchData(pageInfo.currentPage, 10);
       // 수정된 Cash 값을 초기화
       setEditedCash("");
     } catch (error) {
@@ -87,7 +105,7 @@ export default function UserinfoPage() {
                     <input
                       type="text"
                       value={editedCash}
-                      onChange={(e) =>                    (e.target.value)}
+                      onChange={(e) => setEditedCash(e.target.value)}
                     />
                     <button onClick={() => handleCashEdit(user.userId)}>
                       수정
@@ -97,6 +115,22 @@ export default function UserinfoPage() {
               ))}
             </tbody>
           </table>
+          <div className="pagination">
+            {Array.from(
+              { length: pageInfo.totalPages },
+              (_, index) => index + 1
+            ).map((pageNumber) => (
+              <button
+                key={pageNumber}
+                className={`pagination-button ${
+                  pageNumber === pageInfo.currentPage ? "active" : ""
+                }`}
+                onClick={() => handlePageChange(pageNumber)}
+              >
+                {pageNumber}
+              </button>
+            ))}
+          </div>
         </div>
       </main>
     </>
