@@ -36,6 +36,7 @@ export default function PaymentPage() {
           type="text"
           value={cardNumber}
           onChange={(e) => setCardNumber(e.target.value)}
+          placeholder="카드 번호"
         />
       </div>
       <div>
@@ -53,6 +54,7 @@ export default function PaymentPage() {
           type="text"
           value={cvv}
           onChange={(e) => setCvv(e.target.value)}
+          placeholder="CVV"
         />
       </div>
       <button onClick={handlePayment}>결제하기</button>

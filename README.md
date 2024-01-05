@@ -92,3 +92,14 @@ CREATE TABLE Category (
     categoryName VARCHAR(50) NOT NULL,
     parentCategoryID INT NULL
 );
+
+### Cart 추가
+CREATE TABLE Cart (
+    Cart_Index INT AUTO_INCREMENT PRIMARY KEY,
+    User_Index INT NOT NULL,
+    Product_Index INT NOT NULL,
+    quantity INT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (User_Index) REFERENCES User(User_Index),
+    FOREIGN KEY (Product_Index) REFERENCES Product(Product_Index)
+);
