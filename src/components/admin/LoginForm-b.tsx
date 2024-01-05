@@ -31,7 +31,7 @@ const LoginForm = () => {
       localStorage.setItem("token", token);
       console.log("로그인 성공");
 
-      router.push("/admin/dashboard");
+      router.push("/admin/dashboard/member/info");
       setIsLoggedIn(true);
     } else {
       // 로그인 실패
@@ -41,7 +41,7 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.push("/admin/dashboard");
+      router.push("/admin/dashboard/member/info");
     }
   }, [isLoggedIn, router]);
 

@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-
+import Link from "next/link";
 interface SubscriptionClientSideProps {
   Subs_Index: number;
   Name: string;
@@ -41,6 +41,9 @@ export default function SubscriptionClientSide() {
           <p>Week: {item.Week}</p>
         </div>
       ))}
+      <Link href={`/order`}>
+                 <button>주문하기</button>
+     </Link>
     </div>
   );
 }
