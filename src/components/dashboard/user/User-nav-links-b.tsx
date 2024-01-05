@@ -6,8 +6,8 @@ import clsx from 'clsx';
 import styles from "@/styles/adminnavlink.module.scss";
 
 const links = [
-  { name: '회원정보조회', href: '/admin/dashboard/member/info' },
-  { name: '회원캐시관리', href: '/admin/dashboard/member/cash' },
+  { name: '회원정보조회', href: '/admin/dashboard/user/user-info' },
+  { name: '회원캐시관리', href: '/admin/dashboard/user/user-cash' },
 ];
 
 export default function NavLinks() {

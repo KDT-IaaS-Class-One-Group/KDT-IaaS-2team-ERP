@@ -1,6 +1,6 @@
-import NavLinks from "@/components/dashboard/subscribe/Subscribe-nav-links-b";
+import NavLinks from "@/components/dashboard/analysis/Data-nav-links-b";
 import styles from "@/styles/adminsidenav.module.scss";
-import Service from "@/components/dashboard/subscribe/Service-b";
+import UserData from "@/components/dashboard/analysis/User-data-b";
 
 export default async function Page() {
   return (
@@ -8,7 +8,7 @@ export default async function Page() {
       <div className={styles.sidelink}>
         <NavLinks />
       </div>
-      <Service />
+      <UserData />
     </>
   );
 }

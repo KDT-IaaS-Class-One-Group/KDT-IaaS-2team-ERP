@@ -8,7 +8,7 @@ interface SubscriptionInfo {
   week: string;
 }
 
-export default function Priduct() {
+export default function SubsProduct() {
   const [showForm, setShowForm] = useState<boolean>(false);
   const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfo>({
     productIndex: '',
