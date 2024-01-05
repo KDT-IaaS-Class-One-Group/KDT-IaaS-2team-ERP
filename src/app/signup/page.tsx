@@ -18,6 +18,16 @@ interface SignUpProps {
     gender?: string;
   };
 }
+interface FormData {
+  userId: string;
+  password: string;
+  name: string;
+  birthdate: Date;
+  phoneNumber: string;
+  email: string;
+  address: string;
+  gender: string;
+}
 
 const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
   const [formData, setFormData] = useState<{
@@ -39,29 +49,62 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     address: signup.address || '',
     gender: signup.gender || '',
   });
+  const [isUserIdValid, setIsUserIdValid] = useState<'unknown' | boolean | null>(null);
   const router = useRouter()
 
   useEffect(() => {
-    
+  
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | Date) => {
     if (event instanceof Date) {
+      // Date일 경우
       setFormData({
         ...formData,
         birthdate: event,
       });
     } else {
+      // HTML 요소일 경우
+      const target = event.target as HTMLInputElement | HTMLSelectElement;
+
       setFormData({
         ...formData,
-        [event.target.name]: event.target.value,
+        [target.name]: target.value,
       });
+
+      if (target.name === 'userId') {
+        // 아이디가 변경될 때, 중복 체크 상태 초기화
+        setIsUserIdValid(null);
+      }
     }
   };
+
+  const handleCheckDuplicate = async () => {
+    try {
+      const url = new URL(`/api/signup/checkDuplicate/${formData.userId}`, window.location.origin);
+      // formData를 URLSearchParams로 변환하여 쿼리 문자열로 추가
+      Object.keys(formData).forEach(key => url.searchParams.append(key, (formData as any)[key]));
   
+      const response = await fetch(url);
+  
+      console.log('Server Response:', response);
+  
+      const data = await response.json();
+  
+      setIsUserIdValid(!data.isDuplicate);
+    } catch (error) {
+      console.error('Error checking duplicate:', error);
+      setIsUserIdValid(false);
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!isUserIdValid) {
+      alert('아이디 중복 확인을 해주세요.');
+      return;
+    }
 
     try {
       const response = await fetch('/api/signup/signup', {
@@ -90,6 +133,18 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
         <label className={styles.formLabel}>
           아이디:
           <input type="text" name="userId" value={formData.userId} onChange={handleChange} className={styles.input} />
+          <button type="button" onClick={handleCheckDuplicate}>
+          중복 확인
+          </button>
+          {isUserIdValid === null ? null : (
+            <span className={styles.validMessage}>
+              {isUserIdValid === true
+                ? '사용 가능한 아이디입니다.'
+                : isUserIdValid === false
+                ? '이미 사용 중인 아이디입니다.'
+                : '중복 확인 중...'}
+            </span>
+          )}
         </label>
         <br />
         <label className={styles.formLabel}>
@@ -134,7 +189,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
           </select>
         </label>
         <br />
-        <button type="submit" className={styles.button}>회원가입</button>
+        <button type="submit" className={styles.button} disabled={isUserIdValid === false}>회원가입</button>
       </form>
     </div>
   );

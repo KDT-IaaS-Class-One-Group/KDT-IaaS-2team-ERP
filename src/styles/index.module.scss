@@ -25,9 +25,14 @@
 }
 
 .yellow {
-  background-color: yellow;
+  overflow: hidden;
 }
 
 .purple {
   background-color: purple;
+}
+
+.box{
+  display:flex;
+  margin-top:15vh;
 }
