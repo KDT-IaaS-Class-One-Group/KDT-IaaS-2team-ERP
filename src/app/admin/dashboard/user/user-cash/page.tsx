@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import NavLinks from '@/components/dashboard/member/Member-nav-links-b';
+import NavLinks from '@/components/dashboard/user/User-nav-links-b';
 import styles from '@/styles/adminsidenav.module.scss';
 
 interface UserInfo {

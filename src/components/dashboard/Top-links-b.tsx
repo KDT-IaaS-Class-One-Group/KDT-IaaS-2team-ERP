@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
 const links = [
-  { name: '회원관리', href: '/admin/dashboard/member/info' },
-  { name: '구독상품관리', href: '/admin/dashboard/subscribe/service' },
-  { name: '통계분석', href: '/admin/dashboard/analysis/member-data' },
+  { name: '회원관리', href: '/admin/dashboard/user/user-info' },
+  { name: '구독상품관리', href: '/admin/dashboard/subscription/service' },
+  { name: '통계분석', href: '/admin/dashboard/analysis/user-data' },
   { name: '고객지원', href: '/admin/dashboard/service'}
 ];
 

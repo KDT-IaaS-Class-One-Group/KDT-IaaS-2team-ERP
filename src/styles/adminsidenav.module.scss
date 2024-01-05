@@ -25,7 +25,7 @@
 .userinfocontent{
   display: flex;
   margin-right: 20vw;
-  width: 60vw;
+  width: 70vw;
   position: relative;
   right: 15vw;
 }
@@ -39,15 +39,17 @@
   .userTable {
     width: 100%;
     border-collapse: collapse;
+    // table-layout:fixed;
   }
   
   .userTable th, .userTable td {
     border: 1px solid #000000;
-    padding: 8px;
+    padding: 4px;
     text-align: left;
   }
-  
+
   .userTable th {
+    width: auto;
     background-color: #d1d1d1;
   }
   

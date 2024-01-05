@@ -19,7 +19,16 @@
 }
 
 .div2 {
-  width:80vw;
+  width:75vw;
+  height:15vh;
+  background-color: azure;
+  display:flex;
+  align-items: center;
+  font-size: 1vw;
+}
+
+.div3 {
+  width:5vw;
   height:15vh;
   background-color: azure;
   display:flex;

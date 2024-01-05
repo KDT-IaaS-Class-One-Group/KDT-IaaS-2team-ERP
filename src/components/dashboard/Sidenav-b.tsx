@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import NavLinks from '@/components/dashboard/member/Member-nav-links-b'
+import NavLinks from '@/components/dashboard/user/User-nav-links-b'
 import styles from "@/styles/adminsidenav.module.scss"
 
 export default function SideNav() {
