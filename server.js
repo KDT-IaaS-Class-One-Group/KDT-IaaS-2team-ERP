@@ -58,7 +58,7 @@ app.prepare().then(() => {
     }
   });
 
-  server.get('/testPage/getData', async (req, res) => {
+  server.get('/customer/getData', async (req, res) => {
     try {
       const connection = await pool.getConnection();
       const [rows, fields] = await connection.query('SELECT title, content, password FROM board');
@@ -80,7 +80,7 @@ app.prepare().then(() => {
   });
 
 
-  server.post('/testPage/writingPage/create-post', async (req, res) => {
+  server.post('/customer/writingPage/create-post', async (req, res) => {
     const { title, content, password } = req.body;
     const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
