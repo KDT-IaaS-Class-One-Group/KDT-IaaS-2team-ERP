@@ -177,7 +177,7 @@ server.post("/api/order", (req, res) => {
     const { product } = req.body;
 
     // 데이터베이스에 삽입할 쿼리문
-    const insertQuery = `INSERT INTO cart (product_name) VALUES (?)`;
+    const insertQuery = `INSERT INTO cart (Product_Index) VALUES (?)`;
 
     // 쿼리 실행
     db.query(insertQuery, [product], (error, results) => {
