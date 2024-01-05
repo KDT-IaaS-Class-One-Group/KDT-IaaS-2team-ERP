@@ -4,7 +4,7 @@ import styles from "@/styles/adminsubproduct.module.scss";
 
 interface SubscriptionInfo {
   Subs_Index: string;
-  productIndex: string;
+  product_Index: string;
   name: string;
   week: string;
   price: string;
@@ -51,7 +51,7 @@ export default function SubsProduct() {
 
   const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfo>({
     Subs_Index: "",
-    productIndex: "",
+    product_Index: "",
     name: "",
     week: "",
     price: "",
@@ -87,7 +87,7 @@ export default function SubsProduct() {
       // 입력 폼 초기화
       setSubscriptionInfo({
         Subs_Index: "",
-        productIndex: "",
+        product_Index: "",
         name: "",
         week: "",
         price: "",
@@ -101,6 +101,7 @@ export default function SubsProduct() {
 
   return (
       <div className={styles.subproduct}>
+        <h1>구독 상품 관리</h1>
         <button onClick={() => setShowForm(!showForm)}>구독 상품 추가</button>
       {showForm && (
         <div>
@@ -108,8 +109,8 @@ export default function SubsProduct() {
             Product Index:
             <input
               type="text"
-              name="productIndex"
-              value={subscriptionInfo.productIndex}
+              name="product_Index"
+              value={subscriptionInfo.product_Index}
               onChange={handleChange}
             />
           </label>
@@ -143,7 +144,7 @@ export default function SubsProduct() {
           <button onClick={handleSubmit}>추가</button>
           </div>
           )}
-
+          <div className="subscription">
           <table className={styles.subscriptionTable}>
             <thead>
               <tr>
@@ -158,9 +159,10 @@ export default function SubsProduct() {
               {subs.map((sub) => (
                 <tr key={sub.Subs_Index}>
                   <td>{sub.Subs_Index}</td>
-                  <td>{sub.productIndex}</td>
+                  <td>{sub.product_Index}</td>
                   <td>{sub.name}</td>
                   <td>{sub.week}</td>
+                  <td>{sub.price}</td>
                 </tr>
               ))}
             </tbody>
@@ -177,6 +179,7 @@ export default function SubsProduct() {
                 {pageNumber}
               </button>
             ))}
+            </div>
           </div>
       </div>
   )}
