@@ -148,24 +148,56 @@ app.prepare().then(() => {
   * ! 상품페이지 앤드포인트
   */
 
-  server.get('/api/products', async (req, res) => {
-    try {
-      const [rows] = await db.execute('SELECT category_id, product_name,stock_quantity FROM product');
-      const dataFromDB = rows.map((row) => ({
-        id: row.category_id,
-        name: row.product_name,
-        stock: row.stock_quantity,
-      }));
-      res.json(dataFromDB);
-    } catch (error) {
-      console.error('쿼리 실행 중 오류 발생:', error);
-      res.status(500).send('데이터베이스 오류');
-    }
-  });
+  // server.get('/api/products', async (req, res) => {
+  //   try {
+  //     const [rows] = await db.execute('SELECT category_id, product_name,stock_quantity FROM product');
+  //     const dataFromDB = rows.map((row) => ({
+  //       id: row.category_id,
+  //       name: row.product_name,
+  //       stock: row.stock_quantity,
+  //     }));
+  //     res.json(dataFromDB);
+  //   } catch (error) {
+  //     console.error('쿼리 실행 중 오류 발생:', error);
+  //     res.status(500).send('데이터베이스 오류');
+  //   }
+  // });
 
   /**
    * ! 끝
    */
+
+  /**
+ * ? /Order 엔드포인트
+ */
+
+server.post("/api/order", (req, res) => {
+  try {
+    // 클라이언트로부터 받은 상품 이름
+    const { product } = req.body;
+
+    // 데이터베이스에 삽입할 쿼리문
+    const insertQuery = `INSERT INTO cart (product_name) VALUES (?)`;
+
+    // 쿼리 실행
+    db.query(insertQuery, [product], (error, results) => {
+      if (error) {
+        console.error("쿼리 실행 오류:", error);
+        res.status(500).send("주문 생성 중 오류가 발생했습니다.");
+      } else {
+        console.log("주문이 성공적으로 생성되었습니다.");
+        res.status(200).send("주문이 성공적으로 생성되었습니다.");
+      }
+    });
+  } catch (error) {
+    console.error("주문 생성 중 오류:", error);
+    res.status(500).send("주문 생성 중 오류가 발생했습니다.");
+  }
+});
+
+/**
+ * ? 끝
+ */
 
   server.get('/api/subscription/:subs_index', async (req, res) => {
     const {subs_index} = req.params;
@@ -564,5 +596,4 @@ server.post('/api/withdraw', async (req, res) => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });
 });
-
 
