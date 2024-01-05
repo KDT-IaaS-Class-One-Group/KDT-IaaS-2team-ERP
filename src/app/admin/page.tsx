@@ -1,11 +1,9 @@
 "use client"
 
 import React from "react";
-import { useState } from "react";
 import  LoginForm  from  "@/components/admin/LoginForm-b"
 
-const Admin = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+export default function Admin () {
 
   return (
     <>
@@ -14,5 +12,3 @@ const Admin = () => {
     </>
   );
 };
-
-export default Admin;

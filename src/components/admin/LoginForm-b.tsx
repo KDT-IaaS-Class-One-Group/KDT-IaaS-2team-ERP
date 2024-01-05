@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
-import styles from  '@/styles/login.module.scss';
+import { useRouter } from "next/navigation";
+import styles from "@/styles/login.module.scss";
 
 const LoginForm = () => {
   const [userId, setUserId] = useState("");
@@ -28,10 +28,11 @@ const LoginForm = () => {
 
     if (response.status === 200) {
       const { token } = data;
-        localStorage.setItem('token', token);
-        console.log('로그인 성공');
-        router.push("/admin/dashboard");
-        setIsLoggedIn(true);
+      localStorage.setItem("token", token);
+      console.log("로그인 성공");
+
+      router.push("/admin/dashboard");
+      setIsLoggedIn(true);
     } else {
       // 로그인 실패
       alert("로그인 실패!");
@@ -40,7 +41,7 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.push("/admin/dashboard/member/info");
+      router.push("/admin/dashboard");
     }
   }, [isLoggedIn, router]);
 

@@ -1,39 +1,52 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import NavLinks from "@/components/dashboard/member/Member-nav-links-b";
-import styles from "@/styles/adminsidenav.module.scss";
-import Info from "@/components/dashboard/member/Info-b";
+"use client"
+
+import { useState, useEffect } from 'react';
+import NavLinks from '@/components/dashboard/member/Member-nav-links-b';
+import styles from '@/styles/adminsidenav.module.scss';
 
 interface UserInfo {
   id: string;
   userId: string;
   name: string;
   birthdate: string;
-  phoneNumber: string;
-  email: string;
-  address: string;
-  gender: string;
   cash: string;
   isWithdrawn: number;
 }
 
-export default function UserinfoPage() {
-  const [editedCash, setEditedCash] = useState<string>("");
+export default function UsercashPage() {
   const [users, setUsers] = useState<UserInfo[]>([]);
+  const [pageInfo, setPageInfo] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalPages: 1,
+  });
+
+  const [editedCash, setEditedCash] = useState<{ [userId: string]: string }>({});
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(pageInfo.currentPage, 10);
+  }, [pageInfo.currentPage]);
 
-  const fetchData = async () => {
+  const fetchData = async (page: number, pageSize: number) => {
     try {
-      const response = await fetch("/api/users/cash");
+      const response = await fetch(`/api/cash?page=${page}&pageSize=${pageSize}`);
       const data = await response.json();
-      const userList = Array.isArray(data) && data.length > 0 ? data[0] : [];
-      setUsers(userList);
+      setUsers(data.users);
+      setPageInfo({
+        currentPage: data.pageInfo.currentPage,
+        pageSize: data.pageInfo.pageSize,
+        totalPages: data.pageInfo.totalPages,
+      });
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error('Error fetching users:', error);
     }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPageInfo({
+      ...pageInfo,
+      currentPage: newPage,
+    });
   };
 
   const formatBirthdate = (birthdate: string) => {
@@ -46,23 +59,19 @@ export default function UserinfoPage() {
     try {
       // API 호출하여 cash 수정
       await fetch(`/api/updateCash/${userId}`, {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cash: editedCash }),
+        body: JSON.stringify({ cash: editedCash[userId] }),
       });
       // 수정 후 데이터 다시 불러오기
-      fetchData();
+      fetchData(pageInfo.currentPage, 10);
       // 수정된 Cash 값을 초기화
-      setEditedCash("");
+      setEditedCash((prev) => ({ ...prev, [userId]: '' }));
     } catch (error) {
-      console.error("Error updating cash:", error);
+      console.error('Error updating cash:', error);
     }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedCash(e.target.value);
   };
 
   return (
@@ -71,19 +80,15 @@ export default function UserinfoPage() {
         <NavLinks />
       </div>
       <main>
-        <h1 className={`mb-4 text-xl md:text-2xl`}>회원 캐시 관리</h1>
+        <h1>회원 캐시 관리</h1>
         <div className={styles.userinfocontent}>
-          <table className="min-w-full">
+          <table className={styles.userTable}>
             <thead>
               <tr>
                 <th>ID</th>
                 <th>User ID</th>
                 <th>Name</th>
                 <th>Birthdate</th>
-                <th>Phone Number</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>Gender</th>
                 <th>Cash</th>
                 <th>수정</th>
               </tr>
@@ -95,25 +100,32 @@ export default function UserinfoPage() {
                   <td>{user.userId}</td>
                   <td>{user.name}</td>
                   <td>{formatBirthdate(user.birthdate)}</td>
-                  <td>{user.phoneNumber}</td>
-                  <td>{user.email}</td>
-                  <td>{user.address}</td>
-                  <td>{user.gender}</td>
                   <td>{user.cash}</td>
                   <td>
                     <input
                       type="text"
-                      value={editedCash}
-                      onChange={(e) => setEditedCash(e.target.value)}
+                      value={editedCash[user.userId] || ''}
+                      onChange={(e) => setEditedCash((prev) => ({ ...prev, [user.userId]: e.target.value }))}
                     />
-                    <button onClick={() => handleCashEdit(user.userId)}>
-                      수정
-                    </button>
+                    <button onClick={() => handleCashEdit(user.userId)}>수정</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <div className={styles.pagination}>
+            {Array.from({ length: pageInfo.totalPages }, (_, index) => index + 1).map((pageNumber) => (
+              <button
+                key={pageNumber}
+                className={`pagination-button ${
+                  pageNumber === pageInfo.currentPage ? 'active' : ''
+                }`}
+                onClick={() => handlePageChange(pageNumber)}
+              >
+                {pageNumber}
+              </button>
+            ))}
+          </div>
         </div>
       </main>
     </>
