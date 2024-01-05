@@ -27,7 +27,7 @@ export default function SubsProduct() {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch("/api/subscribe", {
+      const response = await fetch("/api/subs-product", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
