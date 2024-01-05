@@ -12,7 +12,7 @@ const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "723546",
+  password: "0000",
   database: "erp",
   connectionLimit: 5,
 });
@@ -151,6 +151,38 @@ app.prepare().then(() => {
   /**
    * ! 끝
    */
+
+  /**
+ * ? /Order 엔드포인트
+ */
+
+server.post("/api/order", (req, res) => {
+  try {
+    // 클라이언트로부터 받은 상품 이름
+    const { product } = req.body;
+
+    // 데이터베이스에 삽입할 쿼리문
+    const insertQuery = `INSERT INTO cart (Product_Index) VALUES (?)`;
+
+    // 쿼리 실행
+    db.query(insertQuery, [product], (error, results) => {
+      if (error) {
+        console.error("쿼리 실행 오류:", error);
+        res.status(500).send("주문 생성 중 오류가 발생했습니다.");
+      } else {
+        console.log("주문이 성공적으로 생성되었습니다.");
+        res.status(200).send("주문이 성공적으로 생성되었습니다.");
+      }
+    });
+  } catch (error) {
+    console.error("주문 생성 중 오류:", error);
+    res.status(500).send("주문 생성 중 오류가 발생했습니다.");
+  }
+});
+
+/**
+ * ? 끝
+ */
 
   server.get('/api/subscription/:subs_index', async (req, res) => {
     const {subs_index} = req.params;
@@ -549,5 +581,4 @@ server.post('/api/withdraw', async (req, res) => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });
 });
-
 
