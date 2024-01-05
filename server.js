@@ -437,6 +437,35 @@ server.post("/api/approveUser/:userId", async (req, res) => {
     }
   });
 
+  server.post("/api/subs-product", async (req, res) => {
+    try {
+      if (req.method === "POST") {
+        const { productIndex, name, week, price } = req.body;
+        
+        // 데이터베이스에서 subscription 정보 추가
+        const [result] = await db.query(
+          "INSERT INTO subscription (product_Index, name, week, price) VALUES (?, ?, ?, ?)",
+          [productIndex, name, week, price]
+        );
+  
+        if (result.affectedRows === 1) {
+          // 성공적으로 추가된 경우
+          res.status(200).json({ message: "subscription 정보 추가 성공" });
+        } else {
+          // 추가 실패
+          res.status(500).json({ error: "subscription 정보 추가 실패" });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: '내부 서버 오류' });
+    }
+  });
+  
+
   // ...
 
 server.put('/api/updateUser', async (req, res) => {
