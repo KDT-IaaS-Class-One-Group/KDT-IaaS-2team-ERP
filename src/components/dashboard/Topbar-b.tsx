@@ -2,11 +2,37 @@
 
 import React, { useState, useEffect } from "react";
 import styles from "@/styles/admintopbar.module.scss";
-import Link from "next/link";
-import jwt, { JwtPayload } from 'jsonwebtoken';
 import TopNav from "@/components/dashboard/Topnav-b"
+import jwt, { JwtPayload } from 'jsonwebtoken';
+
 
 function Topbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [name, setName] = useState<string | JwtPayload>('');
+
+  useEffect(() => {
+    const loadUserFromToken = () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const decodedToken = jwt.decode(token) as JwtPayload;
+
+        if (decodedToken) {
+          setIsLoggedIn(true);
+        }
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+
+    loadUserFromToken();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    window.location.href = '/admin';
+    setName('');
+  };
 
   const handleDiv1Click = () => {
     // 관리자 홈페이지로 이동
@@ -17,6 +43,9 @@ function Topbar() {
       <div className={styles.div1} onClick={handleDiv1Click}>NTS Admin</div>
       <div className={styles.div2}>
       <TopNav/>
+      </div>
+      <div className={styles.div3}>
+      <button onClick={handleLogout}>로그아웃</button>
       </div>
     </div>
   );
