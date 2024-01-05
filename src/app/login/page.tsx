@@ -24,7 +24,7 @@ const Login: React.FC = () => {
         localStorage.setItem('token', token);
         // sessionStorage.setItem('name', name);
         console.log('로그인 성공');
-
+        
         window.location.href = '/';
       } else {
         // 로그인 실패

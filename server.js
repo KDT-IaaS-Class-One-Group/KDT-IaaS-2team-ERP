@@ -176,6 +176,15 @@ server.post("/api/order", (req, res) => {
     // 클라이언트로부터 받은 상품 이름
     const { product } = req.body;
 
+    // 클라이언트에서 전송된 토큰
+    const token = req.headers.authorization;
+
+    // 토큰이 존재하는지 확인
+    if (!token) {
+      res.status(401).send("인증되지 않은 사용자입니다.");
+      return;
+    }
+
     // 데이터베이스에 삽입할 쿼리문
     const insertQuery = `INSERT INTO cart (Product_Index) VALUES (?)`;
 
@@ -333,6 +342,7 @@ server.post('/api/login', async (req, res) => {
           // 로그인 성공
           const token = jwt.sign(
             {
+              index: user.User_Index,
               userId,
               name: user.name,
               birthdate: user.birthdate,
