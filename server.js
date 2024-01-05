@@ -105,8 +105,25 @@ app.prepare().then(() => {
 
   server.get('/api/data', async (req, res) => {
     try {
-      const [rows] = await db.execute('SELECT Subs_Index, name,price, week FROM subscription');
-      console.log('DB Rows:', rows);
+      const [rows] = await db.execute('SELECT * FROM subscription');
+      const dataFromDB = rows.map((row) => ({
+        Subs_Index: row.Subs_Index,
+        name: row.name,
+        price: row.price,
+        week: row.week,
+      }));
+      res.json(dataFromDB);
+    } catch (error) {
+      console.error('쿼리 실행 중 오류 발생:', error);
+      res.status(500).send('데이터베이스 오류');
+    }
+  });
+
+  server.get('/api/test/:subsIndex', async (req, res) => {
+    const subsIndex = req.params.subsIndex;
+  
+    try {
+      const [rows] = await db.execute('SELECT * FROM subscription WHERE Subs_Index = ?', [subsIndex]);
       const dataFromDB = rows.map((row) => ({
         Subs_Index: row.Subs_Index,
         name: row.name,
