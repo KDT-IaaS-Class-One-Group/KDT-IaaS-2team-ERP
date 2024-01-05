@@ -41,9 +41,10 @@ function Subscription() {
           <p>Name: 오류</p>
           <p>Price: 확인</p>
           <p>Week: 바람</p>
-          <p> 일치하는 index가 없어서 그런듯??</p>
+          <p> index 확인 </p>
         </>
       )}
+      <input type="text" placeholder="상품선택"></input>
       <Link href={`/order`}>
         <button>주문하기</button>
       </Link>
