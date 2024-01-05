@@ -17,7 +17,6 @@ interface DataItem {
 }
 
 function Index() {
-  const router = useRouter();
   const [data, setData] = useState<DataItem[]>([]);
   useEffect(() => {
     const fetchData = async () => {
