@@ -105,8 +105,10 @@ app.prepare().then(() => {
 
   server.get('/api/data', async (req, res) => {
     try {
-      const [rows] = await db.execute('SELECT name, price, week FROM subscription');
+      const [rows] = await db.execute('SELECT Subs_Index, name,price, week FROM subscription');
+      console.log('DB Rows:', rows);
       const dataFromDB = rows.map((row) => ({
+        Subs_Index: row.Subs_Index,
         name: row.name,
         price: row.price,
         week: row.week,
@@ -118,11 +120,12 @@ app.prepare().then(() => {
     }
   });
 
+
   /**
    * ! 끝
    */
 
- 
+
 /** 
 
   * ! 상품페이지 앤드포인트
@@ -146,6 +149,26 @@ app.prepare().then(() => {
   /**
    * ! 끝
    */
+
+  server.get('/api/subscription/:subs_index', async (req, res) => {
+    const {subs_index} = req.params;
+    
+    console.log('Received subsIndex:', subs_index);
+    try {
+      const [rows] = await db.execute('SELECT Subs_Index, Name, Price, Week FROM subscription WHERE Subs_Index = ?', [subs_index]);
+      console.log('DB Rows:', rows);
+      const dataFromDB = rows.map((row) => ({
+        Subs_Index: row.Subs_Index,
+        Name: row.Name,
+        Price: row.Price,
+        Week: row.Week,
+      }));
+      res.json(dataFromDB);
+    } catch (error) {
+      console.error('쿼리 실행 중 오류 발생:', error);
+      res.status(500).send('데이터베이스 오류');
+    }
+  });
 
 
   // 기본적인 Next.js 페이지 핸들링
