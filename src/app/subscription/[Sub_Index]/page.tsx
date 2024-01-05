@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { usePathname , useRouter , useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 interface SubscriptionClientSideProps {
   Subs_Index: number;

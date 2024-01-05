@@ -1,3 +1,65 @@
+import React, { useState, useEffect } from 'react';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import styles from '@/styles/productslide.module.scss'
+const SlideComponent = () => {
+  const [productData, setProductData] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const fetchProductData = async () => {
+    try {
+      const response = await fetch('/api/products');
+      const dataFromServer = await response.json();
+      setProductData(dataFromServer);
+    } catch (error) {
+      console.error('데이터를 불러오는 도중 오류 발생:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductData();
+  }, []);
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    nextArrow: <div className="slick-arrow slick-next">Next</div>,
+    prevArrow: <div className="slick-arrow slick-prev">Prev</div>,
+  };
+
+  const handleSlideClick = (index : any) => {
+    // 슬라이드 클릭 시 선택된 상품 정보 갱신
+    setSelectedProduct(productData[index]);
+  };
+
+  return (
+    <div>
+      <Slider {...settings}>
+        {productData.map((product, index) => (
+          <div key={index} onClick={() => handleSlideClick(index)} className={styles.customslide}>
+            <p style={{ margin: 0 }}>Name: {product.name}</p>
+          </div>
+        ))}
+        <div className="slick-arrow slick-next">Next</div>
+      </Slider>
+
+      {selectedProduct && (
+        <div className="selected-product-info">
+          <p>Name: {selectedProduct.name}</p>
+          <p>Stock: {selectedProduct.stock}</p>
+          {/* 기타 정보 표시 */}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SlideComponent;
+
 // import React, { useState, useEffect, useRef } from 'react';
 // import Swiper from 'swiper';
 // import 'swiper/swiper-bundle.css';

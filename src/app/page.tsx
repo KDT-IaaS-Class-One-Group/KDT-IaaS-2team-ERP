@@ -5,7 +5,7 @@ import 'swiper/swiper-bundle.css'; // Swiper 스타일을 불러옵니다.
 import styles from "@/styles/index.module.scss";
 import Topbar from "@/components/Topbar/Topbar";
 import Footbar from '@/components/Footer/Footer';
-// import SlideComponent from '@/components/productslide/slide';
+import SlideComponent from '@/components/productslide/slide';
 import Link from "next/link";
 import { usePathname , useRouter } from 'next/navigation';
 
@@ -108,7 +108,7 @@ function Index() {
         </div>
       </div>
       <div className={`${styles.div} ${styles.purple}`}>
-        {/* <SlideComponent/> */}
+        <SlideComponent/>
       </div>
       <Footbar/>
     </div>

@@ -5,7 +5,7 @@ import Topbar from "@/components/Topbar/Topbar";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className={styles.main}>
-      <div><Topbar /></div>
+      <div className={styles.top}><Topbar /></div>
       <div className={styles.side}>
         <SideNav />
       </div>
