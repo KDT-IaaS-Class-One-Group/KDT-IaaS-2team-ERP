@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken");
 const app = next({ dev });
 const handle = app.getRequestHandler();
 const mysql = require("mysql2/promise");
+const multer = require('multer');
+const path = require('path');
 
 const secretKey = "nts9604";
 const pool = mysql.createPool({
@@ -28,6 +30,25 @@ pool
   });
 
 app.prepare().then(() => {
+
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'public/uploads'); // 업로드된 파일이 저장될 경로 (public/uploads 폴더를 사용)
+    },
+    filename: (req, file, cb) => {
+      // 파일 이름 설정 (현재는 'image' + timestamp + 확장자로 설정)
+      const timestamp = Date.now();
+      const ext = path.extname(file.originalname);
+      cb(null, `image${timestamp}${ext}`);
+    },
+  });
+  
+  const upload = multer({ storage });
+
+
+
+
+
   const server = express();
   server.use(bodyParser.json());
 
@@ -440,12 +461,43 @@ server.post("/api/approveUser/:userId", async (req, res) => {
   server.post("/api/subs-product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { productIndex, name, week, price } = req.body;
+        const { productIndex, name, price, week } = req.body;
         
         // 데이터베이스에서 subscription 정보 추가
         const [result] = await db.query(
-          "INSERT INTO subscription (product_Index, name, week, price) VALUES (?, ?, ?, ?)",
-          [productIndex, name, week, price]
+          "INSERT INTO subscription (product_Index, name, price, week) VALUES (?, ?, ?, ?)",
+          [productIndex, name, price, week]
+        );
+  
+        if (result.affectedRows === 1) {
+          // 성공적으로 추가된 경우
+          res.status(200).json({ message: "subscription 정보 추가 성공" });
+        } else {
+          // 추가 실패
+          res.status(500).json({ error: "subscription 정보 추가 실패" });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: '내부 서버 오류' });
+    }
+  });
+
+  server.post("/api/addproduct", async (req, res) => {
+    try {
+      if (req.method === "POST") {
+        const {category_id,
+        product_name,
+        stock_quantity,
+        info,} = req.body;
+        
+        // 데이터베이스에서 subscription 정보 추가
+        const [result] = await db.query(
+          "INSERT INTO product (category_id, product_name, stock_quantity , info) VALUES (?, ?, ?, ?)",
+          [category_id, product_name, stock_quantity, info]
         );
   
         if (result.affectedRows === 1) {
@@ -599,6 +651,16 @@ server.post('/api/withdraw', async (req, res) => {
   } catch (error) {
     console.error('Error withdrawing user:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+server.post('/api/uploadImage', upload.single('image'), async (req, res) => {
+  try {
+    // 업로드 성공 시 클라이언트에 응답
+    res.status(200).json({ success: true, message: '이미지 업로드 성공' });
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 });
 

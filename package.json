@@ -16,6 +16,7 @@
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "lru-cache": "^10.1.0",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.6.5",
     "next": "14.0.4",
     "next-images": "^1.8.5",

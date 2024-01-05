@@ -31,18 +31,18 @@ app.prepare().then(() => {
   const server = express();
   server.use(bodyParser.json());
 
+
   server.get("/api/classroom", async (req, res) => {
     try {
       const classrooms = await db.query("SELECT * from classrooms");
-
-      // console.log('Classrooms data from the server:', classrooms);
-
       res.json(classrooms);
     } catch (error) {
       console.error("Error fetching classrooms:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
+
+  
   server.get('/api/users', async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
@@ -151,6 +151,38 @@ app.prepare().then(() => {
   /**
    * ! 끝
    */
+
+  /**
+ * ? /Order 엔드포인트
+ */
+
+server.post("/api/order", (req, res) => {
+  try {
+    // 클라이언트로부터 받은 상품 이름
+    const { product } = req.body;
+
+    // 데이터베이스에 삽입할 쿼리문
+    const insertQuery = `INSERT INTO cart (Product_Index) VALUES (?)`;
+
+    // 쿼리 실행
+    db.query(insertQuery, [product], (error, results) => {
+      if (error) {
+        console.error("쿼리 실행 오류:", error);
+        res.status(500).send("주문 생성 중 오류가 발생했습니다.");
+      } else {
+        console.log("주문이 성공적으로 생성되었습니다.");
+        res.status(200).send("주문이 성공적으로 생성되었습니다.");
+      }
+    });
+  } catch (error) {
+    console.error("주문 생성 중 오류:", error);
+    res.status(500).send("주문 생성 중 오류가 발생했습니다.");
+  }
+});
+
+/**
+ * ? 끝
+ */
 
   server.get('/api/subscription/:subs_index', async (req, res) => {
     const {subs_index} = req.params;
@@ -405,6 +437,66 @@ server.post("/api/approveUser/:userId", async (req, res) => {
     }
   });
 
+  server.post("/api/subs-product", async (req, res) => {
+    try {
+      if (req.method === "POST") {
+        const { productIndex, name, price, week } = req.body;
+        
+        // 데이터베이스에서 subscription 정보 추가
+        const [result] = await db.query(
+          "INSERT INTO subscription (product_Index, name, price, week) VALUES (?, ?, ?, ?)",
+          [productIndex, name, price, week]
+        );
+  
+        if (result.affectedRows === 1) {
+          // 성공적으로 추가된 경우
+          res.status(200).json({ message: "subscription 정보 추가 성공" });
+        } else {
+          // 추가 실패
+          res.status(500).json({ error: "subscription 정보 추가 실패" });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: '내부 서버 오류' });
+    }
+  });
+
+  server.post("/api/addproduct", async (req, res) => {
+    try {
+      if (req.method === "POST") {
+        const {category_id,
+        product_name,
+        stock_quantity,
+        info,} = req.body;
+        
+        // 데이터베이스에서 subscription 정보 추가
+        const [result] = await db.query(
+          "INSERT INTO product (category_id, product_name, stock_quantity , info) VALUES (?, ?, ?, ?)",
+          [category_id, product_name, stock_quantity, info]
+        );
+  
+        if (result.affectedRows === 1) {
+          // 성공적으로 추가된 경우
+          res.status(200).json({ message: "subscription 정보 추가 성공" });
+        } else {
+          // 추가 실패
+          res.status(500).json({ error: "subscription 정보 추가 실패" });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: '내부 서버 오류' });
+    }
+  });
+  
+
   // ...
 
 server.put('/api/updateUser', async (req, res) => {
@@ -549,5 +641,4 @@ server.post('/api/withdraw', async (req, res) => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });
 });
-
 

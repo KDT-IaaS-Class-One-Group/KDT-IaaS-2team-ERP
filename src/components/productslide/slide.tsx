@@ -44,7 +44,7 @@ const SlideComponent = () => {
       <Slider {...settings}>
         {productData.map((product, index) => (
           <div key={index} onClick={() => handleSlideClick(index)} className={styles.customslide}>
-            <Image width={368} height={380} src={`/productimage/image${index+1}.jpg`} alt={`Product ${index + 1}`} />
+            <Image width={459} height={380} src={`/productimage/image${index+1}.jpg`} alt={`Product ${index + 1}`} />
             <p style={{ margin: 0 }}>Name: {product.name}</p>
           </div>
         ))}
