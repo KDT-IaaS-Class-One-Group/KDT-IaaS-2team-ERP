@@ -12,7 +12,7 @@ const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "0000",
+  password: "723546",
   database: "erp",
   connectionLimit: 5,
 });
@@ -31,18 +31,18 @@ app.prepare().then(() => {
   const server = express();
   server.use(bodyParser.json());
 
+
   server.get("/api/classroom", async (req, res) => {
     try {
       const classrooms = await db.query("SELECT * from classrooms");
-
-      // console.log('Classrooms data from the server:', classrooms);
-
       res.json(classrooms);
     } catch (error) {
       console.error("Error fetching classrooms:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
+
+  
   server.get('/api/users', async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
