@@ -17,7 +17,7 @@ export default function Page() {
   const [titles, setTitles] = useState([]);
 
   useEffect(() => {
-    fetch("/testPage/getData") // 적절한 API 경로를 사용하여 데이터를 가져옵니다.
+    fetch("/customer/getData") // 적절한 API 경로를 사용하여 데이터를 가져옵니다.
       .then((response) => response.json())
       .then((titles) => {
         setTitles(titles);
@@ -56,7 +56,7 @@ export default function Page() {
           {item.title}
         </h1>
       ))}
-      <Link href="/testPage/writingPage">
+      <Link href="/customer/writingPage">
         <button>Go to Writing Page</button>
       </Link>
       {showContent && <p>내용 : {data.content}</p>}
