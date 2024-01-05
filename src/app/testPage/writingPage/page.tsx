@@ -33,14 +33,11 @@ export default function Page() {
 
       if (response.ok) {
         console.log("Board created successfully!");
-        // Handle success (redirect, update UI, etc.)
       } else {
         console.error("Failed to create board");
-        // Handle error (show message, retry, etc.)
       }
     } catch (err) {
       console.error("Error creating board:", err);
-      // Handle error (show message, retry, etc.)
     }
   };
   return (
