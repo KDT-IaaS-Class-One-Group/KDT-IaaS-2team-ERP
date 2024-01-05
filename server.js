@@ -289,7 +289,7 @@ app.prepare().then(() => {
   
       const offset = (page - 1) * pageSize;
   
-      const [subs] = await db.query('SELECT * FROM subscription LIMIT ?, ?', [offset, pageSize]);
+      const [subs] = await db.query('SELECT * FROM subscription LIMIT ?, ?, ?, ? ', [offset, pageSize]);
       const [totalCount] = await db.query('SELECT COUNT(*) AS totalCount FROM subscription');
       const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
   
