@@ -14,14 +14,12 @@ export default function SubscriptionClientSide() {
   const [selectedProduct, setSelectedProduct] = useState("");
   const Subs_Index = useParams();
   const subs_index = Subs_Index.Sub_Index;
-  console.log(subs_index);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`/api/subscription/${subs_index}`);
         const dataFromServer = await response.json();
-        console.log(dataFromServer);
         setData(dataFromServer);
       } catch (error) {
         console.error("데이터를 불러오는 도중 오류 발생:", error);

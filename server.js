@@ -171,7 +171,7 @@ app.prepare().then(() => {
  * ? /Order 엔드포인트
  */
 
-server.post("/api/order", (req, res) => {
+server.post("/api/order", async (req, res) => {
   try {
     // 클라이언트로부터 받은 상품 이름
     const { product } = req.body;
@@ -201,6 +201,35 @@ server.post("/api/order", (req, res) => {
   } catch (error) {
     console.error("주문 생성 중 오류:", error);
     res.status(500).send("주문 생성 중 오류가 발생했습니다.");
+  }
+});
+
+server.post('/api/payment', async (req, res) => {
+  try {
+    const token = req.body.token;
+    const price = req.body.price;
+
+    console.log(price)
+
+    const decodedToken = jwt.verify(token, secretKey);
+    const userIndex = decodedToken.index;
+
+    const updateQuery = `UPDATE users SET cash = cash - ? WHERE user_index = ?`;
+    const updateValues = [price, userIndex];
+
+    // 데이터베이스 연결
+    const connection = await pool.getConnection();
+
+    // 쿼리 실행
+    await connection.query(updateQuery, updateValues);
+
+    // 연결 해제
+    connection.release();
+
+    res.status(200).json({ message: '결제가 완료되었습니다.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: '서버 오류 발생' });
   }
 });
 
