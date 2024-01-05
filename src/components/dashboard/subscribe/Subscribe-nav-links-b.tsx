@@ -8,6 +8,7 @@ import styles from "@/styles/adminnavlink.module.scss";
 const links = [
   { name: '구독서비스관리', href: '/admin/dashboard/subscribe/service' },
   { name: '구독상품관리', href: '/admin/dashboard/subscribe/product' },
+  { name: '원두상품관리', href: '/admin/dashboard/subscribe/coproduct' }
 ];
 
 export default function NavLinks() {

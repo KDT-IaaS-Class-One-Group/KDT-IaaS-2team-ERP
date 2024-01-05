@@ -3,6 +3,8 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styles from '@/styles/productslide.module.scss'
+import Image from 'next/image';
+
 const SlideComponent = () => {
   const [productData, setProductData] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -27,8 +29,9 @@ const SlideComponent = () => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    nextArrow: <div className="slick-arrow slick-next">Next</div>,
-    prevArrow: <div className="slick-arrow slick-prev">Prev</div>,
+    arrows: true, 
+    nextArrow: <div className={styles.slickarrownext}>Next</div>,
+    prevArrow: <div className={styles.slickarrowprev}>Prev</div>,
   };
 
   const handleSlideClick = (index : any) => {
@@ -37,20 +40,19 @@ const SlideComponent = () => {
   };
 
   return (
-    <div>
+    <div className={styles.containerStyle}>
       <Slider {...settings}>
         {productData.map((product, index) => (
           <div key={index} onClick={() => handleSlideClick(index)} className={styles.customslide}>
+            <Image width={200} height={200} src={`/productimage/image${index+1}.jpg`} alt={`Product ${index + 1}`} />
             <p style={{ margin: 0 }}>Name: {product.name}</p>
           </div>
         ))}
-        <div className="slick-arrow slick-next">Next</div>
       </Slider>
-
       {selectedProduct && (
-        <div className="selected-product-info">
+        <div className={styles.selectedproductinfo}>
           <p>Name: {selectedProduct.name}</p>
-          <p>Stock: {selectedProduct.stock}</p>
+          <p>info: {selectedProduct.info}</p>
           {/* 기타 정보 표시 */}
         </div>
       )}

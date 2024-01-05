@@ -1,4 +1,28 @@
-.customslide{
+.containerStyle{
   width:30vw;
-  height:70vh;
+  height:60vh;
+  margin-left:10vw;
+  margin-top:20vh;
+}
+.customslide{
+  display:flex;
+  width:30vw;
+  height:60vh;
+  background-color: bisque;
+}
+.slickarrownext,
+.slickarrowprev {
+  font-size: 24px;
+  color: #000;
+  z-index: 100;
+}
+
+.selectedproductinfo{
+  display:flex;
+  width: 40vw;
+  height: 60vh;
+  position: relative;
+  bottom:60vh;
+  margin-left:40vw;
+  border: 3px solid black;
 }
