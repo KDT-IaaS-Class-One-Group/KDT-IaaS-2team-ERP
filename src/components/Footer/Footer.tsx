@@ -9,7 +9,7 @@ export default function Footbar() {
     <div className={styles.footbar}>
       <div className={styles.footdiv1}>NTS</div>
       <div className={styles.footdiv2}>
-        <div className={styles.suvdiv1}>카약</div>
+        <div className={styles.suvdiv1}>NTS</div>
         <div className={styles.suvdiv2}>
           <p>이용약관 l 개인정보처리방침 l 카약 공식 블로그 l 전국 검사소 목록</p>
           <p>대표이사 : 변무영</p>

@@ -22,7 +22,18 @@
   width: 40vw;
   height: 60vh;
   position: relative;
+  flex-direction: column;
+  font-weight: 600;
+  font-size:2vw;
   bottom:60vh;
   margin-left:40vw;
   border: 3px solid black;
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 선택된 제품 정보에 그림자 효과 */
+  transition: opacity 0.3s ease; /* 트랜지션 효과 설정 */
+  opacity: 0;
+}
+
+.containerStyle:hover .selectedproductinfo {
+  opacity: 1; /* 마우스 호버 시 나타나는 효과 */
 }

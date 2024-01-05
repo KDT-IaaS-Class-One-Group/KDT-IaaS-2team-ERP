@@ -48,3 +48,21 @@
 .swiperbuttonnext{
   margin-top:200vh;
 }
+
+.subscriptionItem {
+  width: 30vw;
+  height: 80vh;
+  background-color: lightgray;
+  margin-top: 10vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: border 0.3s ease; /* 테두리에 트랜지션 효과를 추가 */
+
+  /* 호버 시 테두리 스타일 */
+  &:hover {
+    border: 5px solid black; /* 테두리 색 및 두께 설정 */
+  }
+}

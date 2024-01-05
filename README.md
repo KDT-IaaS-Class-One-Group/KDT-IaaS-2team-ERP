@@ -7,7 +7,7 @@ npm install react-query
 
 ## 데이터베이스 쿼리문 / 그냥 기본 틀이니까 열 추가나 삭제 필요하면 하면서 해주세요!
 
-### User (사용자 정보)
+### Users (사용자 정보)
 CREATE TABLE User (
     User_Index INT AUTO_INCREMENT PRIMARY KEY,
     id VARCHAR(50) NOT NULL,
