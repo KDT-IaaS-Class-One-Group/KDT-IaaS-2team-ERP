@@ -5,14 +5,21 @@ import 'slick-carousel/slick/slick-theme.css';
 import styles from '@/styles/productslide.module.scss'
 import Image from 'next/image';
 
-const SlideComponent = () => {
-  const [productData, setProductData] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+
+interface Product {
+  name: string;
+  info: string;
+  // 추가적인 필드들을 필요에 따라 정의
+}
+
+const SlideComponent: React.FC = () => {
+  const [productData, setProductData] = useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const fetchProductData = async () => {
     try {
       const response = await fetch('/api/products');
-      const dataFromServer = await response.json();
+      const dataFromServer: Product[] = await response.json();
       setProductData(dataFromServer);
     } catch (error) {
       console.error('데이터를 불러오는 도중 오류 발생:', error);
@@ -34,7 +41,7 @@ const SlideComponent = () => {
     prevArrow: <div className={styles.slickarrowprev}>Prev</div>,
   };
 
-  const handleSlideClick = (index : any) => {
+  const handleSlideClick = (index : number) => {
     // 슬라이드 클릭 시 선택된 상품 정보 갱신
     setSelectedProduct(productData[index]);
   };
