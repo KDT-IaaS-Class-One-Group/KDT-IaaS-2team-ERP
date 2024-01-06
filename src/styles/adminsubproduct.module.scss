@@ -1,0 +1,53 @@
+.subproduct{
+  display: flex;
+  margin-right: 20vw;
+  width: 70vw;
+  position: relative;
+  right: 15vw;
+  flex-direction: column;
+}
+
+.subscription{
+  display: flex;
+  margin-right: 20vw;
+  width: 60vw;
+  }
+
+  .subscriptionTable {
+    width: 100%;
+    border-collapse: collapse;
+    // table-layout:fixed;
+  }
+  
+  .subscriptionTable th, .subscriptionTable td {
+    border: 1px solid #000000;
+    padding: 4px;
+    text-align: left;
+  }
+
+  .subscriptionTable th {
+    width: auto;
+    background-color: #d1d1d1;
+  }
+  
+  .pagination {
+    margin-top: 10px;
+  }
+  
+  .pagination-button {
+    background-color: #4caf50;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: 4px;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  .pagination-button.active {
+    background-color: #45a049;
+  }

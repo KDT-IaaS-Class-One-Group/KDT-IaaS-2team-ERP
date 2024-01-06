@@ -28,13 +28,13 @@ CREATE TABLE User (
 ### Subscription (구독 서비스 제어) 구독 고유번호가 유저고유번호와 연결, 상품고유번호와도 연결되어 어떤 상품들을 선택했는지 확인 가능, 상품 개수만큼 행이 추가됨
 CREATE TABLE Subscription (
     Subs_Index INT AUTO_INCREMENT PRIMARY KEY,
-    product_Index INT NOT NULL,
-    User_Index INT NOT NULL,
+    product_Index INT(11) NOT NULL,
+    user_Index INT(11) NOT NULL,
     name VARCHAR(50) NOT NULL,
     week INT NOT NULL,
     price INT NOT NULL,
-    FOREIGN KEY (product_Index) REFERENCES Products(Product_Index),
-    FOREIGN KEY (User_Index) REFERENCES User(User_Index)
+    FOREIGN KEY (product_Index) REFERENCES Product(product_Index),
+    FOREIGN KEY (user_Index) REFERENCES Users(User_Index)
 );
 
 ### Order (고객이 주문하면 여기 저장됩니다.) 유저고유번호와 구독고유번호로 어떤 사용자가 어떤 종료의 구독서비스를 이용하는지 확인가능
@@ -54,7 +54,7 @@ CREATE TABLE Order (
     req VARCHAR(300) NULL,
     status INT DEFAULT 0,
     FOREIGN KEY (Subs_Index_Subscription) REFERENCES Subscription(Subs_Index),
-    FOREIGN KEY (User_Index) REFERENCES User(User_Index),
+    FOREIGN KEY (User_Index) REFERENCES Users(User_Index),
     FOREIGN KEY (Subs_Index_Order) REFERENCES Subscription(Subs_Index)
 );
 
@@ -67,7 +67,7 @@ CREATE TABLE Board (
     date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     password VARCHAR(50) NOT NULL,
     image VARCHAR(500) NULL,
-    FOREIGN KEY (User_Index) REFERENCES User(User_Index)
+    FOREIGN KEY (User_Index) REFERENCES Users(User_Index)
 );
 
 ### Product 상품 정보 (원두 종류가 들어갑니다.)

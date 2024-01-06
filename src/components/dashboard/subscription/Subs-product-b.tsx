@@ -1,17 +1,57 @@
 "use client";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
+import styles from "@/styles/adminsubproduct.module.scss";
 
 interface SubscriptionInfo {
-  productIndex: string;
+  Subs_Index: string;
+  product_Index: string;
   name: string;
   week: string;
   price: string;
 }
 
 export default function SubsProduct() {
-  const [showForm, setShowForm] = useState<boolean>(false);
+  const [showForm, setShowForm] = useState(false);
+  const [subs, setSubs] = useState<SubscriptionInfo[]>([]);
+  const [pageInfo, setPageInfo] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalPages: 1,
+  });
+
+  const handlePageChange = (newPage: number) => {
+    setPageInfo({
+      ...pageInfo,
+      currentPage: newPage,
+    });
+  };
+
+  useEffect(() => {
+    fetchData(pageInfo.currentPage, 10);
+  }, [pageInfo.currentPage]);
+
+  const fetchData = async (page: number, pageSize: number) => {
+    try {
+      const response = await fetch(
+        `/api/subs-product?page=${page}&pageSize=${pageSize}`
+      );
+      const data = await response.json();
+    setSubs(data.subs);
+      
+
+      setPageInfo({
+        currentPage: data.pageInfo.currentPage,
+        pageSize: data.pageInfo.pageSize,
+        totalPages: data.pageInfo.totalPages,
+      });
+    } catch (error) {
+      console.error("Error fetching subs:", error);
+    }
+  };
+
   const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfo>({
-    productIndex: "",
+    Subs_Index: "",
+    product_Index: "",
     name: "",
     week: "",
     price: "",
@@ -38,6 +78,7 @@ export default function SubsProduct() {
       if (response.ok) {
         // 성공적인 응답 처리
         console.log("Subscription added successfully");
+        fetchData(pageInfo.currentPage, 10);
       } else {
         // 오류 응답 처리
         console.error(`Error adding subscription: ${response.status}`);
@@ -45,7 +86,8 @@ export default function SubsProduct() {
 
       // 입력 폼 초기화
       setSubscriptionInfo({
-        productIndex: "",
+        Subs_Index: "",
+        product_Index: "",
         name: "",
         week: "",
         price: "",
@@ -58,17 +100,17 @@ export default function SubsProduct() {
   };
 
   return (
-    <>
-      <h1>구독 상품 관리</h1>
-      <button onClick={() => setShowForm(!showForm)}>구독 상품 추가</button>
+      <div className={styles.subproduct}>
+        <h1>구독 상품 관리</h1>
+        <button onClick={() => setShowForm(!showForm)}>구독 상품 추가</button>
       {showForm && (
         <div>
           <label>
             Product Index:
             <input
               type="text"
-              name="productIndex"
-              value={subscriptionInfo.productIndex}
+              name="product_Index"
+              value={subscriptionInfo.product_Index}
               onChange={handleChange}
             />
           </label>
@@ -100,8 +142,44 @@ export default function SubsProduct() {
             />
           </label>
           <button onClick={handleSubmit}>추가</button>
-        </div>
-      )}
-    </>
-  );
-}
+          </div>
+          )}
+          <div className="subscription">
+          <table className={styles.subscriptionTable}>
+            <thead>
+              <tr>
+                <th>Subs_Index</th>
+                <th>product_Index</th>
+                <th>name</th>
+                <th>week</th>
+                <th>price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {subs.map((sub) => (
+                <tr key={sub.Subs_Index}>
+                  <td>{sub.Subs_Index}</td>
+                  <td>{sub.product_Index}</td>
+                  <td>{sub.name}</td>
+                  <td>{sub.week}</td>
+                  <td>{sub.price}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className={styles.pagination}>
+            {Array.from({ length: pageInfo.totalPages }, (_, index) => index + 1).map((pageNumber) => (
+              <button
+                key={pageNumber}
+                className={`pagination-button ${
+                  pageNumber === pageInfo.currentPage ? 'active' : ''
+                }`}
+                onClick={() => handlePageChange(pageNumber)}
+              >
+                {pageNumber}
+              </button>
+            ))}
+            </div>
+          </div>
+      </div>
+  )}
