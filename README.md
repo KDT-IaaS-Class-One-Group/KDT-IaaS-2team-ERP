@@ -25,9 +25,18 @@ CREATE TABLE User (
     RegiMethod BOOLEAN NOT NULL
 );
 
-### Subscription (구독 서비스 제어) 구독 고유번호가 유저고유번호와 연결, 상품고유번호와도 연결되어 어떤 상품들을 선택했는지 확인 가능, 상품 개수만큼 행이 추가됨
+### Subscription (구독 상품 제어) 구독 자체 상품, 구독 고유 상품번호 및 , 구독 상품의 구독week, 배송하는 담을수 있는 원두갯수(주단위)
+CREATE TABLE subscription (
+    subs_index INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    week INT NOT NULL CHECK (week % 4 = 0),
+    size INT NOT NULL CHECK (size % 4 = 0),
+    price INT NOT NULL
+);
+### service (구독 서비스  제어) 구독 고유번호가 유저고유번호와 연결, 상품고유번호와도 연결되어 어떤 상품들을 선택했는지 확인 가능, 상품 개수만큼 행이 추가됨
 CREATE TABLE Subscription (
-    Subs_Index INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    subs_index INT(11) NOT NULL,
     product_Index INT(11) NOT NULL,
     user_Index INT(11) NOT NULL,
     name VARCHAR(50) NOT NULL,
@@ -35,6 +44,7 @@ CREATE TABLE Subscription (
     price INT NOT NULL,
     FOREIGN KEY (product_Index) REFERENCES Product(product_Index),
     FOREIGN KEY (user_Index) REFERENCES Users(User_Index)
+    FOREIGN KEY (product_Index) REFERENCES subscription(subs_index_Index),
 );
 
 ### Order (고객이 주문하면 여기 저장됩니다.) 유저고유번호와 구독고유번호로 어떤 사용자가 어떤 종료의 구독서비스를 이용하는지 확인가능

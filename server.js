@@ -155,9 +155,10 @@ app.prepare().then(() => {
 
   server.get('/api/products', async (req, res) => {
     try {
-      const [rows] = await db.execute('SELECT category_id, product_name,stock_quantity , info FROM product');
+      const [rows] = await db.execute('SELECT product_id , category_id, product_name, stock_quantity , info FROM product');
       const dataFromDB = rows.map((row) => ({
-        id: row.category_id,
+        id: row.product_id,
+        category:row.category_id,
         name: row.product_name,
         stock: row.stock_quantity,
         info: row.info
@@ -172,6 +173,32 @@ app.prepare().then(() => {
   /**
    * ! 끝
    */
+
+  server.get('/api/productss', async (req, res) => {
+    try {
+      const productIds = req.query.productIds;
+      if (!productIds) {
+        return res.status(400).json({ error: '상품 ID가 제공되지 않았습니다.' });
+      }
+  
+      const ids = productIds.split(',').map((id) => parseInt(id, 10));
+      
+      const [rows] = await db.query('SELECT product_id, category_id, product_name, stock_quantity, info FROM product WHERE product_id IN (?)', [ids]);
+  
+      const dataFromDB = rows.map((row) => ({
+        id: row.product_id,
+        category: row.category_id,
+        name: row.product_name,
+        stock: row.stock_quantity,
+        info: row.info
+      }));
+  
+      res.json(dataFromDB);
+    } catch (error) {
+      console.error('쿼리 실행 중 오류 발생:', error);
+      res.status(500).send('데이터베이스 오류');
+    }
+  });
 
   /**
  * ? /Order 엔드포인트
@@ -218,11 +245,12 @@ server.post('/api/payment', async (req, res) => {
     console.log(price)
 
     const decodedToken = jwt.verify(token, secretKey);
+    console.log(decodedToken)
     const userIndex = decodedToken.index;
 
-    const updateQuery = `UPDATE users SET cash = cash - ? WHERE user_index = ?`;
+    const updateQuery = `UPDATE users SET cash = cash - ? WHERE user_Index = ?`;
     const updateValues = [price, userIndex];
-
+    console.log(updateValues);
     // 데이터베이스 연결
     const connection = await pool.getConnection();
 
@@ -248,13 +276,14 @@ server.post('/api/payment', async (req, res) => {
     
     console.log('Received subsIndex:', subs_index);
     try {
-      const [rows] = await db.execute('SELECT Subs_Index, Name, Price, Week FROM subscription WHERE Subs_Index = ?', [subs_index]);
+      const [rows] = await db.execute('SELECT Subs_Index, Name, Price, Week, size FROM subscription WHERE Subs_Index = ?', [subs_index]);
       console.log('DB Rows:', rows);
       const dataFromDB = rows.map((row) => ({
         Subs_Index: row.Subs_Index,
         Name: row.Name,
         Price: row.Price,
         Week: row.Week,
+        size: row.size,
       }));
       res.json(dataFromDB);
     } catch (error) {
@@ -403,7 +432,7 @@ server.post('/api/login', async (req, res) => {
           // 로그인 성공
           const token = jwt.sign(
             {
-              index: user.User_Index,
+              index: user.user_Index,
               userId,
               name: user.name,
               birthdate: user.birthdate,
