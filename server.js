@@ -45,10 +45,6 @@ app.prepare().then(() => {
   
   const upload = multer({ storage });
 
-
-
-
-
   const server = express();
   server.use(bodyParser.json());
 
