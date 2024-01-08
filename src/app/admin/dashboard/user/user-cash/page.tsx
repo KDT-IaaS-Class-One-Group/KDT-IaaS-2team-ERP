@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import NavLinks from '@/components/dashboard/user/User-nav-links-b';
 import styles from '@/styles/adminsidenav.module.scss';
-import SearchForm '@/components/dashboard/SearchForm-b.tsx'
 
 interface UserInfo {
   id: string;
@@ -13,6 +12,8 @@ interface UserInfo {
   cash: string;
   isWithdrawn: number;
 }
+
+const pageSize = 10; // 페이지당 표시할 항목 수
 
 export default function UsercashPage() {
   const [users, setUsers] = useState<UserInfo[]>([]);
@@ -24,24 +25,30 @@ export default function UsercashPage() {
 
   const [editedCash, setEditedCash] = useState<{ [userId: string]: string }>({});
 
-  useEffect(() => {
-    fetchData(pageInfo.currentPage, 10);
-  }, [pageInfo.currentPage]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchOption, setSearchOption] = useState("userId"); // 기본값은 userId로 설정
 
-  const fetchData = async (page: number, pageSize: number) => {
-    try {
-      const response = await fetch(`/api/cash?page=${page}&pageSize=${pageSize}`);
-      const data = await response.json();
-      setUsers(data.users);
-      setPageInfo({
-        currentPage: data.pageInfo.currentPage,
-        pageSize: data.pageInfo.pageSize,
-        totalPages: data.pageInfo.totalPages,
-      });
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  };
+
+  const fetchData = useCallback(
+    async (page: number) => {
+      try {
+        const response = await fetch(
+          `/api/users?page=${page}&pageSize=${pageSize}&searchTerm=${searchTerm}&searchOption=${searchOption}`
+        );
+        const data = await response.json();
+
+        setUsers(data.users);
+        setPageInfo({
+          currentPage: data.pageInfo.currentPage,
+          pageSize: data.pageInfo.pageSize,
+          totalPages: data.pageInfo.totalPages,
+        });
+      } catch (error) {
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+      }
+    },
+    [searchTerm, searchOption]
+  );
 
   const handlePageChange = (newPage: number) => {
     setPageInfo({
@@ -67,7 +74,7 @@ export default function UsercashPage() {
         body: JSON.stringify({ cash: editedCash[userId] }),
       });
       // 수정 후 데이터 다시 불러오기
-      fetchData(pageInfo.currentPage, 10);
+      fetchData(pageInfo.currentPage);
       // 수정된 Cash 값을 초기화
       setEditedCash((prev) => ({ ...prev, [userId]: '' }));
     } catch (error) {
@@ -75,14 +82,38 @@ export default function UsercashPage() {
     }
   };
 
+  useEffect(() => {
+    fetchData(pageInfo.currentPage);
+  }, [fetchData, pageInfo.currentPage]);
+
+  useEffect(() => {
+    setSearchTerm("");
+  }, []);
+
   return (
     <>
       <div className={styles.sidelink}>
         <NavLinks />
       </div>
       <main>
-        <SearchForm />
         <h1>회원 캐시 관리</h1>
+        <label htmlFor="searchOption">검색 옵션:</label>
+        <select
+          id="searchOption"
+          value={searchOption}
+          onChange={(e) => setSearchOption(e.target.value)}
+        >
+          <option value="userId">User ID</option>
+          <option value="name">Name</option>
+        </select>
+        <input
+          type="text"
+          placeholder={`${
+            searchOption === "userId" ? "User ID" : "Name"
+          }로 검색`}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />   
         <div className={styles.userinfocontent}>
           <table className={styles.userTable}>
             <thead>
