@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import NavLinks from "@/components/dashboard/user/User-nav-links-b";
 import styles from "@/styles/adminsidenav.module.scss";
+import SearchForm from '@/components/dashboard/SearchForm-b';
 
 interface UserInfo {
   id: string;
@@ -24,12 +25,13 @@ export default function UserinfoPage() {
   useEffect(() => {
     fetchData(pageInfo.currentPage);
   }, [pageInfo.currentPage]);
-
+  
   const fetchData = async (page: number) => {
     try {
-      const response = await fetch(`/api/users?page=${page}&pageSize=${pageSize}`);
+      const queryParams = new URLSearchParams(window.location.search); // 수정된 부분
+      const response = await fetch(`/api/users?page=${page}&pageSize=${pageSize}&${queryParams}`);
       const data = await response.json();
-
+  
       setUsers(data.users);
       setPageInfo({
         currentPage: data.pageInfo.currentPage,
@@ -82,6 +84,7 @@ export default function UserinfoPage() {
       <h1>
         회원 정보 관리
       </h1>
+      <SearchForm />
       <div className={styles.userinfocontent}>
         <table className={styles.userTable}>
           <thead>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import NavLinks from '@/components/dashboard/user/User-nav-links-b';
 import styles from '@/styles/adminsidenav.module.scss';
+import SearchForm '@/components/dashboard/SearchForm-b.tsx'
 
 interface UserInfo {
   id: string;
@@ -80,6 +81,7 @@ export default function UsercashPage() {
         <NavLinks />
       </div>
       <main>
+        <SearchForm />
         <h1>회원 캐시 관리</h1>
         <div className={styles.userinfocontent}>
           <table className={styles.userTable}>
