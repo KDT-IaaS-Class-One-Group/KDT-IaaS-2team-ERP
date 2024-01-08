@@ -182,18 +182,25 @@ app.prepare().then(() => {
       }
   
       const ids = productIds.split(',').map((id) => parseInt(id, 10));
-      
-      const [rows] = await db.query('SELECT product_id, category_id, product_name, stock_quantity, info FROM product WHERE product_id IN (?)', [ids]);
+      console.log(ids)
+      const productsPromises = ids.map(async (id) => {
+        const [rows] = await db.query('SELECT product_id, category_id, product_name, stock_quantity, info FROM product WHERE product_id = ?', [id]);
+        if (rows.length > 0) {
+          const row = rows[0];
+          return {
+            id: row.product_id,
+            category: row.category_id,
+            name: row.product_name,
+            stock: row.stock_quantity,
+            info: row.info
+          };
+        }
+        return null;
+      });
   
-      const dataFromDB = rows.map((row) => ({
-        id: row.product_id,
-        category: row.category_id,
-        name: row.product_name,
-        stock: row.stock_quantity,
-        info: row.info
-      }));
+      const products = await Promise.all(productsPromises);
   
-      res.json(dataFromDB);
+      res.json(products.filter((product) => product !== null));
     } catch (error) {
       console.error('쿼리 실행 중 오류 발생:', error);
       res.status(500).send('데이터베이스 오류');

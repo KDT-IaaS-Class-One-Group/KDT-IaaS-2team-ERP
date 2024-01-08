@@ -48,6 +48,7 @@ export default function OrderClientSide() {
   useEffect(() => {
     if (selectedProducts) {
       const ids = selectedProducts.split(',').map((id) => parseInt(id, 10));
+      console.log(`ids = ${ids}`)
       setSelectedProductIds(ids);
 
       // 서버로 선택한 상품 정보 요청
