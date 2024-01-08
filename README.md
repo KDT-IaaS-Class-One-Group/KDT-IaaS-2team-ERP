@@ -36,7 +36,7 @@ CREATE TABLE subscription (
 
 
 ### Order (고객이 주문하면 여기 저장됩니다.) 유저고유번호와 구독고유번호로 어떤 사용자가 어떤 종료의 구독서비스를 이용하는지 확인가능
-CREATE TABLE Order (
+CREATE TABLE Orders (
     Order_Index INT AUTO_INCREMENT PRIMARY KEY,
     Subs_Index_Subscription INT NOT NULL,
     User_Index INT NOT NULL,
