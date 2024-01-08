@@ -56,6 +56,9 @@ CREATE TABLE Orders (
     FOREIGN KEY (Subs_Index_Order) REFERENCES Subscription(Subs_Index)
 );
 
+    ALTER TABLE Orders
+    ADD COLUMN payment_date TIMESTAMP DEFAULT DATE_FORMAT(DATE_SUB(Subs_End, INTERVAL 1 DAY), '%Y-%m-%d 10:00:00');
+
 ### Board (고객센터 관련)
 CREATE TABLE Board (
     boardKey INT AUTO_INCREMENT PRIMARY KEY,
@@ -83,8 +86,6 @@ CREATE TABLE Product (
     display_status TINYINT(1) NULL DEFAULT 0,
     FOREIGN KEY (categoryID) REFERENCES Category(categoryID)
 );
-
-
 
 ### Cart 추가
 CREATE TABLE Cart (
