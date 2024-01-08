@@ -14,7 +14,7 @@ const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "723546",
+  password: "1245",
   database: "erp",
   connectionLimit: 5,
 });
@@ -44,9 +44,6 @@ app.prepare().then(() => {
   });
   
   const upload = multer({ storage });
-
-
-
 
 
   const server = express();
@@ -350,6 +347,22 @@ server.post('/api/payment', async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
+
+  server.get('/customer/getData', async (req, res) => {
+    try {
+      const connection = await pool.getConnection();
+      const [rows, fields] = await connection.query('SELECT title, content, password FROM board');
+
+      // 데이터베이스에서 가져온 정보를 클라이언트에게 반환합니다.
+      res.json(rows);
+
+      // 연결 해제
+      connection.release();
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  })
 
   // 기본적인 Next.js 페이지 핸들링
   server.get("*", (req, res) => {
@@ -762,6 +775,25 @@ server.post('/api/uploadImage', upload.single('image'), async (req, res) => {
   } catch (error) {
     console.error('Error uploading image:', error);
     res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+});
+
+server.post('/customer/writingPage/create-post', async (req, res) => {
+  const { title, content, password } = req.body;
+  const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+  try {
+    const conn = await pool.getConnection();
+    await conn.query(
+      `INSERT INTO board (title, content, date, password)
+      VALUES (?, ?, ?, ?)`,
+      [title, content, currentDate, password]
+    );
+    conn.release();
+    res.status(201).send('board create successfully');
+  } catch (err) {
+    console.error('Error creating board:', err);
+    res.status(500).send('Error creating board');
   }
 });
 
