@@ -1,8 +1,7 @@
-'use client'
-import React, { useState, useEffect, useCallback } from 'react';
+"use client";
+import React, { useState, useEffect, useCallback } from "react";
 import NavLinks from "@/components/dashboard/user/User-nav-links-b";
 import styles from "@/styles/adminsidenav.module.scss";
-import { useSearchParams } from 'react-router-dom';
 
 interface UserInfo {
   id: string;
@@ -16,62 +15,60 @@ interface UserInfo {
   cash: string;
   isWithdrawn: number;
 }
+
 const pageSize = 10; // 페이지당 표시할 항목 수
 
 export default function UserinfoPage() {
   const [users, setUsers] = useState<UserInfo[]>([]);
+  const [pageInfo, setPageInfo] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalPages: 1,
+  });
   const [searchTerm, setSearchTerm] = useState("");
-  const [pageInfo, setPageInfo] = useState({ currentPage: 1, pageSize: 10, totalPages: 1 });
+  const [searchOption, setSearchOption] = useState("userId"); // 기본값은 userId로 설정
 
-  const fetchData = useCallback(async () => {
-    try {
-      let url = `/api/users?page=${pageInfo.currentPage}&pageSize=${pageSize}`;
+  const fetchData = useCallback(
+    async (page: number) => {
+      try {
+        const response = await fetch(
+          `/api/users?page=${page}&pageSize=${pageSize}&searchTerm=${searchTerm}&searchOption=${searchOption}`
+        );
+        const data = await response.json();
 
-      if (searchTerm) {
-        url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
+        setUsers(data.users);
+        setPageInfo({
+          currentPage: data.pageInfo.currentPage,
+          pageSize: data.pageInfo.pageSize,
+          totalPages: data.pageInfo.totalPages,
+        });
+      } catch (error) {
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
       }
-
-      const response = await fetch(url);
-      const data = await response.json();
-
-      setUsers(data.users);
-
-      setPageInfo({
-        currentPage: data.pageInfo.currentPage, // Set currentPage to 1 for search results
-        pageSize: data.pageInfo.pageSize,
-        totalPages: data.pageInfo.totalPages,
-      });
-    } catch (error) {
-      console.error('회원 정보 불러오기 오류:', error);
-    }
-  }, [pageInfo.currentPage, searchTerm]); // 의존성 배열 수정
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    },
+    [searchTerm, searchOption]
+  );
 
   const handlePageChange = (newPage: number) => {
     setPageInfo({
       ...pageInfo,
       currentPage: newPage,
     });
-    if (searchTerm) {
-      setSearchTerm(""); // Reset search term when changing pages
-    }
   };
+
   const handleApproval = async (userId: string) => {
     try {
       // API 호출하여 승인 처리
       await fetch(`/api/approveUser/${userId}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
       // 승인 후 데이터 다시 불러오기
-      fetchData();
+      fetchData(pageInfo.currentPage);
     } catch (error) {
-      console.error('사용자 승인 오류:', error);
+      console.error("Error approving user:", error);
     }
   };
 
@@ -81,19 +78,13 @@ export default function UserinfoPage() {
     return birthdateLocalString;
   };
 
-  // 검색어를 기반으로 사용자를 필터링하는 함수
-  const filterUsers = (usersList: UserInfo[], term: string) => {
-    return usersList.filter(
-      (user) =>
-        user.name.toLowerCase().includes(term.toLowerCase()) ||
-        user.userId.toLowerCase().includes(term.toLowerCase())
-    );
-  };
-
-  // 검색어 또는 사용자 목록이 변경될 때마다 필터된 사용자 업데이트
   useEffect(() => {
-    filterUsers(users, searchTerm);
-  }, [searchTerm, users]);
+    fetchData(pageInfo.currentPage);
+  }, [fetchData, pageInfo.currentPage]);
+
+  useEffect(() => {
+    setSearchTerm("");
+  }, []);
 
 
   return (
@@ -101,70 +92,84 @@ export default function UserinfoPage() {
       <div className={styles.sidelink}>
         <NavLinks />
       </div>
-    <main className={styles.main}>
-      <h1>
-        회원 정보 관리
-      </h1>
-      <div className="search-container">
-          <input
-            type="text"
-            placeholder="이름 또는 아이디로 검색"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      <div className={styles.userinfocontent}>
-        <table className={styles.userTable}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>User ID</th>
-              <th>Name</th>
-              <th>Birthdate</th>
-              <th>Phone Number</th>
-              <th>Email</th>
-              <th>Address</th>
-              <th>Gender</th>
-              <th>Cash</th>
-              <th>탈퇴신청</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-          {filterUsers(users, searchTerm).map((user) => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.userId}</td>
-                <td>{user.name}</td>
-                <td>{formatBirthdate(user.birthdate)}</td>
-                <td>{user.phoneNumber}</td>
-                <td>{user.email}</td>
-                <td>{user.address}</td>
-                <td>{user.gender}</td>
-                <td>{user.cash}</td>
-                <td>{user.isWithdrawn === 1 ? '신청' : '미신청'}</td>
-                <td>
-                  {user.isWithdrawn === 1 && (
-                    <button onClick={() => handleApproval(user.userId)}>승인</button>
-                  )}
-                </td>
+      <main className={styles.main}>
+        <h1>회원 정보 관리</h1>
+        <label htmlFor="searchOption">검색 옵션:</label>
+        <select
+          id="searchOption"
+          value={searchOption}
+          onChange={(e) => setSearchOption(e.target.value)}
+        >
+          <option value="userId">User ID</option>
+          <option value="name">Name</option>
+        </select>
+        <input
+          type="text"
+          placeholder={`${
+            searchOption === "userId" ? "User ID" : "Name"
+          }로 검색`}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <div className={styles.userinfocontent}>
+          <table className={styles.userTable}>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Birthdate</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Gender</th>
+                <th>Cash</th>
+                <th>탈퇴신청</th>
+                <th>Action</th>
               </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.userId}</td>
+                  <td>{user.name}</td>
+                  <td>{formatBirthdate(user.birthdate)}</td>
+                  <td>{user.phoneNumber}</td>
+                  <td>{user.email}</td>
+                  <td>{user.address}</td>
+                  <td>{user.gender}</td>
+                  <td>{user.cash}</td>
+                  <td>{user.isWithdrawn === 1 ? "신청" : "미신청"}</td>
+                  <td>
+                    {user.isWithdrawn === 1 && (
+                      <button onClick={() => handleApproval(user.userId)}>
+                        승인
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="pagination">
+            {Array.from(
+              { length: pageInfo.totalPages },
+              (_, index) => index + 1
+            ).map((pageNumber) => (
+              <button
+                key={pageNumber}
+                className={`pagination-button ${
+                  pageNumber === pageInfo.currentPage ? "active" : ""
+                }`}
+                onClick={() => handlePageChange(pageNumber)}
+              >
+                {pageNumber}
+              </button>
             ))}
-          </tbody>
-        </table>
-        <div className="pagination">
-        {Array.from({ length: pageInfo.totalPages }, (_, index) => index + 1).map((pageNumber) => (
-          <button
-            key={pageNumber}
-            className={`pagination-button ${pageNumber === pageInfo.currentPage ? 'active' : ''}`}
-            onClick={() => handlePageChange(pageNumber)}
-          >
-            {pageNumber}
-          </button>
-        ))}
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
     </>
   );
 }
