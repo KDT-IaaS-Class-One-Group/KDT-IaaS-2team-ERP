@@ -24,6 +24,7 @@
 }
 .userinfocontent{
   display: flex;
+    flex-direction: column;
   margin-right: 20vw;
   width: 70vw;
   position: relative;
