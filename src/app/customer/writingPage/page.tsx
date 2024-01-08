@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function Page() {
   const [formData, setFormData] = useState({
     boardKey: "",
-    User_index: "",
+    User_Index: "",
     title: "",
     content: "",
     date: "",
@@ -14,16 +14,18 @@ export default function Page() {
     image: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    
     try {
-      const response = await fetch('/testPage/writingPage/create-post', {
+      const response = await fetch("/customer/writingPage/create-post", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
