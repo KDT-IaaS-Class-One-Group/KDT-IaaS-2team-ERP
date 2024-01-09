@@ -37,7 +37,7 @@ CREATE TABLE Subscription (
     FOREIGN KEY (User_Index) REFERENCES User(User_Index)
 );
 
-### Order (고객이 주문하면 여기 저장됩니다.) 유저고유번호와 구독고유번호로 어떤 사용자가 어떤 종료의 구독서비스를 이용하는지 확인가능
+<!-- ### Order (고객이 주문하면 여기 저장됩니다.) 유저고유번호와 구독고유번호로 어떤 사용자가 어떤 종료의 구독서비스를 이용하는지 확인가능
 CREATE TABLE Order (
     Order_Index INT AUTO_INCREMENT PRIMARY KEY,
     Subs_Index_Subscription INT NOT NULL,
@@ -56,18 +56,27 @@ CREATE TABLE Order (
     FOREIGN KEY (Subs_Index_Subscription) REFERENCES Subscription(Subs_Index),
     FOREIGN KEY (User_Index) REFERENCES User(User_Index),
     FOREIGN KEY (Subs_Index_Order) REFERENCES Subscription(Subs_Index)
-);
+); -->
 
-CREATE TABLE Orderdetails (
+### CREATE TABLE Orderdetails (고객이 주문하면 여기 저장됩니다. 유저고유번호와 구독고유번호로 어떤 사용자가 어떤 종료의 구독서비스를 이용하는지 확인가능)
     Order_Index INT AUTO_INCREMENT PRIMARY KEY,
     subs_index INT(11) NOT NULL,
     user_Index INT(11) NOT NULL,
     price INT NOT NULL,
     Subs_Start TIMESTAMP NOT NULL,
     Subs_End TIMESTAMP NOT NULL,
+    auto_renew BOOLEAN DEFAULT TRUE;
     FOREIGN KEY (subs_index) REFERENCES subscription(subs_index),
     FOREIGN KEY (user_Index) REFERENCES users(user_Index)
-);
+;
+
+
+### CREATE TABLE Orderproduct (위의 orderdeatils 에 저장된 구독에 어떤 원두가 선택되었는지 확인하는 테이블)
+     OrderProduct_Index  int(11) NOT NULL PRIMARY KEY,
+     Order_Index int(11)
+     product_id  int(11)
+     FOREIGN KEY (Order_Index) REFERENCES Orderdetails(orderdetails),
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
 
 ### Board (고객센터 관련)
 CREATE TABLE Board (
