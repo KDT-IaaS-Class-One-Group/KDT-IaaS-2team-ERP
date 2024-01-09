@@ -151,7 +151,7 @@ export default function OrderClientSide() {
         },
         body: JSON.stringify({
           token: localStorage.token,
-          sub_index: subs_index, // 추가: sub_index 전달
+          sub_index: subs_index,
           price: Price,
           ids: selectedProducts,
         }),

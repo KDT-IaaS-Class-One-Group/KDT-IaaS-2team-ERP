@@ -10,6 +10,9 @@ const multer = require('multer');
 const path = require('path');
 const cron = require('node-cron');
 
+const { checkAndRenewSubscriptions } = require("./src/components/checkAndRenewSubscriptions");
+
+
 const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
@@ -50,110 +53,116 @@ app.prepare().then(() => {
   server.use(bodyParser.json());
 
 
-  cron.schedule('0 * * * *', async () => {
+  // cron.schedule('15 * * * *', async () => {
+  //   try {
+  //     // 구독을 확인하고 갱신하는 함수 호출
+  //     await checkAndRenewSubscriptions();
+  //   } catch (error) {
+  //     console.error('구독 갱신 오류:', error);
+  //   }
+  // });
+
+  // async function checkAndRenewSubscriptions() {
+  //   const currentDate = new Date();
+  
+  //   // 구독 갱신이 필요한 주문 조회
+  //   const dueSubscriptionsQuery = `
+  //     SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
+  //     FROM Orderdetails
+  //     WHERE Subs_End <= ?;
+  //   `;
+  
+  //   const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
+  
+  //   for (const subscription of dueSubscriptionsResult) {
+  //     const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
+  
+  //     // 해당 주문의 구독 주기 조회
+  //     const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
+  //     const [weekResult] = await pool.query(weekQuery, [subs_index]);
+  
+  //     if (weekResult.length > 0) {
+  //       const week = weekResult[0].Week;
+  
+  //       // 새로운 시작일 결정 (예: 이전 구독의 종료일)
+  //       const newStartDate = Subs_End;
+  
+  //       // 새로운 종료일 결정 (예: week * 7일 연장)
+  //       const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
+  
+  //       // 데이터베이스에서 구독 정보 업데이트
+  //       const updateSubscriptionQuery = `
+  //         UPDATE Orderdetails
+  //         SET Subs_Start = ?, Subs_End = ?
+  //         WHERE Order_Index = ?;
+  //       `;
+  
+  //       await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
+  
+  //       // 갱신된 구독에 대한 로그 또는 알림
+  //       console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
+  //     }
+  //   }
+  // }
+
+
+  cron.schedule("0 * * * *", () => {
     try {
-      // 구독을 확인하고 갱신하는 함수 호출
-      await checkAndRenewSubscriptions();
+      checkAndRenewSubscriptions(pool); 
+      console.log("checkAndRenewSubscriptions.js가 실행되었습니다.");
     } catch (error) {
-      console.error('구독 갱신 오류:', error);
+      console.error(
+        "checkAndRenewSubscriptions.js 실행 중 오류가 발생했습니다:",
+        error.message
+      );
     }
   });
 
-  async function checkAndRenewSubscriptions() {
-    const currentDate = new Date();
-  
-    // 구독 갱신이 필요한 주문 조회
-    const dueSubscriptionsQuery = `
-      SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
-      FROM Orderdetails
-      WHERE Subs_End <= ?;
-    `;
-  
-    const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
-  
-    for (const subscription of dueSubscriptionsResult) {
-      const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
-  
-      // 해당 주문의 구독 주기 조회
-      const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
-      const [weekResult] = await pool.query(weekQuery, [subs_index]);
-  
-      if (weekResult.length > 0) {
-        const week = weekResult[0].Week;
-  
-        // 새로운 시작일 결정 (예: 이전 구독의 종료일)
-        const newStartDate = Subs_End;
-  
-        // 새로운 종료일 결정 (예: week * 7일 연장)
-        const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
-  
-        // 데이터베이스에서 구독 정보 업데이트
-        const updateSubscriptionQuery = `
-          UPDATE Orderdetails
-          SET Subs_Start = ?, Subs_End = ?
-          WHERE Order_Index = ?;
-        `;
-  
-        await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
-  
-        // 갱신된 구독에 대한 로그 또는 알림
-        console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
-      }
-    }
-  }
+  // ! 테스트 목적 즉시 실행되게 
+  checkAndRenewSubscriptions(pool); 
 
-
-  cron.schedule('0 * * * *', async () => {
-    try {
-      // 구독을 확인하고 갱신하는 함수 호출
-      await checkAndRenewSubscriptions();
-    } catch (error) {
-      console.error('구독 갱신 오류:', error);
-    }
-  });
-
-  async function checkAndRenewSubscriptions() {
-    const currentDate = new Date();
+  // async function checkAndRenewSubscriptions() {
+  //   const currentDate = new Date();
   
-    // 구독 갱신이 필요한 주문 조회
-    const dueSubscriptionsQuery = `
-      SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
-      FROM Orderdetails
-      WHERE Subs_End <= ?;
-    `;
+  //   // 구독 갱신이 필요한 주문 조회
+  //   const dueSubscriptionsQuery = `
+  //     SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
+  //     FROM Orderdetails
+  //     WHERE Subs_End <= ?;
+  //   `;
   
-    const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
+  //   const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
   
-    for (const subscription of dueSubscriptionsResult) {
-      const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
+  //   for (const subscription of dueSubscriptionsResult) {
+  //     const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
   
-      // 해당 주문의 구독 주기 조회
-      const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
-      const [weekResult] = await pool.query(weekQuery, [subs_index]);
+  //     // 해당 주문의 구독 주기 조회
+  //     const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
+  //     const [weekResult] = await pool.query(weekQuery, [subs_index]);
   
-      if (weekResult.length > 0) {
-        const week = weekResult[0].Week;
+  //     if (weekResult.length > 0) {
+  //       const week = weekResult[0].Week;
   
-        // 새로운 시작일 결정 (예: 이전 구독의 종료일)
-        const newStartDate = Subs_End;
+  //       // 새로운 시작일 결정 (예: 이전 구독의 종료일)
+  //       const newStartDate = Subs_End;
   
-        // 새로운 종료일 결정 (예: week * 7일 연장)
-        const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
+  //       // 새로운 종료일 결정 (예: week * 7일 연장)
+  //       const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
   
-        // 데이터베이스에서 구독 정보 업데이트
-        const updateSubscriptionQuery = `
-          UPDATE Orderdetails
-          SET Subs_Start = ?, Subs_End = ?
-          WHERE Order_Index = ?;
-        `;
+  //       // 데이터베이스에서 구독 정보 업데이트
+  //       const updateSubscriptionQuery = `
+  //         UPDATE Orderdetails
+  //         SET Subs_Start = ?, Subs_End = ?
+  //         WHERE Order_Index = ?;
+  //       `;
   
-        await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
+  //       await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
   
-        // 갱신된 구독에 대한 로그 또는 알림
-        console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
-      }
-    }
-  }
+  //       // 갱신된 구독에 대한 로그 또는 알림
+  //       console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
+  //     }
+  //   }
+  // }
 
 
   server.get("/api/classroom", async (req, res) => {
