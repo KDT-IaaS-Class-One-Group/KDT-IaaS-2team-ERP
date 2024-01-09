@@ -87,6 +87,21 @@ export default function QA() {
     }
   };
 
+  const formatDateTime = (datetime: string) => {
+    const dateTime = new Date(datetime);
+    const options = {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: false,
+    };
+    const dateTimeString = dateTime.toLocaleString();
+    return dateTimeString;
+  };
+
   useEffect(() => {
     fetchData(pageInfo.currentPage);
   }, [fetchData, pageInfo.currentPage]);
@@ -99,89 +114,87 @@ export default function QA() {
     <div className={styles.subproduct}>
       <h1>Q&A 관리</h1>
       <label htmlFor="searchOption">검색 옵션:</label>
-        <select
-          id="searchOption"
-          value={searchOption}
-          onChange={(e) => setSearchOption(e.target.value)}
-        >
-          <option value="userId">User ID</option>
-          <option value="name">Name</option>
-        </select>
-        <input
-          type="text"
-          placeholder={`${
-            searchOption === "userId" ? "userId" : "name"
-          }로 검색`}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <div className={styles.userinfocontent}>
-          <table className={styles.userTable}>
-            <thead>
-              <tr>
-                <th>boardKey</th>
-                <th>User ID</th>
-                <th>title</th>
-                <th>content</th>
-                <th>date</th>
-                <th>password</th>
-                <th>image</th>
-                <th>email</th>
-                <th>phoneNumber</th>
-                <th>name</th>
-                <th>reply</th>
+      <select
+        id="searchOption"
+        value={searchOption}
+        onChange={(e) => setSearchOption(e.target.value)}
+      >
+        <option value="userId">User ID</option>
+        <option value="name">Name</option>
+      </select>
+      <input
+        type="text"
+        placeholder={`${searchOption === "userId" ? "userId" : "name"}로 검색`}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <div className={styles.userinfocontent}>
+        <table className={styles.userTable}>
+          <thead>
+            <tr>
+              <th>boardKey</th>
+              <th>User ID</th>
+              <th>title</th>
+              <th>content</th>
+              <th>date</th>
+              <th>password</th>
+              <th>image</th>
+              <th>email</th>
+              <th>phoneNumber</th>
+              <th>name</th>
+              <th>reply</th>
+            </tr>
+          </thead>
+          <tbody>
+            {boards.map((board) => (
+              <tr key={board.boardKey}>
+                <td>{board.boardKey}</td>
+                <td>{board.userId}</td>
+                <td>{board.title}</td>
+                <td>{board.content}</td>
+                <td>{formatDateTime(board.date)}</td>
+                <td>{board.password}</td>
+                <td>{board.image}</td>
+                <td>{board.email}</td>
+                <td>{board.phoneNumber}</td>
+                <td>{board.name}</td>
+                <td>{board.reply}</td>
+                <td>
+                  <input
+                    type="text"
+                    value={editedReply[board.userId] || ""}
+                    onChange={(e) =>
+                      setEditedReply((prev) => ({
+                        ...prev,
+                        [board.userId]: e.target.value,
+                      }))
+                    }
+                  />
+                  <button onClick={() => handleReplyEdit(board.userId)}>
+                    등록
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {boards.map((board) => (
-                <tr key={board.boardKey}>
-                  <td>{board.boardKey}</td>
-                  <td>{board.userId}</td>
-                  <td>{board.title}</td>
-                  <td>{board.content}</td>
-                  <td>{board.date}</td>
-                  <td>{board.password}</td>
-                  <td>{board.image}</td>
-                  <td>{board.email}</td>
-                  <td>{board.phoneNumber}</td>
-                  <td>{board.name}</td>
-                  <td>{board.reply}</td>
-                  <td>
-                    <input
-                      type="text"
-                      value={editedReply[board.userId] || ""}
-                      onChange={(e) =>
-                        setEditedReply((prev) => ({
-                          ...prev,
-                          [board.userId]: e.target.value,
-                        }))
-                      }
-                    />
-                    <button onClick={() => handleReplyEdit(board.userId)}>
-                      등록
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className={styles.pagination}>
-            {Array.from(
-              { length: pageInfo.totalPages },
-              (_, index) => index + 1
-            ).map((pageNumber) => (
-              <button
-                key={pageNumber}
-                className={`pagination-button ${
-                  pageNumber === pageInfo.currentPage ? "active" : ""
-                }`}
-                onClick={() => handlePageChange(pageNumber)}
-              >
-                {pageNumber}
-              </button>
             ))}
-          </div>
+          </tbody>
+        </table>
+        <div className={styles.pagination}>
+          {Array.from(
+            { length: pageInfo.totalPages },
+            (_, index) => index + 1
+          ).map((pageNumber) => (
+            <button
+              key={pageNumber}
+              className={`pagination-button ${
+                pageNumber === pageInfo.currentPage ? "active" : ""
+              }`}
+              onClick={() => handlePageChange(pageNumber)}
+            >
+              {pageNumber}
+            </button>
+          ))}
         </div>
       </div>
+    </div>
   );
 }
