@@ -86,8 +86,7 @@ CREATE TABLE Board (
     content VARCHAR(500) NOT NULL,
     date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     password VARCHAR(50) NOT NULL,
-    image VARCHAR(500) NULL,
-    FOREIGN KEY (User_Index) REFERENCES User(User_Index)
+    FOREIGN KEY (User_Index) REFERENCES Users(User_Index)
 );
 
 ### Product 상품 정보 (원두 종류가 들어갑니다.)

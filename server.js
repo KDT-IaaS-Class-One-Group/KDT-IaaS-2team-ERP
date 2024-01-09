@@ -15,7 +15,7 @@ const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "0000",
+  password: "723546",
   database: "erp",
   connectionLimit: 5,
 });
@@ -701,7 +701,7 @@ server.post('/api/payment', async (req, res) => {
   server.get('/customer/getData', async (req, res) => {
     try {
       const connection = await pool.getConnection();
-      const [rows, fields] = await connection.query('SELECT title, content, password FROM board');
+      const [rows, fields] = await connection.query('SELECT boardKey, email, userID, title, content, password FROM board');
 
       // 데이터베이스에서 가져온 정보를 클라이언트에게 반환합니다.
       res.json(rows);
@@ -1177,22 +1177,43 @@ server.post('/api/uploadImage', upload.single('image'), async (req, res) => {
   }
 });
 
-server.post('/customer/writingPage/create-post', async (req, res) => {
-  const { title, content, password } = req.body;
-  const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
+
+server.post('/customer/writingPage/create-post', async (req, res) => {
+  const formData = req.body;
+  console.log(formData)
+ 
   try {
-    const conn = await pool.getConnection();
-    await conn.query(
-      `INSERT INTO board (title, content, date, password)
-      VALUES (?, ?, ?, ?)`,
-      [title, content, currentDate, password]
+    // users 테이블에서 해당 User_Index 값이 존재하는지 확인
+    const [userResult] = await db.query(
+      'SELECT * FROM users WHERE user_Index = ?',
+      [formData.user_Index]
     );
-    conn.release();
-    res.status(201).send('board create successfully');
-  } catch (err) {
-    console.error('Error creating board:', err);
-    res.status(500).send('Error creating board');
+    console.log(formData.user_Index);
+    // User_Index 값이 존재하는 경우에만 게시글을 삽입
+    if (userResult.length === 1) {
+      // 데이터베이스에 데이터 삽입
+      const [result] = await db.query(
+        'INSERT INTO board (user_Index, userID, email, title, content, date, password) VALUES (?, ?, ?, ?, ?, NOW(), ?)',
+        [formData.user_Index, formData.userID, formData.email, formData.title, formData.content, formData.password]
+      );
+
+      // 삽입 성공 시 클라이언트에 응답
+      if (result.affectedRows === 1) {
+        console.log('Board created successfully!');
+        res.status(200).json({ message: 'Board created successfully!' });
+      } else {
+        console.error('Failed to create board');
+        res.status(500).json({ error: 'Failed to create board' });
+      }
+    } else {
+      // User_Index 값이 존재하지 않는 경우 클라이언트에 오류 응답
+      console.error('User not found for given User_Index:', formData.user_Index);
+      res.status(404).json({ error: 'User not found for given User_Index' });
+    }
+  } catch (error) {
+    console.error('Error creating board:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

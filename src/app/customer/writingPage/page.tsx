@@ -1,18 +1,47 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import styles from "@/styles/test.module.scss";
 import Link from "next/link";
 
 export default function Page() {
   const [formData, setFormData] = useState({
     boardKey: "",
-    User_Index: "",
+    userID:"",
+    email: "",
+    user_Index: 0,
     title: "",
     content: "",
     date: "",
     password: "",
-    image: "",
+    // image: "",
   });
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+  
+    if (token) {
+      // 토큰을 '.'을 기준으로 세 부분으로 분리
+      const tokenParts = token.split('.');
+  
+      // 페이로드는 Base64로 인코딩된 두 번째 부분
+      const payload = JSON.parse(atob(tokenParts[1]));
+  
+      // 사용자 ID와 사용자 인덱스, 이메일 추출
+      const userId = payload.userId;
+      const userIndex = payload.user_Index;
+      const userEmail = payload.email;
+      console.log(userId)
+      console.log(userIndex)
+      console.log(userEmail)
+      // 폼 데이터에 사용자 ID와 이메일 추가
+      setFormData((prevData) => ({
+        ...prevData,
+        userID: userId,
+        user_Index: userIndex,
+        email: userEmail,
+      }));
+    }
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
