@@ -31,9 +31,15 @@ export default function UserinfoPage() {
   const fetchData = useCallback(
     async (page: number) => {
       try {
-        const response = await fetch(
-          `/api/users?page=${page}&pageSize=${pageSize}&searchTerm=${searchTerm}&searchOption=${searchOption}`
-        );
+        let apiUrl = "/api/users?page=" + page + "&pageSize=" + pageSize;
+
+        if (searchOption === "userId") {
+          apiUrl += "&searchOption=userId&searchTerm=" + searchTerm;
+        } else if (searchOption === "name") {
+          apiUrl += "&searchOption=name&searchTerm=" + searchTerm;
+        }
+
+        const response = await fetch(apiUrl);
         const data = await response.json();
 
         setUsers(data.users);
@@ -106,7 +112,7 @@ export default function UserinfoPage() {
         <input
           type="text"
           placeholder={`${
-            searchOption === "userId" ? "User ID" : "Name"
+            searchOption === "userId" ? "userId" : "name"
           }로 검색`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
