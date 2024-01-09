@@ -25,8 +25,8 @@ const UserGraph = () => {
 
   return (
     <div>
-      <label>Select X-Axis:</label>
-      <select value={selectedXAxis} onChange={handleXAxisChange}>
+      <label htmlFor="selectUserElement">가로축</label>
+      <select id="selectUserElement" name="selectUserElement" onChange={handleXAxisChange}>
         <option value="timestamp">가입일자</option>
         <option value="birth">출생년도</option>
         <option value="gender">성별</option>
