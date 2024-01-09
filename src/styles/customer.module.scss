@@ -14,7 +14,49 @@
 .main{
   width:100vw;
   height:85vh;
-
   background-color: lightgreen;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+.marginRight {
+  margin-right: 50px;
+}
+
+.width {
+  width: 30vw;
+}
+
+.flex {
+  display: flex;
+}
+
+.flexSet{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spaceBetween {
+  display: flex;
+  justify-content: space-between;
+  width: 50vw;
+  align-items: end;
+}
+
+.spaceAround {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.paddingLeft {
+  padding-left: 22px;
+}
+
+.whiteBgc {
+  background-color: #fff;
+  width: 35vw;
+  height: 30vh;
+}
