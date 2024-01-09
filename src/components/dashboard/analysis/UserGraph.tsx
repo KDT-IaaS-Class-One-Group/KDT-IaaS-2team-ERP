@@ -37,7 +37,7 @@ const UserGraph = () => {
 
   return (
     <div>
-      <label htmlFor="selectUserElement">가로축 선택</label>
+      <label htmlFor="selectUserElement">가로축</label>
       <select
         id="selectUserElement"
         name="selectUserElement"
