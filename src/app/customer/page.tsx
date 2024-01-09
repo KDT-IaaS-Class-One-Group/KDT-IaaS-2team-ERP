@@ -1,6 +1,6 @@
 "use client";
 import Topbar from "@/components/Topbar/Topbar";
-import styles from "@/styles/customer.module.scss"
+import styles from "@/styles/customer.module.scss";
 import { useState, useEffect } from "react";
 import React from "react";
 import Link from "next/link";
@@ -26,20 +26,20 @@ export default function Page() {
   const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
-       // 토큰을 localStorage에서 가져오기
-       const token = localStorage.getItem('token');
+    // 토큰을 localStorage에서 가져오기
+    const token = localStorage.getItem("token");
 
-       if (token) {
-         // 토큰을 '.'을 기준으로 세 부분으로 분리
-         const tokenParts = token.split('.');
-   
-         // 페이로드는 Base64로 인코딩된 두 번째 부분
-         const payload = JSON.parse(atob(tokenParts[1]));
-   
-         // 사용자 ID 추출
-         const userId = payload.userId;
-         setUserId(userId); // 추출한 사용자 ID 상태에 저장
-       }
+    if (token) {
+      // 토큰을 '.'을 기준으로 세 부분으로 분리
+      const tokenParts = token.split(".");
+
+      // 페이로드는 Base64로 인코딩된 두 번째 부분
+      const payload = JSON.parse(atob(tokenParts[1]));
+
+      // 사용자 ID 추출
+      const userId = payload.userId;
+      setUserId(userId); // 추출한 사용자 ID 상태에 저장
+    }
     fetch("/customer/getData") // 적절한 API 경로를 사용하여 데이터를 가져옵니다.
       .then((response) => response.json())
       .then((titles) => {
@@ -67,7 +67,7 @@ export default function Page() {
 
   const handleGoToWritingPage = () => {
     // Check if the user is logged in (token exists)
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     if (token) {
       // If the token exists, navigate to the writing page
@@ -80,21 +80,39 @@ export default function Page() {
 
   return (
     <div className={styles.root}>
-      <div className={styles.top}><Topbar /></div>
+      <div className={styles.top}>
+        <Topbar />
+      </div>
       <div className={styles.main}>
-      {titles.map((item: item, index: number) => (
-        <p
-          key={index}
-          onClick={() =>
-            handleTitleClick(item.title, item.password, item.content)
-          }
-        >
-        글번호: {item.boardKey} 글제목: {item.title} , 작성자:{item.userID}
-        </p>
-      ))}
-      <p>사용자 ID: {userId}</p>
-      <button onClick={handleGoToWritingPage}>Go to Writing Page</button>
-      {showContent && <p>내용 : {data.content}</p>}
+        <div>
+          <div className={`${styles.spaceBetween} ${styles.paddingLeft}`}>
+            <div></div>
+            <div>
+              <p>사용자 ID: {userId}</p>
+              <button onClick={handleGoToWritingPage}>
+                Go to Writing Page
+              </button>
+            </div>
+          </div>
+          <div className={`${styles.flex} ${styles.marginTop}`}>
+          <div className={styles.marginRight}>
+          {titles.map((item: item, index: number) => (
+            <h3
+            key={index}
+            onClick={() =>
+              handleTitleClick(item.title, item.password, item.content)
+            }
+            >
+              글번호: {item.boardKey} 글제목: {item.title} , 작성자:
+              {item.userID}
+            </h3>
+          ))}
+          </div>
+          <div className={`${styles.flexSet} ${styles.width} ${styles.whiteBgc}`}>
+          {showContent && <p>내용 : {data.content}</p>}
+          </div>
+          </div>
+        </div>
       </div>
     </div>
   );
