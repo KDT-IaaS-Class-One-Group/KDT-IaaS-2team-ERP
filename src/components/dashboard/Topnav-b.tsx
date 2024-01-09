@@ -6,7 +6,6 @@ export default function TopNav() {
     <div className={styles.topmenu}>
       <div className={styles.toplink}>
         <TopNavLinks />
-      
       </div>
     </div>
   );
