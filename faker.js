@@ -15,6 +15,7 @@ const db_config = {
   user: 'root',
   password: '0000',
   database: 'erp',
+  port: 3307
 };
 
 // MariaDB 연결

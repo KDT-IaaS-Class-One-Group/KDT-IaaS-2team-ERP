@@ -16,7 +16,7 @@ const { checkAndRenewSubscriptions } = require("./src/components/checkAndRenewSu
 const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
-  port: "3306",
+  port: "3307",
   user: "root",
   password: "0000",
   database: "erp",
@@ -116,6 +116,31 @@ app.prepare().then(() => {
       );
     }
   }); 
+
+  server.get("/api/orderdetails", async (req, res) => {
+    try {
+      // 토큰에서 user_Index 추출
+      const token = req.headers.authorization.split(" ")[1];
+      const decodedToken = jwt.verify(token, secretKey);
+  
+      if (!decodedToken || !decodedToken.user_Index) {
+        console.error('Invalid token or user index not found');
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+  
+      const userIndex = decodedToken.user_Index;
+      console.log('userIndex : ' ,userIndex)
+      // 사용자의 주문 정보만 가져오기
+      const [rows, fields] = await pool.query("SELECT Order_Index FROM orderdetails WHERE User_Index = ?", [userIndex]);
+  
+      // 결과를 JSON 형식으로 응답
+      res.json(rows);
+    } catch (error) {
+      console.error("Error fetching orderdetails:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
 
   // // ! 테스트 목적 즉시 실행되게 
   // checkAndRenewSubscriptions(pool); 
