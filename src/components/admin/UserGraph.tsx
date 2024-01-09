@@ -4,13 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 
-const UserDynamicGraph = () => {
+const UserGraph = () => {
   const [dynamicGraphData, setDynamicGraphData] = useState([]);
   const [selectedXAxis, setSelectedXAxis] = useState('timestamp');
 
   useEffect(() => {
     // 서버에서 동적 그래프 데이터를 가져오는 API 호출
-    axios.get(`/api/dynamicGraph?xAxis=${selectedXAxis}`)
+    axios.get(`/api/userGraph?xAxis=${selectedXAxis}`)
       .then(response => {
         setDynamicGraphData(response.data);
       })
@@ -46,4 +46,4 @@ const UserDynamicGraph = () => {
   );
 }
 
-export default UserDynamicGraph;
+export default UserGraph;

@@ -59,7 +59,7 @@ app.prepare().then(() => {
     }
   });
 
-  server.get('/api/dynamicGraph', async (req, res) => {
+  server.get('/api/userGraph', async (req, res) => {
     const { xAxis } = req.query;
   
     try {
