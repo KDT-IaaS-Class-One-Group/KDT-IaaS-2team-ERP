@@ -103,59 +103,6 @@ app.prepare().then(() => {
   }
 
 
-  cron.schedule('0 * * * *', async () => {
-    try {
-      // 구독을 확인하고 갱신하는 함수 호출
-      await checkAndRenewSubscriptions();
-    } catch (error) {
-      console.error('구독 갱신 오류:', error);
-    }
-  });
-
-  async function checkAndRenewSubscriptions() {
-    const currentDate = new Date();
-  
-    // 구독 갱신이 필요한 주문 조회
-    const dueSubscriptionsQuery = `
-      SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
-      FROM Orderdetails
-      WHERE Subs_End <= ?;
-    `;
-  
-    const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
-  
-    for (const subscription of dueSubscriptionsResult) {
-      const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
-  
-      // 해당 주문의 구독 주기 조회
-      const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
-      const [weekResult] = await pool.query(weekQuery, [subs_index]);
-  
-      if (weekResult.length > 0) {
-        const week = weekResult[0].Week;
-  
-        // 새로운 시작일 결정 (예: 이전 구독의 종료일)
-        const newStartDate = Subs_End;
-  
-        // 새로운 종료일 결정 (예: week * 7일 연장)
-        const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
-  
-        // 데이터베이스에서 구독 정보 업데이트
-        const updateSubscriptionQuery = `
-          UPDATE Orderdetails
-          SET Subs_Start = ?, Subs_End = ?
-          WHERE Order_Index = ?;
-        `;
-  
-        await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
-  
-        // 갱신된 구독에 대한 로그 또는 알림
-        console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
-      }
-    }
-  }
-
-
   server.get("/api/classroom", async (req, res) => {
     try {
       const classrooms = await db.query("SELECT * from classrooms");
@@ -698,22 +645,6 @@ server.post('/api/payment', async (req, res) => {
     }
   });
 
-  server.get('/customer/getData', async (req, res) => {
-    try {
-      const connection = await pool.getConnection();
-      const [rows, fields] = await connection.query('SELECT title, content, password FROM board');
-
-      // 데이터베이스에서 가져온 정보를 클라이언트에게 반환합니다.
-      res.json(rows);
-
-      // 연결 해제
-      connection.release();
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  })
-
   // 기본적인 Next.js 페이지 핸들링
   server.get("*", (req, res) => {
     return handle(req, res);
@@ -1174,25 +1105,6 @@ server.post('/api/uploadImage', upload.single('image'), async (req, res) => {
   } catch (error) {
     console.error('Error uploading image:', error);
     res.status(500).json({ success: false, error: 'Internal Server Error' });
-  }
-});
-
-server.post('/customer/writingPage/create-post', async (req, res) => {
-  const { title, content, password } = req.body;
-  const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
-
-  try {
-    const conn = await pool.getConnection();
-    await conn.query(
-      `INSERT INTO board (title, content, date, password)
-      VALUES (?, ?, ?, ?)`,
-      [title, content, currentDate, password]
-    );
-    conn.release();
-    res.status(201).send('board create successfully');
-  } catch (err) {
-    console.error('Error creating board:', err);
-    res.status(500).send('Error creating board');
   }
 });
 
