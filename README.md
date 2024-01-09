@@ -8,9 +8,9 @@ npm install react-query
 ## 데이터베이스 쿼리문 / 그냥 기본 틀이니까 열 추가나 삭제 필요하면 하면서 해주세요!
 
 ### User (사용자 정보)  order_Index 외래키로 Orderdetails 테이블에서 구독내용 확인 (자동연장시 갱신x추가해야함)      
-CREATE TABLE User (
+CREATE TABLE Users (
     User_Index INT AUTO_INCREMENT PRIMARY KEY,
-    id VARCHAR(50) NOT NULL,
+    userId VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL,
     name VARCHAR(16) NOT NULL,
     birth DATE NOT NULL,
@@ -92,18 +92,17 @@ CREATE TABLE Board (
 
 ### Product 상품 정보 (원두 종류가 들어갑니다.)
 CREATE TABLE Product (
-    product_Index INT AUTO_INCREMENT PRIMARY KEY,
-    categoryID INT NOT NULL,
-    name VARCHAR(255) NOT NULL,
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_id INT NOT NULL,
+    product_name VARCHAR(255) NOT NULL,
     price INT NOT NULL,
     sale INT NULL,
-    stock INT NOT NULL,
+    stock_quantity INT NOT NULL,
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     img1 VARCHAR(500) NULL,
     img2 VARCHAR(500) NULL,
     delete_status TINYINT(1) NULL DEFAULT 0,
-    display_status TINYINT(1) NULL DEFAULT 0,
-    FOREIGN KEY (categoryID) REFERENCES Category(categoryID)
+    display_status TINYINT(1) NULL DEFAULT 0
 );
 
 ### Category 카테고리 관련
