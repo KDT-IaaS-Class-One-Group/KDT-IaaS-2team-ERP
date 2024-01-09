@@ -15,7 +15,7 @@ const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "723546",
+  password: "0000",
   database: "erp",
   connectionLimit: 5,
 });
@@ -45,10 +45,6 @@ app.prepare().then(() => {
   });
   
   const upload = multer({ storage });
-
-
-
-
 
   const server = express();
   server.use(bodyParser.json());
@@ -117,6 +113,51 @@ app.prepare().then(() => {
     }
   });
 
+  server.get('/api/userGraph', async (req, res) => {
+    const { xAxis } = req.query;
+  
+    try {
+      let query;
+      switch (xAxis) {
+        case 'timestamp':
+          query = `
+            SELECT DATE_FORMAT(timestamp, '%Y-%m') as label, COUNT(DISTINCT id) as userCount
+            FROM User
+            GROUP BY label
+            ORDER BY label;
+          `;
+          break;
+        case 'birth':
+          query = `
+            SELECT YEAR(birth) as label, COUNT(DISTINCT id) as userCount
+            FROM User
+            GROUP BY label
+            ORDER BY label;
+          `;
+          break;
+          case 'gender':
+            query = `
+              SELECT gender as label, COUNT(DISTINCT id) as userCount
+              FROM User
+              GROUP BY label
+              ORDER BY label;
+            `;
+            break;
+        default:
+          res.status(400).send('Invalid xAxis parameter');
+          return;
+      }
+  
+      const connection = await pool.getConnection();
+      const [results] = await connection.query(query);
+      connection.release();
+  
+      res.json(results);
+    } catch (error) {
+      console.error('Error executing query:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
   
   server.get('/api/users', async (req, res) => {
     try {
