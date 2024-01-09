@@ -5,7 +5,7 @@ async function checkAndRenewSubscriptions(pool) {
   
       // 종료일로부터 1일 이내의 데이터 가져오기
       const [rows, fields] = await pool.query(
-        "SELECT Order_Index, subs_index, user_Index, price, Subs_End FROM orderdetails WHERE Subs_End >= NOW() AND Subs_End <= NOW() + INTERVAL 1 DAY"
+        "SELECT Order_Index, subs_index, user_Index, price, Subs_End, address FROM orderdetails WHERE Subs_End >= NOW() AND Subs_End <= NOW() + INTERVAL 1 DAY"
       );
   
       // 데이터베이스의 Subs_End 값 출력
@@ -16,17 +16,25 @@ async function checkAndRenewSubscriptions(pool) {
   
       // 각 데이터에 대해 새로운 Subscription 데이터 추가
       for (const row of rows) {
-        const { Order_Index, subs_index, user_Index, price, Subs_End } = row;
-        const existingSubsEndDate = Subs_End; // 기존 데이터의 Subs_End 값
-        const startDate = new Date(existingSubsEndDate);
-        const endDate = new Date(existingSubsEndDate);
-        endDate.setDate(endDate.getDate() + 28); // Subs_End에서 4주(28일) 더하기
+        const { Order_Index, subs_index, user_Index, price, Subs_End, address } = row;
   
-        // INSERT 쿼리를 통해 새로운 Subscription 데이터를 DB에 추가
-        await pool.query(
-          "INSERT INTO orderdetails (Subs_Start, Subs_End, subs_index, user_Index, price) VALUES (?, ?, ?, ?, ?)",
-          [startDate, endDate, subs_index, user_Index, price]
-        );
+        // 해당 주문의 구독 주기 조회
+        const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
+        const [weekResult] = await pool.query(weekQuery, [subs_index]);
+  
+        if (weekResult.length > 0) {
+          const week = weekResult[0].Week;
+  
+          // 새로운 종료일 결정 (예: week * 7일 연장)
+          const endDate = new Date(Subs_End);
+          endDate.setDate(endDate.getDate() + week * 7); // Subs_End에서 주차 수에 따라 더하기
+  
+          // INSERT 쿼리를 통해 새로운 Subscription 데이터를 DB에 추가
+          await pool.query(
+            "INSERT INTO orderdetails (Subs_Start, Subs_End, subs_index, user_Index, price, address) VALUES (?, ?, ?, ?, ?, ?)",
+            [Subs_End, endDate, subs_index, user_Index, price, address]
+          );
+        }
       }
   
       // 새로운 행 추가 조건 확인
