@@ -118,8 +118,8 @@ app.prepare().then(() => {
     }
   });
 
-  // ! 테스트 목적 즉시 실행되게 
-  checkAndRenewSubscriptions(pool); 
+  // // ! 테스트 목적 즉시 실행되게 
+  // checkAndRenewSubscriptions(pool); 
 
   // async function checkAndRenewSubscriptions() {
   //   const currentDate = new Date();
@@ -542,12 +542,14 @@ server.post('/api/payment', async (req, res) => {
   try {
     const token = req.body.token;
     const price = req.body.price;
-    const subsIndex=req.body.sub_index;
+    const subsIndex = req.body.sub_index;
     const ids = req.body.ids;
-    
+    const address = req.body.address; // 추가된 부분
+
     // 토큰 해독
     const decodedToken = jwt.verify(token, secretKey);
-    const userIndex = decodedToken.user_Index;
+    const userIndex = decodedToken.User_Index;
+
 
     // 데이터베이스 연결
     const connection = await pool.getConnection();
@@ -564,19 +566,21 @@ server.post('/api/payment', async (req, res) => {
       // 주문 정보 추가
       const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
       const [weekResult] = await connection.query(weekQuery, [subsIndex]);
-     
+
       const week = weekResult[0].Week;
-     
+
+      // 추가된 부분: 사용자의 user_Index 값으로 주문 정보를 추가
       const orderQuery = `
-        INSERT INTO Orderdetails (subs_index, user_Index, price, Subs_Start, Subs_End )
-        VALUES (?, ?, ?, ?, ? )
+        INSERT INTO Orderdetails (subs_index, user_Index, price, Subs_Start, Subs_End, address) 
+        VALUES (?, ?, ?, ?, ?, ?)
       `;
       const orderValues = [
         subsIndex,
-        userIndex,
+        userIndex, // 추가된 부분
         price,
         new Date(),
         new Date(Date.now() + week * 7 * 24 * 60 * 60 * 1000),
+        address,
       ];
 
       const [orderResult] = await connection.query(orderQuery, orderValues);
@@ -585,9 +589,9 @@ server.post('/api/payment', async (req, res) => {
       // ids를 배열로 변환
       const productIds = ids.split(',').map((id) => parseInt(id, 10));
 
-      //users 테이블 구독상탭 변경
+      // users 테이블 구독상탭 변경
       const updateUserOrderIndexQuery = `UPDATE users SET order_Index = ? WHERE user_Index = ?`;
-      const updateUserOrderIndexValues = [orderId , userIndex];
+      const updateUserOrderIndexValues = [orderId, userIndex];
       await connection.query(updateUserOrderIndexQuery, updateUserOrderIndexValues);
 
       // OrderProduct에 추가
@@ -810,7 +814,7 @@ server.post('/api/payment', async (req, res) => {
           // 로그인 성공
           const token = jwt.sign(
             {
-              user_Index: user.user_Index,
+              User_Index: user.User_Index,
               userId: user.userId ,
               name: user.name,
               birthdate: user.birthdate,
@@ -827,6 +831,7 @@ server.post('/api/payment', async (req, res) => {
 
           const verified = jwt.verify(token, secretKey);
         
+          console.log(token)
 
             res.status(200).json({ token });
           } else {
