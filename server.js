@@ -54,7 +54,7 @@ app.prepare().then(() => {
     try {
       // SubscriptionChecker.js 실행
       await checkSubscription(pool); 
-      console.log("SubscriptionChecker.js가 매일 10시에 실행되었습니다.");
+      console.log("SubscriptionChecker.js가 실행되었습니다.");
     } catch (error) {
       console.error(
         "SubscriptionChecker.js 실행 중 오류가 발생했습니다:",
