@@ -4,32 +4,46 @@ import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 
-const UserGraph = () => {
-  const [monthlyUserData, setMonthlyUserData] = useState([]);
+const UserDynamicGraph = () => {
+  const [dynamicGraphData, setDynamicGraphData] = useState([]);
+  const [selectedXAxis, setSelectedXAxis] = useState('timestamp');
 
   useEffect(() => {
-    // 서버에서 월별 가입자 수 데이터를 가져오는 API 호출
-    axios.get('/api/userGraph')
+    // 서버에서 동적 그래프 데이터를 가져오는 API 호출
+    axios.get(`/api/dynamicGraph?xAxis=${selectedXAxis}`)
       .then(response => {
-        setMonthlyUserData(response.data);
+        setDynamicGraphData(response.data);
       })
       .catch(error => {
-        console.error('Error fetching monthly user data:', error);
+        console.error('Error fetching dynamic graph data:', error);
       });
-  }, []);
+  }, [selectedXAxis]);
+
+  const handleXAxisChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+    setSelectedXAxis(event.target.value);
+  };
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <BarChart data={monthlyUserData} margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="month" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="userCount" fill="#8884d8" />
-      </BarChart>
-    </ResponsiveContainer>
+    <div>
+      <label>Select X-Axis:</label>
+      <select value={selectedXAxis} onChange={handleXAxisChange}>
+        <option value="timestamp">가입일자</option>
+        <option value="birth">출생년도</option>
+        <option value="gender">성별</option>
+      </select>
+
+      <ResponsiveContainer width="200%" height={400}>
+        <BarChart data={dynamicGraphData} margin={{ top: 20, right: 30, left: 20, bottom: 50 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="label" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="userCount" fill="#8884d8" />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
 
-export default UserGraph;
+export default UserDynamicGraph;

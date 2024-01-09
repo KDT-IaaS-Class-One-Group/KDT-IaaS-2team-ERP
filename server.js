@@ -59,14 +59,41 @@ app.prepare().then(() => {
     }
   });
 
-  server.get('/api/userGraph', async (req, res) => {
+  server.get('/api/dynamicGraph', async (req, res) => {
+    const { xAxis } = req.query;
+  
     try {
-      const query = `
-        SELECT DATE_FORMAT(timestamp, '%Y-%m') as month, COUNT(DISTINCT id) as userCount
-        FROM User
-        GROUP BY month
-        ORDER BY month;
-      `;
+      let query;
+      switch (xAxis) {
+        case 'timestamp':
+          query = `
+            SELECT DATE_FORMAT(timestamp, '%Y-%m') as label, COUNT(DISTINCT id) as userCount
+            FROM User
+            GROUP BY label
+            ORDER BY label;
+          `;
+          break;
+        case 'birth':
+          query = `
+            SELECT YEAR(birth) as label, COUNT(DISTINCT id) as userCount
+            FROM User
+            GROUP BY label
+            ORDER BY label;
+          `;
+          break;
+          case 'gender':
+            query = `
+              SELECT gender as label, COUNT(DISTINCT id) as userCount
+              FROM User
+              GROUP BY label
+              ORDER BY label;
+            `;
+            break;
+        default:
+          res.status(400).send('Invalid xAxis parameter');
+          return;
+      }
+  
       const connection = await pool.getConnection();
       const [results] = await connection.query(query);
       connection.release();
@@ -77,7 +104,6 @@ app.prepare().then(() => {
       res.status(500).send('Internal Server Error');
     }
   });
-
   
   server.get('/api/users', async (req, res) => {
     try {
