@@ -15,7 +15,7 @@ interface OrderClientSideProps {
 }
 
 interface UserInfo {
-  user_Index: number;
+  User_Index: number;
   userId: string;
   name: string;
   phoneNumber: string;
@@ -114,7 +114,7 @@ export default function OrderClientSide() {
 
       if (decodedToken) {
         const {
-          user_Index,
+          User_Index,
           userId,
           name,
           phoneNumber,
@@ -125,7 +125,7 @@ export default function OrderClientSide() {
         } = decodedToken;
 
         const userInformation: UserInfo = {
-          user_Index,
+          User_Index,
           userId,
           name,
           phoneNumber,
@@ -150,12 +150,12 @@ export default function OrderClientSide() {
 
   const handlePayment = async () => {
     try {
-      if (userInfo && userInfo.order_Index !== null) {
-        console.log("이미 구독 중입니다.");
-        alert("이미 구독 중입니다.");
-        router.push("/");
-        return;
-      }
+      // if (userInfo && userInfo.User_Index !== null) {
+      //   console.log("이미 구독 중입니다.");
+      //   alert("이미 구독 중입니다.");
+      //   router.push("/");
+      //   return;
+      // }
 
       const response = await fetch("/api/payment", {
         method: "POST",
@@ -182,7 +182,15 @@ export default function OrderClientSide() {
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        // 400 에러가 발생하면 수동으로 페이지 이동하거나 에러 처리를 할 수 있습니다.
+        if (response.status === 400) {
+          // 수동으로 페이지 이동
+          router.push('/400-error-page');
+        } else {
+          // 다른 에러 상태 코드의 경우에 대한 처리
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return;
       }
 
       const responseData = await response.json();

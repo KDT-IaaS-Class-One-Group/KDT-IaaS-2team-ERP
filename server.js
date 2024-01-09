@@ -550,11 +550,21 @@ server.post('/api/payment', async (req, res) => {
     const decodedToken = jwt.verify(token, secretKey);
     const userIndex = decodedToken.User_Index;
 
-
     // 데이터베이스 연결
     const connection = await pool.getConnection();
 
     try {
+      // 사용자의 캐시 확인
+      const checkCashQuery = `SELECT cash FROM users WHERE user_Index = ?`;
+      const [cashResult] = await connection.query(checkCashQuery, [userIndex]);
+      const userCash = cashResult[0].cash;
+
+      // 캐시 부족한 경우 에러 응답
+      if (userCash < price) {
+        res.status(400).json({ error: '캐시가 부족합니다.' });
+        return;
+      }
+
       // 트랜잭션 시작
       await connection.beginTransaction();
 
