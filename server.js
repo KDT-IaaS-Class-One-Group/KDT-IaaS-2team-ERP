@@ -122,11 +122,91 @@ app.prepare().then(() => {
     try {
       const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
       const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
+      const searchTerm = req.query.searchTerm || "";
+      const searchOption = req.query.searchOption || "userId";
+
+      let query = "SELECT * FROM users";
+      let queryParams = [];
+
+      if (searchTerm) {
+        if (searchOption === "userId") {
+          query += " WHERE userId LIKE ?";
+        } else if (searchOption === "name") {
+          query += " WHERE name LIKE ?";
+        }
   
-      const offset = (page - 1) * pageSize;
+        queryParams = [`%${searchTerm}%`];
+      }
+
+      query += " LIMIT ?, ?";
+      queryParams.push((page - 1) * pageSize, pageSize);
+
+      const [users] = await db.query(query, queryParams);
+
+      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM users";
+      if (searchTerm) {
+        if (searchOption === "userId") {
+          totalCountQuery += " WHERE userId LIKE ?";
+        } else if (searchOption === "name") {
+          totalCountQuery += " WHERE name LIKE ?";
+        }
+      }
+
+      const [totalCount] = await db.query(
+        totalCountQuery,
+        queryParams.slice(0, 2)
+      );
+      const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
+
+      res.json({
+        users,
+        pageInfo: {
+          currentPage: page,
+          pageSize,
+          totalPages,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  server.get("/api/users/cash", async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const pageSize = parseInt(req.query.pageSize) || 20;
+      const searchTerm = req.query.searchTerm || "";
+      const searchOption = req.query.searchOption || "userId";
   
-      const [users] = await db.query('SELECT * FROM users LIMIT ?, ?', [offset, pageSize]);
-      const [totalCount] = await db.query('SELECT COUNT(*) AS totalCount FROM users');
+      let query = "SELECT * FROM users";
+      let queryParams = [];
+  
+      if (searchTerm) {
+        if (searchOption === "userId") {
+          query += " WHERE userId LIKE ?";
+        } else if (searchOption === "name") {
+          query += " WHERE name LIKE ?";
+        }
+  
+        queryParams = [`%${searchTerm}%`];
+      }
+  
+      query += " LIMIT ?, ?";
+      queryParams.push((page - 1) * pageSize, pageSize);
+  
+      const [users] = await db.query(query, queryParams);
+  
+      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM users";
+      if (searchTerm) {
+        if (searchOption === "userId") {
+          totalCountQuery += " WHERE userId LIKE ?";
+        } else if (searchOption === "name") {
+          totalCountQuery += " WHERE name LIKE ?";
+        }
+      }
+  
+      const [totalCount] = await db.query(totalCountQuery, queryParams.slice(0, 1));
       const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
   
       res.json({
@@ -138,19 +218,7 @@ app.prepare().then(() => {
         },
       });
     } catch (error) {
-      console.error('Error fetching users:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
-
-  server.get("/api/users/cash", async (req, res) => {
-    try {
-      const users = await db.query("SELECT * from users");
-
-
-      res.json(users);
-    } catch (error) {
-      console.error("Error fetching classrooms:", error);
+      console.error("Error fetching users:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
@@ -225,9 +293,11 @@ app.prepare().then(() => {
   server.get('/api/signup/checkDuplicate/:userId', async (req, res) => {
     try {
       const userId = req.params.userId;
-  
-      const [rows] = await db.query('SELECT * FROM users WHERE userId = ?', [userId]);
-  
+
+      const [rows] = await db.query("SELECT * FROM users WHERE userId = ?", [
+        userId,
+      ]);
+
       if (rows.length > 0) {
         // 이미 존재하는 ID인 경우
         res.json({ isDuplicate: true });
@@ -236,8 +306,8 @@ app.prepare().then(() => {
         res.json({ isDuplicate: false });
       }
     } catch (error) {
-      console.error('Error checking duplicate:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      console.error("Error checking duplicate:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   });
 
@@ -245,7 +315,7 @@ app.prepare().then(() => {
   * ! 구독페이지 앤드포인트
   */
 
-  server.get('/api/data', async (req, res) => {
+  server.get("/api/data", async (req, res) => {
     try {
       const [rows] = await db.execute('SELECT Subs_Index, name, price, week FROM subscription');
       const dataFromDB = rows.map((row) => ({
@@ -256,8 +326,8 @@ app.prepare().then(() => {
       }));
       res.json(dataFromDB);
     } catch (error) {
-      console.error('쿼리 실행 중 오류 발생:', error);
-      res.status(500).send('데이터베이스 오류');
+      console.error("쿼리 실행 중 오류 발생:", error);
+      res.status(500).send("데이터베이스 오류");
     }
   });
 
@@ -286,8 +356,8 @@ app.prepare().then(() => {
       }));
       res.json(dataFromDB);
     } catch (error) {
-      console.error('쿼리 실행 중 오류 발생:', error);
-      res.status(500).send('데이터베이스 오류');
+      console.error("쿼리 실행 중 오류 발생:", error);
+      res.status(500).send("데이터베이스 오류");
     }
   });
 
@@ -467,23 +537,28 @@ server.post('/api/payment', async (req, res) => {
       }));
       res.json(dataFromDB);
     } catch (error) {
-      console.error('쿼리 실행 중 오류 발생:', error);
-      res.status(500).send('데이터베이스 오류');
+      console.error("쿼리 실행 중 오류 발생:", error);
+      res.status(500).send("데이터베이스 오류");
     }
   });
 
 
-  server.get('/api/cash', async (req, res) => {
+  server.get("/api/cash", async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
       const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
-  
+
       const offset = (page - 1) * pageSize;
-  
-      const [users] = await db.query('SELECT * FROM users LIMIT ?, ?', [offset, pageSize]);
-      const [totalCount] = await db.query('SELECT COUNT(*) AS totalCount FROM users');
+
+      const [users] = await db.query("SELECT * FROM users LIMIT ?, ?", [
+        offset,
+        pageSize,
+      ]);
+      const [totalCount] = await db.query(
+        "SELECT COUNT(*) AS totalCount FROM users"
+      );
       const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
-  
+
       res.json({
         users,
         pageInfo: {
@@ -493,22 +568,27 @@ server.post('/api/payment', async (req, res) => {
         },
       });
     } catch (error) {
-      console.error('Error fetching users:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   });
 
-  server.get('/api/subs-product', async (req, res) => {
+  server.get("/api/subs-product", async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
       const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
-  
+
       const offset = (page - 1) * pageSize;
-  
-      const [subs] = await db.query('SELECT * FROM subscription LIMIT ?, ?, ?, ? ', [offset, pageSize]);
-      const [totalCount] = await db.query('SELECT COUNT(*) AS totalCount FROM subscription');
+
+      const [subs] = await db.query(
+        "SELECT * FROM subscription LIMIT ?, ?, ?, ? ",
+        [offset, pageSize]
+      );
+      const [totalCount] = await db.query(
+        "SELECT COUNT(*) AS totalCount FROM subscription"
+      );
       const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
-  
+
       res.json({
         subs,
         pageInfo: {
@@ -519,8 +599,8 @@ server.post('/api/payment', async (req, res) => {
       });
       
     } catch (error) {
-      console.error('Error fetching subs:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      console.error("Error fetching subs:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   });
 
@@ -584,26 +664,25 @@ server.post('/api/payment', async (req, res) => {
           expiresIn: "1h",
         });
         res.status(200).json({ token });
-      console.log(token);
+        console.log(token);
       } else {
         res.status(401).json({ error: "invalid credentials" });
       }
     }
   });
 
+  server.post("/api/login", async (req, res) => {
+    try {
+      if (req.method === "POST") {
+        const { userId, password } = req.body;
 
-server.post('/api/login', async (req, res) => {
-  try {
-    if (req.method === 'POST') {
-      const { userId, password } = req.body;
+        const [rows, fields] = await db.query(
+          "SELECT * FROM users WHERE userId = ?",
+          [userId]
+        );
 
-      const [rows, fields] = await db.query(
-        'SELECT * FROM users WHERE userId = ?',
-        [userId]
-      );
-
-      if (rows.length === 1) {
-        const user = rows[0];
+        if (rows.length === 1) {
+          const user = rows[0];
 
         if (user.isWithdrawn) {
           // 회원이 탈퇴한 경우
@@ -630,53 +709,57 @@ server.post('/api/login', async (req, res) => {
           const verified = jwt.verify(token, secretKey);
         
 
-          res.status(200).json({ token });
+            res.status(200).json({ token });
+          } else {
+            // 비밀번호 불일치
+            res
+              .status(401)
+              .json({ error: "아이디 또는 비밀번호가 일치하지 않습니다." });
+          }
         } else {
-          // 비밀번호 불일치
-          res.status(401).json({ error: '아이디 또는 비밀번호가 일치하지 않습니다.' });
+          // 사용자를 찾을 수 없음
+          res
+            .status(401)
+            .json({ error: "아이디 또는 비밀번호가 일치하지 않습니다." });
         }
       } else {
-        // 사용자를 찾을 수 없음
-        res.status(401).json({ error: '아이디 또는 비밀번호가 일치하지 않습니다.' });
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
       }
-    } else {
-      // 허용되지 않은 메서드
-      res.status(405).json({ error: '허용되지 않은 메서드' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "서버 에러" });
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: '서버 에러' });
-  }
-});
+  });
 
-server.post("/api/approveUser/:userId", async (req, res) => {
-  try {
-    if (req.method === "POST") {
-      const { userId } = req.params;
+  server.post("/api/approveUser/:userId", async (req, res) => {
+    try {
+      if (req.method === "POST") {
+        const { userId } = req.params;
 
-      // 데이터베이스에서 사용자 정보 삭제
-      const [result] = await db.query("DELETE FROM users WHERE userId = ?", [
-        userId,
-      ]);
+        // 데이터베이스에서 사용자 정보 삭제
+        const [result] = await db.query("DELETE FROM users WHERE userId = ?", [
+          userId,
+        ]);
 
-      if (result.affectedRows === 1) {
-        // 성공적으로 삭제된 경우
-        res.status(200).json({ message: "사용자 승인 성공" });
+        if (result.affectedRows === 1) {
+          // 성공적으로 삭제된 경우
+          res.status(200).json({ message: "사용자 승인 성공" });
+        } else {
+          // 삭제 실패 시
+          res.status(404).json({ error: "사용자를 찾을 수 없습니다." });
+        }
       } else {
-        // 삭제 실패 시
-        res.status(404).json({ error: "사용자를 찾을 수 없습니다." });
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
       }
-    } else {
-      // 허용되지 않은 메서드
-      res.status(405).json({ error: "허용되지 않은 메서드" });
+    } catch (error) {
+      console.error("Error approving user:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
-  } catch (error) {
-    console.error("Error approving user:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-  
-  server.post('/api/insertData', async (req, res) => {
+  });
+
+  server.post("/api/insertData", async (req, res) => {
     try {
       if (req.method === "POST") {
         const { userId } = req.params;
@@ -727,7 +810,7 @@ server.post("/api/approveUser/:userId", async (req, res) => {
       }
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: '내부 서버 오류' });
+      res.status(500).json({ error: "내부 서버 오류" });
     }
   });
 
@@ -772,7 +855,7 @@ server.post("/api/approveUser/:userId", async (req, res) => {
           "INSERT INTO product (category_id, product_name, stock_quantity , info) VALUES (?, ?, ?, ?)",
           [category_id, product_name, stock_quantity, info]
         );
-  
+
         if (result.affectedRows === 1) {
           // 성공적으로 추가된 경우
           res.status(200).json({ message: "subscription 정보 추가 성공" });
@@ -786,104 +869,111 @@ server.post("/api/approveUser/:userId", async (req, res) => {
       }
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: '내부 서버 오류' });
+      res.status(500).json({ error: "내부 서버 오류" });
     }
   });
-  
 
   // ...
 
-server.put('/api/updateUser', async (req, res) => {
-  try {
-    if (req.method === 'PUT') {
-      // 인증된 사용자인지 확인
-      const token = req.headers.authorization?.replace('Bearer ', '');
-      if (!token) {
-        console.error('토큰이 제공되지 않았습니다.');
-        return res.status(401).json({ error: '토큰이 제공되지 않았습니다.' });
-      }
+  server.put("/api/updateUser", async (req, res) => {
+    try {
+      if (req.method === "PUT") {
+        // 인증된 사용자인지 확인
+        const token = req.headers.authorization?.replace("Bearer ", "");
+        if (!token) {
+          console.error("토큰이 제공되지 않았습니다.");
+          return res.status(401).json({ error: "토큰이 제공되지 않았습니다." });
+        }
 
-      const decodedToken = jwt.verify(token, secretKey);
-      if (!decodedToken) {
-        console.error('토큰이 유효하지 않습니다.');
-        throw new JsonWebTokenError('jwt malformed');
-      }
+        const decodedToken = jwt.verify(token, secretKey);
+        if (!decodedToken) {
+          console.error("토큰이 유효하지 않습니다.");
+          throw new JsonWebTokenError("jwt malformed");
+        }
 
+        const userId = decodedToken.userId;
 
-      const userId = decodedToken.userId;
+        // 클라이언트에서 보낸 업데이트할 사용자 정보
+        const { name, birthdate, phoneNumber, email, address, gender } =
+          req.body;
 
-      // 클라이언트에서 보낸 업데이트할 사용자 정보
-      const { name, birthdate, phoneNumber, email, address, gender } = req.body;
-
-      // 데이터베이스에서 사용자 정보 업데이트
-      const [result] = await db.query(
-        'UPDATE users SET name = ?, birthdate = ?, phoneNumber = ?, email = ?, address = ?, gender = ? WHERE userId = ?',
-        [name, new Date(birthdate), phoneNumber, email, address, gender, userId]
-      );
-
-      if (result.affectedRows === 1) {
-        // 업데이트 성공 시 새로운 토큰 발급
-        const newToken = jwt.sign(
-          {
-            userId,
+        // 데이터베이스에서 사용자 정보 업데이트
+        const [result] = await db.query(
+          "UPDATE users SET name = ?, birthdate = ?, phoneNumber = ?, email = ?, address = ?, gender = ? WHERE userId = ?",
+          [
             name,
-            birthdate,
+            new Date(birthdate),
             phoneNumber,
             email,
             address,
             gender,
-            cash: decodedToken.cash, // 이 부분은 사용자 정보에 따라 추가 또는 수정해야 할 수 있습니다.
-          },
-          secretKey,
-          { expiresIn: '1h' }
+            userId,
+          ]
         );
-        const newDecodedToken = jwt.verify(newToken, secretKey);
-        console.log(newDecodedToken);
-        res.status(200).json({ token: newToken });
+
+        if (result.affectedRows === 1) {
+          // 업데이트 성공 시 새로운 토큰 발급
+          const newToken = jwt.sign(
+            {
+              userId,
+              name,
+              birthdate,
+              phoneNumber,
+              email,
+              address,
+              gender,
+              cash: decodedToken.cash, // 이 부분은 사용자 정보에 따라 추가 또는 수정해야 할 수 있습니다.
+            },
+            secretKey,
+            { expiresIn: "1h" }
+          );
+          const newDecodedToken = jwt.verify(newToken, secretKey);
+          console.log(newDecodedToken);
+          res.status(200).json({ token: newToken });
+        } else {
+          console.error("사용자를 찾을 수 없습니다.");
+          res.status(404).json({ error: "사용자를 찾을 수 없습니다." });
+        }
       } else {
-        console.error('사용자를 찾을 수 없습니다.');
-        res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
+        console.error("허용되지 않은 메서드");
+        res.status(405).json({ error: "허용되지 않은 메서드" });
       }
-    } else {
-      console.error('허용되지 않은 메서드');
-      res.status(405).json({ error: '허용되지 않은 메서드' });
+    } catch (error) {
+      console.error("Error updating user info:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
-  } catch (error) {
-    console.error('Error updating user info:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+  });
 
-server.post('/api/refreshToken', async (req, res) => {
-  try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
+  server.post("/api/refreshToken", async (req, res) => {
+    try {
+      const token = req.headers.authorization?.replace("Bearer ", "");
 
-    if (!token) {
-      return res.status(401).json({ error: '토큰이 제공되지 않았습니다.' });
-    }
+      if (!token) {
+        return res.status(401).json({ error: "토큰이 제공되지 않았습니다." });
+      }
 
-    const decodedToken = jwt.verify(token, secretKey);
+      const decodedToken = jwt.verify(token, secretKey);
 
     if (!decodedToken) {
       throw new JsonWebTokenError('jwt malformed');
     }
     
 
-    // 현재 토큰의 정보를 기반으로 새로운 토큰을 발급
-    const newToken = jwt.sign(
-      {
-        userId: decodedToken.userId,
-        name: decodedToken.name,
-        birthdate: decodedToken.birthdate,
-        phoneNumber: decodedToken.phoneNumber,
-        email: decodedToken.email,
-        address: decodedToken.address,
-        gender: decodedToken.gender,
-        cash: decodedToken.cash,
-      },
-      secretKey,
-      { expiresIn: '1h' } // 원하는 만료 시간 설정
-    );
+      // 현재 토큰의 정보를 기반으로 새로운 토큰을 발급
+      const newToken = jwt.sign(
+        {
+          userId: decodedToken.userId,
+          name: decodedToken.name,
+          birthdate: decodedToken.birthdate,
+          phoneNumber: decodedToken.phoneNumber,
+          email: decodedToken.email,
+          address: decodedToken.address,
+          gender: decodedToken.gender,
+          cash: decodedToken.cash,
+        },
+        secretKey,
+        { expiresIn: "1h" } // 원하는 만료 시간 설정
+      );
 
     res.status(200).json({ token: newToken });
   } catch (error) {
@@ -932,27 +1022,27 @@ server.post('/api/refresh-token', async (req, res) => {
 });
 
 
-server.post('/api/withdraw', async (req, res) => {
-  try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
+  server.post("/api/withdraw", async (req, res) => {
+    try {
+      const token = req.headers.authorization?.replace("Bearer ", "");
 
-    if (!token) {
-      return res.status(401).json({ error: '토큰이 제공되지 않았습니다.' });
-    }
+      if (!token) {
+        return res.status(401).json({ error: "토큰이 제공되지 않았습니다." });
+      }
 
-    const decodedToken = jwt.verify(token, secretKey);
+      const decodedToken = jwt.verify(token, secretKey);
 
-    if (!decodedToken) {
-      throw new JsonWebTokenError('jwt malformed');
-    }
+      if (!decodedToken) {
+        throw new JsonWebTokenError("jwt malformed");
+      }
 
-    const userId = decodedToken.userId;
+      const userId = decodedToken.userId;
 
-    // 데이터베이스에서 isWithdrawn 상태를 true로 변경
-    const [result] = await db.query(
-      'UPDATE users SET isWithdrawn = true WHERE userId = ?',
-      [userId]
-    );
+      // 데이터베이스에서 isWithdrawn 상태를 true로 변경
+      const [result] = await db.query(
+        "UPDATE users SET isWithdrawn = true WHERE userId = ?",
+        [userId]
+      );
 
     if (result.affectedRows === 1) {
       // 성공적으로 업데이트된 경우

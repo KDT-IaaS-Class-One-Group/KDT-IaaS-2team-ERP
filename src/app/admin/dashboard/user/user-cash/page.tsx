@@ -1,9 +1,8 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
-import NavLinks from '@/components/dashboard/user/User-nav-links-b';
-import styles from '@/styles/adminsidenav.module.scss';
-import SearchForm '@/components/dashboard/SearchForm-b.tsx'
+import React, { useState, useEffect, useCallback } from "react";
+import NavLinks from "@/components/dashboard/user/User-nav-links-b";
+import styles from "@/styles/adminsidenav.module.scss";
 
 interface UserInfo {
   id: string;
@@ -14,34 +13,49 @@ interface UserInfo {
   isWithdrawn: number;
 }
 
+const pageSize = 20; // 페이지당 표시할 항목 수
+
 export default function UsercashPage() {
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 10,
+    pageSize: 20,
     totalPages: 1,
   });
 
-  const [editedCash, setEditedCash] = useState<{ [userId: string]: string }>({});
+  const [editedCash, setEditedCash] = useState<{ [userId: string]: string }>(
+    {}
+  );
 
-  useEffect(() => {
-    fetchData(pageInfo.currentPage, 10);
-  }, [pageInfo.currentPage]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchOption, setSearchOption] = useState("userId"); // 기본값은 userId로 설정
 
-  const fetchData = async (page: number, pageSize: number) => {
-    try {
-      const response = await fetch(`/api/cash?page=${page}&pageSize=${pageSize}`);
-      const data = await response.json();
-      setUsers(data.users);
-      setPageInfo({
-        currentPage: data.pageInfo.currentPage,
-        pageSize: data.pageInfo.pageSize,
-        totalPages: data.pageInfo.totalPages,
-      });
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  };
+  const fetchData = useCallback(
+    async (page: number) => {
+      try {
+        let apiUrl = "/api/users/cash?page=" + page + "&pageSize=" + pageSize;
+
+        if (searchOption === "userId") {
+          apiUrl += "&searchOption=userId&searchTerm=" + searchTerm;
+        } else if (searchOption === "name") {
+          apiUrl += "&searchOption=name&searchTerm=" + searchTerm;
+        }
+
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        setUsers(data.users);
+        setPageInfo({
+          currentPage: data.pageInfo.currentPage,
+          pageSize: data.pageInfo.pageSize,
+          totalPages: data.pageInfo.totalPages,
+        });
+      } catch (error) {
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+      }
+    },
+    [searchTerm, searchOption]
+  );
 
   const handlePageChange = (newPage: number) => {
     setPageInfo({
@@ -60,20 +74,28 @@ export default function UsercashPage() {
     try {
       // API 호출하여 cash 수정
       await fetch(`/api/updateCash/${userId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ cash: editedCash[userId] }),
       });
       // 수정 후 데이터 다시 불러오기
-      fetchData(pageInfo.currentPage, 10);
+      fetchData(pageInfo.currentPage);
       // 수정된 Cash 값을 초기화
-      setEditedCash((prev) => ({ ...prev, [userId]: '' }));
+      setEditedCash((prev) => ({ ...prev, [userId]: "" }));
     } catch (error) {
-      console.error('Error updating cash:', error);
+      console.error("Error updating cash:", error);
     }
   };
+
+  useEffect(() => {
+    fetchData(pageInfo.currentPage);
+  }, [fetchData, pageInfo.currentPage]);
+
+  useEffect(() => {
+    setSearchTerm("");
+  }, []);
 
   return (
     <>
@@ -81,8 +103,24 @@ export default function UsercashPage() {
         <NavLinks />
       </div>
       <main>
-        <SearchForm />
         <h1>회원 캐시 관리</h1>
+        <label htmlFor="searchOption">검색 옵션:</label>
+        <select
+          id="searchOption"
+          value={searchOption}
+          onChange={(e) => setSearchOption(e.target.value)}
+        >
+          <option value="userId">User ID</option>
+          <option value="name">Name</option>
+        </select>
+        <input
+          type="text"
+          placeholder={`${
+            searchOption === "userId" ? "userId" : "name"
+          }로 검색`}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
         <div className={styles.userinfocontent}>
           <table className={styles.userTable}>
             <thead>
@@ -106,21 +144,31 @@ export default function UsercashPage() {
                   <td>
                     <input
                       type="text"
-                      value={editedCash[user.userId] || ''}
-                      onChange={(e) => setEditedCash((prev) => ({ ...prev, [user.userId]: e.target.value }))}
+                      value={editedCash[user.userId] || ""}
+                      onChange={(e) =>
+                        setEditedCash((prev) => ({
+                          ...prev,
+                          [user.userId]: e.target.value,
+                        }))
+                      }
                     />
-                    <button onClick={() => handleCashEdit(user.userId)}>수정</button>
+                    <button onClick={() => handleCashEdit(user.userId)}>
+                      수정
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
           <div className={styles.pagination}>
-            {Array.from({ length: pageInfo.totalPages }, (_, index) => index + 1).map((pageNumber) => (
+            {Array.from(
+              { length: pageInfo.totalPages },
+              (_, index) => index + 1
+            ).map((pageNumber) => (
               <button
                 key={pageNumber}
                 className={`pagination-button ${
-                  pageNumber === pageInfo.currentPage ? 'active' : ''
+                  pageNumber === pageInfo.currentPage ? "active" : ""
                 }`}
                 onClick={() => handlePageChange(pageNumber)}
               >

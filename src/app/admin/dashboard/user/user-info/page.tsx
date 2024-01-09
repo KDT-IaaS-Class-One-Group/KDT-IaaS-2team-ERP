@@ -1,8 +1,7 @@
-'use client'
-import React, { useState, useEffect } from 'react';
+"use client";
+import React, { useState, useEffect, useCallback } from "react";
 import NavLinks from "@/components/dashboard/user/User-nav-links-b";
 import styles from "@/styles/adminsidenav.module.scss";
-import SearchForm from '@/components/dashboard/SearchForm-b';
 
 interface UserInfo {
   id: string;
@@ -16,57 +15,68 @@ interface UserInfo {
   cash: string;
   isWithdrawn: number;
 }
+
 const pageSize = 10; // 페이지당 표시할 항목 수
 
 export default function UserinfoPage() {
   const [users, setUsers] = useState<UserInfo[]>([]);
-  const [pageInfo, setPageInfo] = useState({ currentPage: 1, pageSize: 10, totalPages: 1 });
+  const [pageInfo, setPageInfo] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalPages: 1,
+  });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchOption, setSearchOption] = useState("userId"); // 기본값은 userId로 설정
 
-  useEffect(() => {
-    fetchData(pageInfo.currentPage);
-  }, [pageInfo.currentPage]);
-  
-  const fetchData = async (page: number) => {
-    try {
-      const queryParams = new URLSearchParams(window.location.search); // 수정된 부분
-      const response = await fetch(`/api/users?page=${page}&pageSize=${pageSize}&${queryParams}`);
-      const data = await response.json();
-  
-      setUsers(data.users);
-      setPageInfo({
-        currentPage: data.pageInfo.currentPage,
-        pageSize: data.pageInfo.pageSize,
-        totalPages: data.pageInfo.totalPages,
-      });
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  };
+  const fetchData = useCallback(
+    async (page: number) => {
+      try {
+        let apiUrl = "/api/users?page=" + page + "&pageSize=" + pageSize;
+
+        if (searchOption === "userId") {
+          apiUrl += "&searchOption=userId&searchTerm=" + searchTerm;
+        } else if (searchOption === "name") {
+          apiUrl += "&searchOption=name&searchTerm=" + searchTerm;
+        }
+
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        setUsers(data.users);
+        setPageInfo({
+          currentPage: data.pageInfo.currentPage,
+          pageSize: data.pageInfo.pageSize,
+          totalPages: data.pageInfo.totalPages,
+        });
+      } catch (error) {
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+      }
+    },
+    [searchTerm, searchOption]
+  );
 
   const handlePageChange = (newPage: number) => {
     setPageInfo({
       ...pageInfo,
       currentPage: newPage,
     });
-    
   };
 
   const handleApproval = async (userId: string) => {
     try {
       // API 호출하여 승인 처리
       await fetch(`/api/approveUser/${userId}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
       // 승인 후 데이터 다시 불러오기
       fetchData(pageInfo.currentPage);
     } catch (error) {
-      console.error('Error approving user:', error);
+      console.error("Error approving user:", error);
     }
   };
-  
 
   const formatBirthdate = (birthdate: string) => {
     const birthdateDate = new Date(birthdate);
@@ -74,69 +84,98 @@ export default function UserinfoPage() {
     return birthdateLocalString;
   };
 
+  useEffect(() => {
+    fetchData(pageInfo.currentPage);
+  }, [fetchData, pageInfo.currentPage]);
+
+  useEffect(() => {
+    setSearchTerm("");
+  }, []);
+
 
   return (
     <>
       <div className={styles.sidelink}>
         <NavLinks />
       </div>
-    <main className={styles.main}>
-      <h1>
-        회원 정보 관리
-      </h1>
-      <SearchForm />
-      <div className={styles.userinfocontent}>
-        <table className={styles.userTable}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>User ID</th>
-              <th>Name</th>
-              <th>Birthdate</th>
-              <th>Phone Number</th>
-              <th>Email</th>
-              <th>Address</th>
-              <th>Gender</th>
-              <th>Cash</th>
-              <th>탈퇴신청</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.userId}</td>
-                <td>{user.name}</td>
-                <td>{formatBirthdate(user.birthdate)}</td>
-                <td>{user.phoneNumber}</td>
-                <td>{user.email}</td>
-                <td>{user.address}</td>
-                <td>{user.gender}</td>
-                <td>{user.cash}</td>
-                <td>{user.isWithdrawn === 1 ? '신청' : '미신청'}</td>
-                <td>
-                  {user.isWithdrawn === 1 && (
-                    <button onClick={() => handleApproval(user.userId)}>승인</button>
-                  )}
-                </td>
+      <main className={styles.main}>
+        <h1>회원 정보 관리</h1>
+        <label htmlFor="searchOption">검색 옵션:</label>
+        <select
+          id="searchOption"
+          value={searchOption}
+          onChange={(e) => setSearchOption(e.target.value)}
+        >
+          <option value="userId">User ID</option>
+          <option value="name">Name</option>
+        </select>
+        <input
+          type="text"
+          placeholder={`${
+            searchOption === "userId" ? "userId" : "name"
+          }로 검색`}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <div className={styles.userinfocontent}>
+          <table className={styles.userTable}>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Birthdate</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Gender</th>
+                <th>Cash</th>
+                <th>탈퇴신청</th>
+                <th>Action</th>
               </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.userId}</td>
+                  <td>{user.name}</td>
+                  <td>{formatBirthdate(user.birthdate)}</td>
+                  <td>{user.phoneNumber}</td>
+                  <td>{user.email}</td>
+                  <td>{user.address}</td>
+                  <td>{user.gender}</td>
+                  <td>{user.cash}</td>
+                  <td>{user.isWithdrawn === 1 ? "신청" : "미신청"}</td>
+                  <td>
+                    {user.isWithdrawn === 1 && (
+                      <button onClick={() => handleApproval(user.userId)}>
+                        승인
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="pagination">
+            {Array.from(
+              { length: pageInfo.totalPages },
+              (_, index) => index + 1
+            ).map((pageNumber) => (
+              <button
+                key={pageNumber}
+                className={`pagination-button ${
+                  pageNumber === pageInfo.currentPage ? "active" : ""
+                }`}
+                onClick={() => handlePageChange(pageNumber)}
+              >
+                {pageNumber}
+              </button>
             ))}
-          </tbody>
-        </table>
-        <div className="pagination">
-        {Array.from({ length: pageInfo.totalPages }, (_, index) => index + 1).map((pageNumber) => (
-          <button
-            key={pageNumber}
-            className={`pagination-button ${pageNumber === pageInfo.currentPage ? 'active' : ''}`}
-            onClick={() => handlePageChange(pageNumber)}
-          >
-            {pageNumber}
-          </button>
-        ))}
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
     </>
   );
 }
