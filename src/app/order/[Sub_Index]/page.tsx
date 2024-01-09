@@ -16,11 +16,13 @@ interface OrderClientSideProps {
 
 interface UserInfo {
   user_Index:number,
+  userId :string;
   name: string;
   phoneNumber: string;
   email: string;
   address: string;
   cash:number;
+  order_Index: number;
 }
 
 interface ProductClientSideProps {
@@ -44,6 +46,11 @@ export default function OrderClientSide() {
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
   const [productData, setProductData] = useState<ProductClientSideProps[]>([]);
 
+
+  const setsToken = (token: string) => {
+    localStorage.setItem('token', token);
+    setToken(token);
+  };
 
   useEffect(() => {
     if (selectedProducts) {
@@ -102,15 +109,17 @@ export default function OrderClientSide() {
       const decodedToken = jwt.decode(token) as JwtPayload;
 
       if (decodedToken) {
-        const {user_Index,name, phoneNumber, email, address, cash } = decodedToken;
+        const {user_Index,userId,name, phoneNumber, email, address, cash , order_Index} = decodedToken;
 
         const userInformation: UserInfo = {
           user_Index,
+          userId,
           name,
           phoneNumber,
           email,
           address,
           cash,
+          order_Index,
         };
 
         setUserInfo(userInformation);
@@ -128,24 +137,79 @@ export default function OrderClientSide() {
 
   const handlePayment = async () => {
     try {
+      if (userInfo && userInfo.order_Index !== null) {
+        console.log('이미 구독 중입니다.');
+        alert('이미 구독 중입니다.');
+        router.push('/');
+        return;
+      }
+
       const response = await fetch('/api/payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ token: localStorage.token, price: Price }),
+        body: JSON.stringify({
+          token: localStorage.token,
+          sub_index: subs_index, // 추가: sub_index 전달
+          price: Price,
+          ids: selectedProducts,
+        }),
       });
 
+      console.log('Request Data:', JSON.stringify({
+        token: localStorage.token,
+        sub_index: subs_index,
+        price: Price,
+        ids: selectedProducts,
+    }));
+  
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
+  
       const responseData = await response.json();
       console.log(responseData); // 서버로부터의 응답 처리
+      
+      const updatedToken = await fetchUpdatedToken();
+      
+      if (updatedToken) {
+        // 토큰 업데이트 및 로컬 스토리지에 저장
+        setToken(updatedToken);
+      }
+
     } catch (error) {
       console.error(error);
     }
   };
+
+  const fetchUpdatedToken = async () => {
+    try {
+      const response = await fetch('/api/refresh-token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token: localStorage.token,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const { newToken } = await response.json();
+      console.log(`newtoken:${newToken}`)
+      return newToken;
+      
+    } catch (error) {
+      console.error('토큰 갱신 중 오류 발생:', error);
+      return null;
+    }
+  };
+
+  
 
   return (
     <div>

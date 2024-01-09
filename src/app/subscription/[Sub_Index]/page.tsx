@@ -64,7 +64,7 @@ export default function SubscriptionClientSide() {
   const handleOrderButtonClick = async () => {
     try {
       // 선택된 상품이 없으면 경고 표시
-      if (selectedProducts.length !== Math.floor(data.reduce((acc, item) => acc + item.size, 0) / 4)) {
+      if (selectedProducts.length !== Math.floor(data.reduce((acc, item) => acc + item.size, 0) / (data[0]?.Week || 1)))  {
         alert("상품을 모두 선택하세요.");
         return;
       }else{

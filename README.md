@@ -7,7 +7,7 @@ npm install react-query
 
 ## 데이터베이스 쿼리문 / 그냥 기본 틀이니까 열 추가나 삭제 필요하면 하면서 해주세요!
 
-### Users (사용자 정보)
+### User (사용자 정보)
 CREATE TABLE User (
     User_Index INT AUTO_INCREMENT PRIMARY KEY,
     id VARCHAR(50) NOT NULL,
@@ -25,15 +25,17 @@ CREATE TABLE User (
     RegiMethod BOOLEAN NOT NULL
 );
 
-### Subscription (구독 상품 제어) 구독 자체 상품, 구독 고유 상품번호 및 , 구독 상품의 구독week, 배송하는 담을수 있는 원두갯수(주단위)
-CREATE TABLE subscription (
-    subs_index INT AUTO_INCREMENT PRIMARY KEY,
+### Subscription (구독 서비스 제어) 구독 고유번호가 유저고유번호와 연결, 상품고유번호와도 연결되어 어떤 상품들을 선택했는지 확인 가능, 상품 개수만큼 행이 추가됨
+CREATE TABLE Subscription (
+    Subs_Index INT AUTO_INCREMENT PRIMARY KEY,
+    product_Index INT NOT NULL,
+    User_Index INT NOT NULL,
     name VARCHAR(50) NOT NULL,
-    week INT NOT NULL CHECK (week % 4 = 0),
-    size INT NOT NULL CHECK (size % 4 = 0),
-    price INT NOT NULL
+    week INT NOT NULL,
+    price INT NOT NULL,
+    FOREIGN KEY (product_Index) REFERENCES Products(Product_Index),
+    FOREIGN KEY (User_Index) REFERENCES User(User_Index)
 );
-
 
 ### Order (고객이 주문하면 여기 저장됩니다.) 유저고유번호와 구독고유번호로 어떤 사용자가 어떤 종료의 구독서비스를 이용하는지 확인가능
 CREATE TABLE Order (
@@ -52,8 +54,19 @@ CREATE TABLE Order (
     req VARCHAR(300) NULL,
     status INT DEFAULT 0,
     FOREIGN KEY (Subs_Index_Subscription) REFERENCES Subscription(Subs_Index),
-    FOREIGN KEY (User_Index) REFERENCES Users(User_Index),
+    FOREIGN KEY (User_Index) REFERENCES User(User_Index),
     FOREIGN KEY (Subs_Index_Order) REFERENCES Subscription(Subs_Index)
+);
+
+CREATE TABLE Orderdetails (
+    Order_Index INT AUTO_INCREMENT PRIMARY KEY,
+    subs_index INT(11) NOT NULL,
+    user_Index INT(11) NOT NULL,
+    price INT NOT NULL,
+    Subs_Start TIMESTAMP NOT NULL,
+    Subs_End TIMESTAMP NOT NULL,
+    FOREIGN KEY (subs_index) REFERENCES subscription(subs_index),
+    FOREIGN KEY (user_Index) REFERENCES users(user_Index)
 );
 
 ### Board (고객센터 관련)
@@ -65,7 +78,7 @@ CREATE TABLE Board (
     date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     password VARCHAR(50) NOT NULL,
     image VARCHAR(500) NULL,
-    FOREIGN KEY (User_Index) REFERENCES Users(User_Index)
+    FOREIGN KEY (User_Index) REFERENCES User(User_Index)
 );
 
 ### Product 상품 정보 (원두 종류가 들어갑니다.)
@@ -84,7 +97,12 @@ CREATE TABLE Product (
     FOREIGN KEY (categoryID) REFERENCES Category(categoryID)
 );
 
-
+### Category 카테고리 관련
+CREATE TABLE Category (
+    categoryID INT AUTO_INCREMENT PRIMARY KEY,
+    categoryName VARCHAR(50) NOT NULL,
+    parentCategoryID INT NULL
+);
 
 ### Cart 추가
 CREATE TABLE Cart (
