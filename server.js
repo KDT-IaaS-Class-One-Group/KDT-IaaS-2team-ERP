@@ -59,6 +59,34 @@ app.prepare().then(() => {
     }
   });
 
+  server.get('/api/userGraph', async (req, res) => {
+    const minCash = 0;
+    const maxCash = 150000;
+    const interval = 10000;
+  
+    const ranges = [];
+    for (let start = minCash; start < maxCash; start += interval) {
+      const end = start + interval - 1;
+      ranges.push({ start, end });
+    }
+  
+    try {
+      const promises = ranges.map(async ({ start, end }) => {
+        const query = `SELECT COUNT(DISTINCT id) as userCount FROM Users WHERE cash BETWEEN ${start} AND ${end};`;
+        const connection = await pool.getConnection();
+        const [results] = await connection.query(query);
+        connection.release();
+        return { range: `${start}-${end}`, userCount: results[0].userCount };
+      });
+  
+      const results = await Promise.all(promises);
+      res.json(results);
+    } catch (error) {
+      console.error('Error executing query:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+
   
   server.get('/api/users', async (req, res) => {
     try {
