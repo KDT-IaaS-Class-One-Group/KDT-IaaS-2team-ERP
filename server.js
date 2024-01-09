@@ -49,13 +49,19 @@ app.prepare().then(() => {
       const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
       const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
       const searchTerm = req.query.searchTerm || "";
+      const searchOption = req.query.searchOption || "userId";
 
       let query = "SELECT * FROM users";
       let queryParams = [];
 
       if (searchTerm) {
-        query += " WHERE userId LIKE ? OR name LIKE ?";
-        queryParams = [`%${searchTerm}%`, `%${searchTerm}%`];
+        if (searchOption === "userId") {
+          query += " WHERE userId LIKE ?";
+        } else if (searchOption === "name") {
+          query += " WHERE name LIKE ?";
+        }
+  
+        queryParams = [`%${searchTerm}%`];
       }
 
       query += " LIMIT ?, ?";
@@ -65,7 +71,11 @@ app.prepare().then(() => {
 
       let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM users";
       if (searchTerm) {
-        totalCountQuery += " WHERE userId LIKE ? OR name LIKE ?";
+        if (searchOption === "userId") {
+          totalCountQuery += " WHERE userId LIKE ?";
+        } else if (searchOption === "name") {
+          totalCountQuery += " WHERE name LIKE ?";
+        }
       }
 
       const [totalCount] = await db.query(
@@ -90,34 +100,41 @@ app.prepare().then(() => {
 
   server.get("/api/users/cash", async (req, res) => {
     try {
-      const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
-      const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
+      const page = parseInt(req.query.page) || 1;
+      const pageSize = parseInt(req.query.pageSize) || 20;
       const searchTerm = req.query.searchTerm || "";
-
+      const searchOption = req.query.searchOption || "userId";
+  
       let query = "SELECT * FROM users";
       let queryParams = [];
-
+  
       if (searchTerm) {
-        query += " WHERE userId LIKE ? OR name LIKE ?";
-        queryParams = [`%${searchTerm}%`, `%${searchTerm}%`];
+        if (searchOption === "userId") {
+          query += " WHERE userId LIKE ?";
+        } else if (searchOption === "name") {
+          query += " WHERE name LIKE ?";
+        }
+  
+        queryParams = [`%${searchTerm}%`];
       }
-
+  
       query += " LIMIT ?, ?";
       queryParams.push((page - 1) * pageSize, pageSize);
-
+  
       const [users] = await db.query(query, queryParams);
-
+  
       let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM users";
       if (searchTerm) {
-        totalCountQuery += " WHERE userId LIKE ? OR name LIKE ?";
+        if (searchOption === "userId") {
+          totalCountQuery += " WHERE userId LIKE ?";
+        } else if (searchOption === "name") {
+          totalCountQuery += " WHERE name LIKE ?";
+        }
       }
-
-      const [totalCount] = await db.query(
-        totalCountQuery,
-        queryParams.slice(0, 2)
-      );
+  
+      const [totalCount] = await db.query(totalCountQuery, queryParams.slice(0, 1));
       const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
-
+  
       res.json({
         users,
         pageInfo: {
@@ -130,7 +147,7 @@ app.prepare().then(() => {
       console.error("Error fetching users:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
-  });
+  });  
 
   server.get("/api/signup/checkDuplicate/:userId", async (req, res) => {
     try {
