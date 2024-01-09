@@ -89,6 +89,14 @@ app.prepare().then(() => {
               ORDER BY label;
             `;
             break;
+            case 'cash':
+              query = `
+                SELECT FLOOR(cash / 10000) * 10000 as label, COUNT(DISTINCT id) as userCount
+                FROM User
+                GROUP BY label
+                ORDER BY label;
+              `;
+              break;
         default:
           res.status(400).send('Invalid xAxis parameter');
           return;

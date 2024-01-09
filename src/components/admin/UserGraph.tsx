@@ -30,6 +30,7 @@ const UserGraph = () => {
         <option value="timestamp">가입일자</option>
         <option value="birth">출생년도</option>
         <option value="gender">성별</option>
+        <option value="cash">돈</option>
       </select>
 
       <ResponsiveContainer width="200%" height={400}>
