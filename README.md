@@ -7,7 +7,7 @@ npm install react-query
 
 ## 데이터베이스 쿼리문 / 그냥 기본 틀이니까 열 추가나 삭제 필요하면 하면서 해주세요!
 
-### User (사용자 정보)
+### User (사용자 정보)  order_Index 외래키로 Orderdetails 테이블에서 구독내용 확인 (자동연장시 갱신x추가해야함)      
 CREATE TABLE User (
     User_Index INT AUTO_INCREMENT PRIMARY KEY,
     id VARCHAR(50) NOT NULL,
@@ -19,11 +19,11 @@ CREATE TABLE User (
     address VARCHAR(300) NOT NULL,
     gender CHAR(1) NOT NULL,
     cash INT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    signout CHAR(1) NOT NULL DEFAULT 'N',
-    admin TINYINT(1) NULL,
-    RegiMethod BOOLEAN NOT NULL
-);
+    join_data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    isWithdrawn CHAR(1) NOT NULL DEFAULT 'N',
+    order_Index int DEFAULT NULL                                              
+    FOREIGN KEY (Order_Index) REFERENCES Orderdetails(orderdetails),
+);  
 
 ### Subscription (구독 서비스 제어) 구독 고유번호가 유저고유번호와 연결, 상품고유번호와도 연결되어 어떤 상품들을 선택했는지 확인 가능, 상품 개수만큼 행이 추가됨
 CREATE TABLE Subscription (
