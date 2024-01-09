@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, ChangeEvent, useEffect, useCallback } from "react";
-import styles from "@/styles/adminsidenav.module.scss";
+import React, { useState, useEffect, useCallback } from "react";
+import styles from "@/styles/adminqna.module.scss";
 
 interface BoardInfo {
   boardKey: string;
@@ -27,12 +27,12 @@ export default function QA() {
     totalPages: 1,
   });
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchOption, setSearchOption] = useState("userId"); // 기본값은 userId로 설정
+  const [selectedBoard, setSelectedBoard] = useState<BoardInfo | null>(null);
   const [editedReply, setEditedReply] = useState<{ [userId: string]: string }>(
     {}
   );
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchOption, setSearchOption] = useState("userId"); // 기본값은 userId로 설정
 
   const fetchData = useCallback(
     async (page: number) => {
@@ -61,6 +61,14 @@ export default function QA() {
     },
     [searchTerm, searchOption]
   );
+
+  const handleRowClick = (board: BoardInfo) => {
+    setSelectedBoard(board);
+  };
+
+  const handleModalClose = () => {
+    setSelectedBoard(null);
+  };
 
   const handlePageChange = (newPage: number) => {
     setPageInfo({
@@ -132,52 +140,62 @@ export default function QA() {
         <table className={styles.userTable}>
           <thead>
             <tr>
-              <th>boardKey</th>
               <th>User ID</th>
+              <th>name</th>
               <th>title</th>
               <th>content</th>
               <th>date</th>
-              <th>password</th>
-              <th>image</th>
-              <th>email</th>
-              <th>phoneNumber</th>
-              <th>name</th>
               <th>reply</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {boards.map((board) => (
-              <tr key={board.boardKey}>
-                <td>{board.boardKey}</td>
+              <tr key={board.boardKey} onClick={() => handleRowClick(board)}>
                 <td>{board.userId}</td>
+                <td>{board.name}</td>
                 <td>{board.title}</td>
                 <td>{board.content}</td>
                 <td>{formatDateTime(board.date)}</td>
-                <td>{board.password}</td>
-                <td>{board.image}</td>
-                <td>{board.email}</td>
-                <td>{board.phoneNumber}</td>
-                <td>{board.name}</td>
                 <td>{board.reply}</td>
                 <td>
-                  <input
-                    type="text"
-                    value={editedReply[board.userId] || ""}
-                    onChange={(e) =>
-                      setEditedReply((prev) => ({
-                        ...prev,
-                        [board.userId]: e.target.value,
-                      }))
-                    }
-                  />
-                  <button onClick={() => handleReplyEdit(board.userId)}>
-                    등록
-                  </button>
+                  <button onClick={() => handleRowClick(board)}>보기</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {selectedBoard !== null && (
+          <div className={`${styles.modal} ${styles.show}`}>
+            <div className={styles.modalContent}>
+              <span className={styles.close} onClick={handleModalClose}>
+                &times;
+              </span>
+              <h2>제목 : {selectedBoard.title}</h2>
+              <div>ID : {selectedBoard.userId}</div>
+              <div>이름 : {selectedBoard.name}</div>
+              <div>email : {selectedBoard.email}</div>
+              <div>phone : {selectedBoard.phoneNumber}</div>
+              <div>내용 : {selectedBoard.content}</div>
+              <div>답변 : {selectedBoard.reply}</div>
+              <div>
+                <input
+                  type="text"
+                  value={editedReply[selectedBoard.userId] || ""}
+                  onChange={(e) =>
+                    setEditedReply((prev) => ({
+                      ...prev,
+                      [selectedBoard.userId]: e.target.value,
+                    }))
+                  }
+                />
+                <button onClick={() => handleReplyEdit(selectedBoard.userId)}>
+                  등록
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <div className={styles.pagination}>
           {Array.from(
             { length: pageInfo.totalPages },
