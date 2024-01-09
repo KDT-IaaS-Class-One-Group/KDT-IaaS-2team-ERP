@@ -105,7 +105,6 @@ app.prepare().then(() => {
   //   }
   // }
 
-
   cron.schedule("0 * * * *", () => {
     try {
       checkAndRenewSubscriptions(pool); 
@@ -116,7 +115,7 @@ app.prepare().then(() => {
         error.message
       );
     }
-  });
+  }); 
 
   // // ! 테스트 목적 즉시 실행되게 
   // checkAndRenewSubscriptions(pool); 
