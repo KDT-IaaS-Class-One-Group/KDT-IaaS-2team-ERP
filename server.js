@@ -14,8 +14,8 @@ const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
-  user: "root",
-  password: "0000",
+  user: "yuan",
+  password: "1234",
   database: "erp",
   connectionLimit: 5,
 });
@@ -675,7 +675,7 @@ server.post('/api/payment', async (req, res) => {
       const offset = (page - 1) * pageSize;
 
       const [subs] = await db.query(
-        "SELECT * FROM subscription LIMIT ?, ?, ?, ? ",
+        "SELECT * FROM subscription LIMIT ?, ? ",
         [offset, pageSize]
       );
       const [totalCount] = await db.query(
@@ -691,7 +691,6 @@ server.post('/api/payment', async (req, res) => {
           totalPages,
         },
       });
-      
     } catch (error) {
       console.error("Error fetching subs:", error);
       res.status(500).json({ error: "Internal Server Error" });
@@ -927,12 +926,12 @@ server.post('/api/payment', async (req, res) => {
   server.post("/api/subs-product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { productIndex, name, price, week } = req.body;
-        
+        const { product_Index, name, price, week } = req.body; // 변경된 부분
+  
         // 데이터베이스에서 subscription 정보 추가
         const [result] = await db.query(
           "INSERT INTO subscription (product_Index, name, price, week) VALUES (?, ?, ?, ?)",
-          [productIndex, name, price, week]
+          [product_Index, name, price, week] // 변경된 부분
         );
   
         if (result.affectedRows === 1) {
@@ -950,7 +949,7 @@ server.post('/api/payment', async (req, res) => {
       console.error(error);
       res.status(500).json({ error: '내부 서버 오류' });
     }
-  });
+  });  
 
   server.post("/api/addproduct", async (req, res) => {
     try {
