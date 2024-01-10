@@ -334,7 +334,13 @@ app.prepare().then(() => {
           ORDER BY label;
           `;
           break;
-        // 다른 X 축 옵션들에 대한 case 추가
+          case 'address':
+            query = `
+              SELECT SUBSTRING_INDEX(address, ' ', 1) as label, COUNT(DISTINCT Order_Index) as productCount
+              FROM orderdetails
+              GROUP BY label
+              ORDER BY productCount DESC;`;
+            break;
 
         default:
           res.status(400).send("Invalid xAxis parameter");

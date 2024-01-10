@@ -44,8 +44,8 @@ const ProductGraph = () => {
         value={selectedXAxis}
         onChange={handleXAxisChange}
       >
-        <option value="subs_start"> subs_start </option>
-        {/* 다른 X 축 옵션들에 대한 option 추가 */}
+        <option value="subs_start"> 구독시작월별 </option>
+        <option value="address">지역별</option>
       </select>
 
       <ResponsiveContainer width="200%" height={400}>
