@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import styles from "@/styles/order.module.scss";
 import { useRouter, useSearchParams } from "next/navigation";
+import OrderInfoInput from "../../../components/subscription/OrderInfoInput";
 
 interface OrderClientSideProps {
   Subs_Index: number;
@@ -273,35 +274,28 @@ export default function OrderClientSide() {
             <div>
               <p>나의 캐쉬:{userInfo.cash}</p>
             </div>
-            <label htmlFor="addressInput">주소 입력:</label>
-            <input
-              type="text"
-              id="addressInput"
-              value={addressInput}
-              onChange={handleAddressChange}
-            />
-            <label htmlFor="orderNameInput">주문자 이름:</label>
-            <input
-              type="text"
-              id="orderNameInput"
+            <OrderInfoInput
+              label="주문자 이름"
               value={orderNameInput}
-              onChange={(e) => setOrderNameInput(e.target.value)}
+              onChange={setOrderNameInput}
             />
 
-            <label htmlFor="orderPhoneInput">주문자 전화번호:</label>
-            <input
-              type="text"
-              id="orderPhoneInput"
+            <OrderInfoInput
+              label="주문자 전화번호"
               value={orderPhoneInput}
-              onChange={(e) => setOrderPhoneInput(e.target.value)}
+              onChange={setOrderPhoneInput}
             />
 
-            <label htmlFor="zipCodeInput">우편번호:</label>
-            <input
-              type="text"
-              id="zipCodeInput"
+            <OrderInfoInput
+              label="주소"
+              value={addressInput}
+              onChange={setAddressInput}
+            />
+
+            <OrderInfoInput
+              label="우편번호"
               value={zipCodeInput}
-              onChange={(e) => setZipCodeInput(e.target.value)}
+              onChange={setZipCodeInput}
             />
           </div>
         )}
