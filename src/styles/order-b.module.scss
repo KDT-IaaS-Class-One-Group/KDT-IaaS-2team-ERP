@@ -18,19 +18,19 @@
 
 .title {
   position: relative;
-  left: 15vw;
+  left: 17vw;
 }
 
 .search {
   position: relative;
-  left: 14vw;
+  left: 16vw;
   margin-left: 10px;
   height: 25px;
 }
 
 .select {
   position: relative;
-  left: 14vw;
+  left: 16vw;
   height: 30px;
 }
 
@@ -90,4 +90,39 @@
   &.active {
     background-color: #495464;
   }
+}
+
+.addButton{
+  width: 80px;
+  height: 40px;
+  margin-left: 40px;
+  background-color: #BBBFCA;
+  border: 0;
+  line-height: 40px;
+  color: white;
+  border-radius: 5px;
+  font-weight: bold;
+  position: relative;
+  left: 53vw;
+  font-size: large;
+}
+
+.delButton{
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  width: 40px;
+  height: 25px;
+  background-color: #495464;
+  line-height: 20px;
+  border-radius: 2px;
+}
+
+.addInput {
+  margin-right: 10px;
+  margin-left: 5px;
+
 }
