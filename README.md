@@ -84,6 +84,7 @@ CREATE TABLE Board (
     content VARCHAR(500) NOT NULL,
     date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     password VARCHAR(50) NOT NULL,
+    reply VARCHAR(500) NOT NULL,
     FOREIGN KEY (User_Index) REFERENCES Users(User_Index)
 );
 
