@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import styles from "@/styles/login.module.scss";
+import styles from "@/styles/adminlogin.module.scss";
 
-const LoginForm = () => {
+export default function LoginForm() {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [token, setToken] = useState("");
 
   const router = useRouter();
 
@@ -31,17 +30,16 @@ const LoginForm = () => {
       localStorage.setItem("token", token);
       console.log("로그인 성공");
 
-      router.push("/admin/dashboard");
+      router.push("/admin/dashboard/user/user-info");
       setIsLoggedIn(true);
     } else {
-      // 로그인 실패
       alert("로그인 실패!");
     }
   };
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.push("/admin/dashboard");
+      router.push("/admin/dashboard/user/user-info");
     }
   }, [isLoggedIn, router]);
 
@@ -56,6 +54,7 @@ const LoginForm = () => {
             className={styles.input}
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
+            placeholder="ID를 입력하세요"
           />
         </label>
         <br />
@@ -66,6 +65,7 @@ const LoginForm = () => {
             className={styles.input}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="PASSWORD를 입력하세요"
           />
         </label>
         <br />
@@ -76,5 +76,3 @@ const LoginForm = () => {
     </div>
   );
 };
-
-export default LoginForm;

@@ -1,18 +1,17 @@
-'use client'
+"use client";
 
 import React, { useState, useEffect } from "react";
 import styles from "@/styles/admintopbar.module.scss";
-import TopNav from "@/components/dashboard/Topnav-b"
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import TopNav from "@/components/dashboard/Topnav-b";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-
-function Topbar() {
+export default function Topbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [name, setName] = useState<string | JwtPayload>('');
+  const [name, setName] = useState<string | JwtPayload>("");
 
   useEffect(() => {
     const loadUserFromToken = () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
         const decodedToken = jwt.decode(token) as JwtPayload;
 
@@ -28,27 +27,27 @@ function Topbar() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
-    window.location.href = '/admin';
-    setName('');
+    window.location.href = "/admin";
+    setName("");
   };
 
   const handleDiv1Click = () => {
     // 관리자 홈페이지로 이동
-    window.location.href = '/admin/dashboard';
+    window.location.href = "/admin/dashboard";
   };
   return (
     <div className={styles.topbar}>
-      <div className={styles.div1} onClick={handleDiv1Click}>NTS Admin</div>
+      <div className={styles.div1} onClick={handleDiv1Click}>
+        NTS Admin
+      </div>
       <div className={styles.div2}>
-      <TopNav/>
+        <TopNav />
       </div>
       <div className={styles.div3}>
-      <button onClick={handleLogout}>로그아웃</button>
+        <button className={styles.logout} onClick={handleLogout}>로그아웃</button>
       </div>
     </div>
   );
 }
-
-export default Topbar;

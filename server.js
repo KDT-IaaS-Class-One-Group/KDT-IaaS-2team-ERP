@@ -10,6 +10,9 @@ const multer = require('multer');
 const path = require('path');
 const cron = require('node-cron');
 
+const { checkAndRenewSubscriptions } = require("./src/components/checkAndRenewSubscriptions");
+
+
 const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
@@ -50,110 +53,172 @@ app.prepare().then(() => {
   server.use(bodyParser.json());
 
 
-  cron.schedule('0 * * * *', async () => {
+  // cron.schedule('15 * * * *', async () => {
+  //   try {
+  //     // 구독을 확인하고 갱신하는 함수 호출
+  //     await checkAndRenewSubscriptions();
+  //   } catch (error) {
+  //     console.error('구독 갱신 오류:', error);
+  //   }
+  // });
+
+  // async function checkAndRenewSubscriptions() {
+  //   const currentDate = new Date();
+  
+  //   // 구독 갱신이 필요한 주문 조회
+  //   const dueSubscriptionsQuery = `
+  //     SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
+  //     FROM Orderdetails
+  //     WHERE Subs_End <= ?;
+  //   `;
+  
+  //   const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
+  
+  //   for (const subscription of dueSubscriptionsResult) {
+  //     const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
+  
+  //     // 해당 주문의 구독 주기 조회
+  //     const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
+  //     const [weekResult] = await pool.query(weekQuery, [subs_index]);
+  
+  //     if (weekResult.length > 0) {
+  //       const week = weekResult[0].Week;
+  
+  //       // 새로운 시작일 결정 (예: 이전 구독의 종료일)
+  //       const newStartDate = Subs_End;
+  
+  //       // 새로운 종료일 결정 (예: week * 7일 연장)
+  //       const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
+  
+  //       // 데이터베이스에서 구독 정보 업데이트
+  //       const updateSubscriptionQuery = `
+  //         UPDATE Orderdetails
+  //         SET Subs_Start = ?, Subs_End = ?
+  //         WHERE Order_Index = ?;
+  //       `;
+  
+  //       await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
+  
+  //       // 갱신된 구독에 대한 로그 또는 알림
+  //       console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
+  //     }
+  //   }
+  // }
+
+  const verifyToken = (token) => {
+    return new Promise((resolve, reject) => {
+      jwt.verify(token, secretKey, (err, decoded) => {
+        if (err) reject(err);
+        resolve(decoded);
+      });
+    });
+  };
+  
+  server.get("/api/orderindex", async (req, res) => {
     try {
-      // 구독을 확인하고 갱신하는 함수 호출
-      await checkAndRenewSubscriptions();
+      // 헤더에서 토큰 추출
+      const token = req.headers.authorization.split(" ")[1];
+  
+      // 토큰 확인 및 디코딩
+      const decodedToken = await verifyToken(token);
+      const userIndex = decodedToken.User_Index;
+  
+      // 데이터베이스에서 user_Index를 기반으로 일치하는 Order_Index 조회
+      const [rows] = await pool.query(
+        "SELECT Order_Index FROM orderdetails WHERE User_Index = ?",
+        [userIndex]
+      );
+  
+      const orderIndexArray = rows.map((row) => row.Order_Index);
+      res.json(orderIndexArray);
     } catch (error) {
-      console.error('구독 갱신 오류:', error);
+      console.error("Error querying database:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   });
 
-  async function checkAndRenewSubscriptions() {
-    const currentDate = new Date();
-  
-    // 구독 갱신이 필요한 주문 조회
-    const dueSubscriptionsQuery = `
-      SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
-      FROM Orderdetails
-      WHERE Subs_End <= ?;
-    `;
-  
-    const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
-  
-    for (const subscription of dueSubscriptionsResult) {
-      const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
-  
-      // 해당 주문의 구독 주기 조회
-      const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
-      const [weekResult] = await pool.query(weekQuery, [subs_index]);
-  
-      if (weekResult.length > 0) {
-        const week = weekResult[0].Week;
-  
-        // 새로운 시작일 결정 (예: 이전 구독의 종료일)
-        const newStartDate = Subs_End;
-  
-        // 새로운 종료일 결정 (예: week * 7일 연장)
-        const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
-  
-        // 데이터베이스에서 구독 정보 업데이트
-        const updateSubscriptionQuery = `
-          UPDATE Orderdetails
-          SET Subs_Start = ?, Subs_End = ?
-          WHERE Order_Index = ?;
-        `;
-  
-        await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
-  
-        // 갱신된 구독에 대한 로그 또는 알림
-        console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
-      }
-    }
-  }
-
-
-  cron.schedule('0 * * * *', async () => {
+  cron.schedule("0 * * * *", () => {
     try {
-      // 구독을 확인하고 갱신하는 함수 호출
-      await checkAndRenewSubscriptions();
+      checkAndRenewSubscriptions(pool); 
+      console.log("checkAndRenewSubscriptions.js가 실행되었습니다.");
     } catch (error) {
-      console.error('구독 갱신 오류:', error);
+      console.error(
+        "checkAndRenewSubscriptions.js 실행 중 오류가 발생했습니다:",
+        error.message
+      );
+    }
+  }); 
+
+  server.get("/api/orderdetails", async (req, res) => {
+    try {
+      // 토큰에서 user_Index 추출
+      const token = req.headers.authorization.split(" ")[1];
+      const decodedToken = jwt.verify(token, secretKey);
+  
+      if (!decodedToken || !decodedToken.user_Index) {
+        console.error('Invalid token or user index not found');
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+  
+      const userIndex = decodedToken.user_Index;
+      console.log('userIndex : ' ,userIndex)
+      // 사용자의 주문 정보만 가져오기
+      const [rows, fields] = await pool.query("SELECT Order_Index FROM orderdetails WHERE User_Index = ?", [userIndex]);
+  
+      // 결과를 JSON 형식으로 응답
+      res.json(rows);
+    } catch (error) {
+      console.error("Error fetching orderdetails:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   });
+  
 
-  async function checkAndRenewSubscriptions() {
-    const currentDate = new Date();
+  // // ! 테스트 목적 즉시 실행되게 
+  // checkAndRenewSubscriptions(pool); 
+
+  // async function checkAndRenewSubscriptions() {
+  //   const currentDate = new Date();
   
-    // 구독 갱신이 필요한 주문 조회
-    const dueSubscriptionsQuery = `
-      SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
-      FROM Orderdetails
-      WHERE Subs_End <= ?;
-    `;
+  //   // 구독 갱신이 필요한 주문 조회
+  //   const dueSubscriptionsQuery = `
+  //     SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
+  //     FROM Orderdetails
+  //     WHERE Subs_End <= ?;
+  //   `;
   
-    const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
+  //   const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
   
-    for (const subscription of dueSubscriptionsResult) {
-      const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
+  //   for (const subscription of dueSubscriptionsResult) {
+  //     const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
   
-      // 해당 주문의 구독 주기 조회
-      const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
-      const [weekResult] = await pool.query(weekQuery, [subs_index]);
+  //     // 해당 주문의 구독 주기 조회
+  //     const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
+  //     const [weekResult] = await pool.query(weekQuery, [subs_index]);
   
-      if (weekResult.length > 0) {
-        const week = weekResult[0].Week;
+  //     if (weekResult.length > 0) {
+  //       const week = weekResult[0].Week;
   
-        // 새로운 시작일 결정 (예: 이전 구독의 종료일)
-        const newStartDate = Subs_End;
+  //       // 새로운 시작일 결정 (예: 이전 구독의 종료일)
+  //       const newStartDate = Subs_End;
   
-        // 새로운 종료일 결정 (예: week * 7일 연장)
-        const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
+  //       // 새로운 종료일 결정 (예: week * 7일 연장)
+  //       const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
   
-        // 데이터베이스에서 구독 정보 업데이트
-        const updateSubscriptionQuery = `
-          UPDATE Orderdetails
-          SET Subs_Start = ?, Subs_End = ?
-          WHERE Order_Index = ?;
-        `;
+  //       // 데이터베이스에서 구독 정보 업데이트
+  //       const updateSubscriptionQuery = `
+  //         UPDATE Orderdetails
+  //         SET Subs_Start = ?, Subs_End = ?
+  //         WHERE Order_Index = ?;
+  //       `;
   
-        await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
+  //       await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
   
-        // 갱신된 구독에 대한 로그 또는 알림
-        console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
-      }
-    }
-  }
+  //       // 갱신된 구독에 대한 로그 또는 알림
+  //       console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
+  //     }
+  //   }
+  // }
 
 
   server.get("/api/classroom", async (req, res) => {
@@ -496,6 +561,8 @@ app.prepare().then(() => {
  * ? /Order 엔드포인트
  */
 
+
+
 server.post("/api/order", async (req, res) => {
   try {
     // 클라이언트로부터 받은 상품 이름
@@ -533,17 +600,29 @@ server.post('/api/payment', async (req, res) => {
   try {
     const token = req.body.token;
     const price = req.body.price;
-    const subsIndex=req.body.sub_index;
+    const subsIndex = req.body.sub_index;
     const ids = req.body.ids;
-    
+    const address = req.body.address; // 추가된 부분
+
     // 토큰 해독
     const decodedToken = jwt.verify(token, secretKey);
-    const userIndex = decodedToken.user_Index;
+    const userIndex = decodedToken.User_Index;
 
     // 데이터베이스 연결
     const connection = await pool.getConnection();
 
     try {
+      // 사용자의 캐시 확인
+      const checkCashQuery = `SELECT cash FROM users WHERE user_Index = ?`;
+      const [cashResult] = await connection.query(checkCashQuery, [userIndex]);
+      const userCash = cashResult[0].cash;
+
+      // 캐시 부족한 경우 에러 응답
+      if (userCash < price) {
+        res.status(400).json({ error: '캐시가 부족합니다.' });
+        return;
+      }
+
       // 트랜잭션 시작
       await connection.beginTransaction();
 
@@ -555,19 +634,20 @@ server.post('/api/payment', async (req, res) => {
       // 주문 정보 추가
       const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
       const [weekResult] = await connection.query(weekQuery, [subsIndex]);
-     
+
       const week = weekResult[0].Week;
-     
+
+      // 추가된 부분: 사용자의 user_Index 값으로 주문 정보를 추가
       const orderQuery = `
-        INSERT INTO Orderdetails (subs_index, user_Index, price, Subs_Start, Subs_End )
-        VALUES (?, ?, ?, ?, ? )
+        INSERT INTO Orderdetails (subs_index, user_Index, Subs_Start, Subs_End, address) 
+        VALUES (?, ?, ?, ?, ?)
       `;
       const orderValues = [
         subsIndex,
-        userIndex,
-        price,
+        userIndex, // 추가된 부분
         new Date(),
         new Date(Date.now() + week * 7 * 24 * 60 * 60 * 1000),
+        address,
       ];
 
       const [orderResult] = await connection.query(orderQuery, orderValues);
@@ -576,9 +656,9 @@ server.post('/api/payment', async (req, res) => {
       // ids를 배열로 변환
       const productIds = ids.split(',').map((id) => parseInt(id, 10));
 
-      //users 테이블 구독상탭 변경
+      // users 테이블 구독상탭 변경
       const updateUserOrderIndexQuery = `UPDATE users SET order_Index = ? WHERE user_Index = ?`;
-      const updateUserOrderIndexValues = [orderId , userIndex];
+      const updateUserOrderIndexValues = [orderId, userIndex];
       await connection.query(updateUserOrderIndexQuery, updateUserOrderIndexValues);
 
       // OrderProduct에 추가
@@ -801,7 +881,7 @@ server.post('/api/payment', async (req, res) => {
           // 로그인 성공
           const token = jwt.sign(
             {
-              user_Index: user.user_Index,
+              User_Index: user.User_Index,
               userId: user.userId ,
               name: user.name,
               birthdate: user.birthdate,
@@ -818,6 +898,7 @@ server.post('/api/payment', async (req, res) => {
 
           const verified = jwt.verify(token, secretKey);
         
+          console.log(token)
 
             res.status(200).json({ token });
           } else {

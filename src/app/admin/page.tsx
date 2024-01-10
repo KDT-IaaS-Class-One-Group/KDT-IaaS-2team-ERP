@@ -6,9 +6,9 @@ import  LoginForm  from  "@/components/admin/LoginForm-b"
 export default function Admin () {
 
   return (
-    <>
-      <h1>관리자 페이지</h1>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop:'15vh' }}>
+      <h1>NTS Admin</h1>
         <LoginForm />
-    </>
+    </div>
   );
 };
