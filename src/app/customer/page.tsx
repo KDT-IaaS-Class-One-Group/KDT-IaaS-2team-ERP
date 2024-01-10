@@ -11,6 +11,7 @@ interface item {
   password: string;
   content: string;
   userID: string;
+  reply: string;
 }
 
 export default function Page() {
@@ -20,6 +21,7 @@ export default function Page() {
     password: "",
     content: "",
     userID: "",
+    reply: "",
   });
   const [showModal, setShowModal] = useState(false); // 추가: 컨텐츠를 보여줄지 여부 상태
   const [titles, setTitles] = useState([]);
@@ -53,12 +55,13 @@ export default function Page() {
   const handleTitleClick = (
     title: string,
     password: string,
-    content: string
+    content: string,
+    reply: string
   ) => {
     const enteredPassword = prompt("암호를 입력하세요:");
 
     if (enteredPassword === password) {
-      setModalData({ ...modalData, title, content });
+      setModalData({ ...modalData, title, content, reply });
       setShowModal(true); // 모달을 열고 데이터 설정
     } else {
       alert("잘못된 암호입니다.");
@@ -104,7 +107,7 @@ export default function Page() {
                 <h3
                   key={index}
                   onClick={() =>
-                    handleTitleClick(item.title, item.password, item.content)
+                    handleTitleClick(item.title, item.password, item.content, item.reply)
                   }
                 >
                   글번호: {item.boardKey} 글제목: {item.title} , 작성자:
@@ -119,6 +122,7 @@ export default function Page() {
                 <Modal
                   title={modalData.title}
                   content={modalData.content}
+                  reply={modalData.reply}
                   closeModal={closeModal}
                 />
               )}
