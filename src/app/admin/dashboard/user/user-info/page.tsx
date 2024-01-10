@@ -1,10 +1,9 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import NavLinks from "@/components/dashboard/user/User-nav-links-b";
-import styles from "@/styles/adminsidenav.module.scss";
+import styles from "@/styles/adminuser.module.scss";
 
 interface UserInfo {
-  id: string;
   userId: string;
   name: string;
   birthdate: string;
@@ -16,13 +15,13 @@ interface UserInfo {
   isWithdrawn: number;
 }
 
-const pageSize = 10; // 페이지당 표시할 항목 수
+const pageSize = 15; // 페이지당 표시할 항목 수
 
 export default function UserinfoPage() {
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 10,
+    pageSize: 15,
     totalPages: 1,
   });
   const [searchTerm, setSearchTerm] = useState("");
@@ -98,15 +97,16 @@ export default function UserinfoPage() {
       <div className={styles.sidelink}>
         <NavLinks />
       </div>
-      <main className={styles.main}>
-        <h1>회원 정보 조회</h1>
+      <div className={styles.main}>
+        <h1 className={styles.title}>회원 정보 조회</h1>
         <label htmlFor="searchOption"></label>
         <select
           id="searchOption"
           value={searchOption}
           onChange={(e) => setSearchOption(e.target.value)}
-        >
-          <option value="userId">ID</option>
+          className={styles.select}        
+          >
+          <option  value="userId">ID</option>
           <option value="name">Name</option>
         </select>
         <input
@@ -116,28 +116,27 @@ export default function UserinfoPage() {
           }로 검색`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          className={styles.search}     
         />
-        <div className={styles.userinfocontent}>
+        <div className={styles.userContent}>
           <table className={styles.userTable}>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>User ID</th>
-                <th>Name</th>
-                <th>Birthdate</th>
-                <th>Phone Number</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>Gender</th>
-                <th>Cash</th>
+                <th>아이디</th>
+                <th>이름</th>
+                <th>생년월일</th>
+                <th>핸드폰</th>
+                <th>이메일</th>
+                <th>주소</th>
+                <th>성별</th>
+                <th>캐쉬</th>
                 <th>탈퇴신청</th>
-                <th>Action</th>
+                <th>탈퇴승인</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
+                <tr key={user.userId}>
                   <td>{user.userId}</td>
                   <td>{user.name}</td>
                   <td>{formatBirthdate(user.birthdate)}</td>
@@ -165,8 +164,8 @@ export default function UserinfoPage() {
             ).map((pageNumber) => (
               <button
                 key={pageNumber}
-                className={`pagination-button ${
-                  pageNumber === pageInfo.currentPage ? "active" : ""
+                className={`${styles.paginationButton} ${
+                  pageNumber === pageInfo.currentPage ? styles.active : ""
                 }`}
                 onClick={() => handlePageChange(pageNumber)}
               >
@@ -175,7 +174,7 @@ export default function UserinfoPage() {
             ))}
           </div>
         </div>
-      </main>
+      </div>
     </>
   );
 }
