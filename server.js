@@ -781,7 +781,7 @@ server.post('/api/payment', async (req, res) => {
   server.get('/customer/getData', async (req, res) => {
     try {
       const connection = await pool.getConnection();
-      const [rows, fields] = await connection.query('SELECT title, content, password, reply FROM board');
+      const [rows, fields] = await connection.query('SELECT boardKey, title, content, password, reply FROM board');
 
       // 데이터베이스에서 가져온 정보를 클라이언트에게 반환합니다.
       res.json(rows);
