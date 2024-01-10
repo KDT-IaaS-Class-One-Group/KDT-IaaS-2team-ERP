@@ -382,6 +382,57 @@ app.prepare().then(() => {
     }
   });
 
+  server.get("/api/admin/service", async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const pageSize = parseInt(req.query.pageSize) || 20;
+      const searchTerm = req.query.searchTerm || "";
+      const searchOption = req.query.searchOption || "userId";
+  
+      let query = "SELECT * FROM Board";
+      let queryParams = [];
+  
+      if (searchTerm) {
+        if (searchOption === "userId") {
+          query += " WHERE userId LIKE ?";
+        } else if (searchOption === "name") {
+          query += " WHERE name LIKE ?";
+        }
+  
+        queryParams = [`%${searchTerm}%`];
+      }
+  
+      query += " LIMIT ?, ?";
+      queryParams.push((page - 1) * pageSize, pageSize);
+  
+      const [boards] = await db.query(query, queryParams);
+  
+      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM Board";
+      if (searchTerm) {
+        if (searchOption === "userId") {
+          totalCountQuery += " WHERE userId LIKE ?";
+        } else if (searchOption === "name") {
+          totalCountQuery += " WHERE name LIKE ?";
+        }
+      }
+  
+      const [totalCount] = await db.query(totalCountQuery, queryParams.slice(0, 1));
+      const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
+  
+      res.json({
+        boards,
+        pageInfo: {
+          currentPage: page,
+          pageSize,
+          totalPages,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching boards:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
   server.get('/api/mysubscription', async (req, res) => {
     try {
       const token = req.headers.authorization?.replace('Bearer ', '');
@@ -716,7 +767,6 @@ server.post('/api/payment', async (req, res) => {
     }
   });
 
-
   server.get("/api/cash", async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
@@ -755,7 +805,7 @@ server.post('/api/payment', async (req, res) => {
       const offset = (page - 1) * pageSize;
 
       const [subs] = await db.query(
-        "SELECT * FROM subscription LIMIT ?, ?, ?, ? ",
+        "SELECT * FROM subscription LIMIT ?, ? ",
         [offset, pageSize]
       );
       const [totalCount] = await db.query(
@@ -771,7 +821,6 @@ server.post('/api/payment', async (req, res) => {
           totalPages,
         },
       });
-      
     } catch (error) {
       console.error("Error fetching subs:", error);
       res.status(500).json({ error: "Internal Server Error" });
@@ -1008,12 +1057,12 @@ server.post('/api/payment', async (req, res) => {
   server.post("/api/subs-product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { productIndex, name, price, week } = req.body;
-        
+        const { product_Index, name, price, week } = req.body; // 변경된 부분
+  
         // 데이터베이스에서 subscription 정보 추가
         const [result] = await db.query(
           "INSERT INTO subscription (product_Index, name, price, week) VALUES (?, ?, ?, ?)",
-          [productIndex, name, price, week]
+          [product_Index, name, price, week] // 변경된 부분
         );
   
         if (result.affectedRows === 1) {
@@ -1031,7 +1080,7 @@ server.post('/api/payment', async (req, res) => {
       console.error(error);
       res.status(500).json({ error: '내부 서버 오류' });
     }
-  });
+  });  
 
   server.post("/api/addproduct", async (req, res) => {
     try {
@@ -1053,6 +1102,34 @@ server.post('/api/payment', async (req, res) => {
         } else {
           // 추가 실패
           res.status(500).json({ error: "subscription 정보 추가 실패" });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "내부 서버 오류" });
+    }
+  });
+
+  server.put("/api/updateReply/:userId", async (req, res) => {
+    try {
+      if (req.method === "PUT") {
+        const { userId } = req.params;
+        const { reply } = req.body;
+        // 데이터베이스에서 게시판 정보 수정
+        const [result] = await db.query(
+          "UPDATE board SET reply = ? WHERE userId = ?",
+          [reply, userId]
+        );
+
+        if (result.affectedRows === 1) {
+          // 성공적으로 수정된 경우
+          res.status(200).json({ message: "Q&A 답변 등록 성공" });
+        } else {
+          // 삭제 실패 시
+          res.status(404).json({ error: "사용자를 찾을 수 없습니다." });
         }
       } else {
         // 허용되지 않은 메서드

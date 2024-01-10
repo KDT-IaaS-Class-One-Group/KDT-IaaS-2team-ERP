@@ -6,8 +6,6 @@
 
 .sidelink {
   font-size: 2vw;
-  text-decoration: none;
-  color: white;
   width: 20vw;
   height: 85vh;
   display: flex;
@@ -18,60 +16,71 @@
   right: 20vw;
 }
 
-.linkname{
-  text-decoration: none;
-  color:white;
-}
-.userinfocontent{
+.userinfocontent {
   display: flex;
-    flex-direction: column;
+  flex-direction: column;
   margin-right: 20vw;
   width: 70vw;
   position: relative;
   right: 15vw;
 }
 
-.usercashcontent{
+.usercashcontent {
   display: flex;
   margin-right: 20vw;
   width: 60vw;
-  }
+}
 
-  .userTable {
-    width: 100%;
-    border-collapse: collapse;
-    // table-layout:fixed;
-  }
-  
-  .userTable th, .userTable td {
-    border: 1px solid #000000;
-    padding: 4px;
-    text-align: left;
-  }
+.userTable {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #E8E8E8;
+  // table-layout:fixed;
+}
 
-  .userTable th {
-    width: auto;
-    background-color: #d1d1d1;
-  }
-  
-  .pagination {
-    margin-top: 10px;
-  }
-  
-  .pagination-button {
-    background-color: #4caf50;
-    color: white;
-    padding: 8px 16px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
-    margin-right: 4px;
-    border: none;
-    border-radius: 4px;
-  }
-  
-  .pagination-button.active {
-    background-color: #45a049;
-  }
+.userTable th,
+.userTable td {
+  padding: 4px;
+  text-align: left;
+  padding: 1px;
+  border: 1px solid #E8E8E8;
+}
+
+.userTable td {
+  border-radius: 10px;
+  margin-top: 1px;
+
+}
+
+.userTable tr {
+  border-radius: 10px;
+  margin-top: 1px;
+
+}
+
+.userTable th {
+  width: auto;
+  background-color: #E8E8E8;
+}
+
+.pagination {
+  margin-top: 10px;
+}
+
+.pagination-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  margin-right: 4px;
+  border: none;
+  border-radius: 4px;
+}
+
+.pagination-button.active {
+  background-color: #45a049;
+}

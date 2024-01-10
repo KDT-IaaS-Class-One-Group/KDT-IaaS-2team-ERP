@@ -99,20 +99,20 @@ export default function UserinfoPage() {
         <NavLinks />
       </div>
       <main className={styles.main}>
-        <h1>회원 정보 관리</h1>
-        <label htmlFor="searchOption">검색 옵션:</label>
+        <h1>회원 정보 조회</h1>
+        <label htmlFor="searchOption"></label>
         <select
           id="searchOption"
           value={searchOption}
           onChange={(e) => setSearchOption(e.target.value)}
         >
-          <option value="userId">User ID</option>
+          <option value="userId">ID</option>
           <option value="name">Name</option>
         </select>
         <input
           type="text"
           placeholder={`${
-            searchOption === "userId" ? "userId" : "name"
+            searchOption === "userId" ? "ID" : "Name"
           }로 검색`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
