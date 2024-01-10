@@ -1062,12 +1062,12 @@ app.prepare().then(() => {
   server.post("/api/subs-product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { product_Index, name, price, week } = req.body; // 변경된 부분
+        const { name, week, size, price } = req.body; // 변경된 부분
 
         // 데이터베이스에서 subscription 정보 추가
         const [result] = await db.query(
-          "INSERT INTO subscription (product_Index, name, price, week) VALUES (?, ?, ?, ?)",
-          [product_Index, name, price, week] // 변경된 부분
+          "INSERT INTO subscription (name, week, size, price ) VALUES (?, ?, ?, ?)",
+          [name, week, size, price] // 변경된 부분
         );
 
         if (result.affectedRows === 1) {
@@ -1084,6 +1084,27 @@ app.prepare().then(() => {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "내부 서버 오류" });
+    }
+  });
+
+  server.delete("/api/subs-product/:subs_index", async (req, res) => {
+    const { subs_index } = req.params;
+
+    try {
+      const [result] = await db.query(
+        "DELETE FROM subscription WHERE subs_index = ?",
+        [subs_index]
+      );
+
+      if (result.affectedRows === 1) {
+        res.status(200).json({ message: "subscription 삭제 성공" });
+      } else {
+        // 추가 실패
+        res.status(500).json({ error: "subscription 삭제 실패" });
+      }
+    } catch (error) {
+      console.error("Error deleting subscription:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   });
 
