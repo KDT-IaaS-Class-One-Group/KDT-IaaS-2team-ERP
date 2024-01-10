@@ -7,7 +7,10 @@ import Topbar from "@/components/Topbar/Topbar";
 import Footbar from '@/components/Footer/Footer';
 import SlideComponent from '@/components/productslide/slide';
 import Link from "next/link";
+import Image from 'next/image';
+import Video from 'next-video';
 import { usePathname , useRouter } from 'next/navigation';
+
 
 interface DataItem {
   name: string;
@@ -38,7 +41,7 @@ function Index() {
   useEffect(() => {
     const swiper = new Swiper(".swiper-container", {
       spaceBetween: 70,
-      slidesPerView: 3,
+      slidesPerView: 4,
       navigation: {
         nextEl: ".swiper-button-next",
         prevEl: ".swiper-button-prev",
@@ -54,24 +57,44 @@ function Index() {
     });
   }, []);
 
+
+
+ 
+    const [hasWindow, setHasWindow] = useState(false);
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setHasWindow(true);
+        }
+    }, [hasWindow]);
+
   return (
     <div className={styles.container}>
       <Topbar />
       <div className={`${styles.div} ${styles.gray}`}>
-      <div className={styles.box}>kjawjoiewjifojwajfoiaiou</div>
+        {hasWindow && (
+                <video
+                    className={styles.video}
+                    autoPlay={true}
+                    muted={true}
+                    loop={true}
+                    src={require("../../public/video/배경테스트.mp4")}
+                />
+            )}
+        <div className={styles.box1}>당신을 위한 <br/> 원두를 선택하세요!
+        <button>원두 선택하기!</button>
+        </div>
       </div>
-      <div className={`${styles.div} ${styles.blue}`} />
       <div className={`${styles.div} ${styles.yellow}`}>
-        <div className="swiper-container">
-          <div className="swiper-wrapper">
+        <div className="swiper-container" style={{width: "90vw"}}>
+          <div className="swiper-wrapper" style={{width: "90vw"}}>
             {data.map((item, index) => (
               <div
                 key={index}
                 className={`swiper-slide ${styles.subscriptionItem}`}
                 style={{
-                  width: "30vw",
+                  width: "20vw",
                   height: "80vh",
-                  backgroundColor: "lightgray",
+                  backgroundColor: "#f6f1eb;",
                   marginTop: "10vh",
                   display: "flex",
                   flexDirection: "column",
@@ -80,6 +103,7 @@ function Index() {
                   cursor: "pointer",
                 }}
               >
+                <Image width={250} height={400} src={`/image/image${index+1}.jpg`} alt={`Product ${index + 1}`} />
                 <p style={{ margin: 0 }}>Name: {item.name}</p>
                 <p style={{ margin: 0 }}>Price: {item.price}</p>
                 <p style={{ margin: 0 }}>Week: {item.week}</p>
@@ -89,25 +113,25 @@ function Index() {
               </div>
             ))}
           </div>
-          <div className="swiper-pagination"  style={{
-                  top:'290vh'
-                }}></div>
           <div className="swiper-button-next" style={{
-                  top:'250vh'
+                  top:'150vh'
                 }}></div>
           <div className="swiper-button-prev"
           style={{
-            top:'250vh'
+            top:'150vh'
           }}
           ></div>
-          <div className="swiper-scrollbar" 
-          style={{
-            top:'290vh'
-          }}></div>
+          
         </div>
       </div>
       <div className={`${styles.div} ${styles.purple}`}>
         <SlideComponent/>
+      </div>
+      <div className={`${styles.div} ${styles.blue}`} >
+        <div className={styles.infobox1}></div>
+        <div className={styles.infobox2}></div>
+        <div className={styles.infobox3}></div>
+        <div className={styles.infobox4}></div>
       </div>
       <Footbar/>
     </div>

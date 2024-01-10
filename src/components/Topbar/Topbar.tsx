@@ -44,9 +44,9 @@ function Topbar() {
   };
   return (
     <div className={styles.topbar}>
-      <div className={styles.div1} onClick={handleDiv1Click}>NTS</div>
-      <div className={styles.div2}>
-      <TopNav/>
+      <div className={styles.div1}><TopNav/></div>
+      <div className={styles.div2} onClick={handleDiv1Click} >
+      NTS
       </div>
       <div className={styles.div3}>
         

@@ -6,7 +6,6 @@ import clsx from 'clsx';
 import styles from "@/styles/toplink.module.scss"
 
 const links = [
-  { name: '회사소개', href: '/info' },
   { name: '구독상품', href: '/subproduct' },
   { name: '고객센터', href: '/customer' }
 ];
