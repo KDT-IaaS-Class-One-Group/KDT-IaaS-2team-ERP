@@ -30,7 +30,7 @@ export default function UserinfoPage() {
   const fetchData = useCallback(
     async (page: number) => {
       try {
-        let apiUrl = "/api/users?page=" + page + "&pageSize=" + pageSize;
+        let apiUrl = "/api/admin/users?page=" + page + "&pageSize=" + pageSize;
 
         if (searchOption === "userId") {
           apiUrl += "&searchOption=userId&searchTerm=" + searchTerm;
