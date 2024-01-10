@@ -1,6 +1,7 @@
 import NavLinks from "@/components/dashboard/analysis/Data-nav-links-b";
 import styles from "@/styles/adminsidenav.module.scss";
 import ProductData from "@/components/dashboard/analysis/Product-data-b";
+import ProductGraph from "@/components/admin/ProductGraph";
 
 export default async function Page() {
   return (
@@ -9,6 +10,7 @@ export default async function Page() {
         <NavLinks />
       </div>
       <ProductData />
+      <ProductGraph />
     </>
   );
 }
