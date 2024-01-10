@@ -6,6 +6,7 @@ import styles from "@/styles/signup.module.scss";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRouter } from 'next/navigation'
+import Adress from '@/components/test/adress';
 interface SignUpProps {
   signup?: {
     userId?: string;
@@ -57,6 +58,8 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | Date) => {
+
+  
     if (event instanceof Date) {
       // Date일 경우
       setFormData({
@@ -80,6 +83,14 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
   };
 
   const handleCheckDuplicate = async () => {
+    const idPattern = /^[a-zA-Z0-9]{4,12}$/;
+
+    if (!idPattern.test(formData.userId)) {
+      setIsUserIdValid(false);
+      alert('아이디는 영어와 숫자로 이루어진 4자 이상 12자 이하이어야 합니다.');
+      return;
+    }
+
     try {
       const url = new URL(`/api/signup/checkDuplicate/${formData.userId}`, window.location.origin);
       // formData를 URLSearchParams로 변환하여 쿼리 문자열로 추가
