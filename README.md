@@ -92,15 +92,14 @@ CREATE TABLE Product (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT NOT NULL,
     product_name VARCHAR(255) NOT NULL,
-    price INT NULL,
+    price INT NOT NULL,
     sale INT NULL,
     stock_quantity INT NOT NULL,
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     img1 VARCHAR(500) NULL,
     img2 VARCHAR(500) NULL,
     delete_status TINYINT(1) NULL DEFAULT 0,
-    display_status TINYINT(1) NULL DEFAULT 0,
-    info VARCHAR(255) NULL
+    display_status TINYINT(1) NULL DEFAULT 0
 );
 
 ### Category 카테고리 관련
@@ -120,3 +119,102 @@ CREATE TABLE Cart (
     FOREIGN KEY (User_Index) REFERENCES User(User_Index),
     FOREIGN KEY (Product_Index) REFERENCES Product(Product_Index)
 );
+
+-------------------------------------------------------------------------------
+## NULL 설정은 편의성을 위해 해뒀는데 후에 다시 수정해야 합니다.
+
+CREATE TABLE `orderdetails` (
+	`Order_Index` INT(11) NOT NULL AUTO_INCREMENT,
+	`subs_index` INT(11) NULL DEFAULT NULL,
+	`user_Index` INT(11) NULL DEFAULT NULL,
+	`Subs_Start` TIMESTAMP NULL DEFAULT NULL,
+	`Subs_End` TIMESTAMP NULL DEFAULT NULL,
+	`order_name` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`order_phone` INT(50) NULL DEFAULT NULL,
+	`address` VARCHAR(300) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`zip_code` INT(30) NULL DEFAULT NULL,
+	`auto_renew` TINYINT(1) NULL DEFAULT '1',
+	`staus` TINYINT(4) NULL DEFAULT NULL,
+	PRIMARY KEY (`Order_Index`) USING BTREE
+)
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=106
+;
+
+
+
+### orderproduct 테이블
+CREATE TABLE `orderproduct` (
+	`OrderProduct_Index` INT(11) NOT NULL AUTO_INCREMENT,
+	`Order_Index` INT(11) NULL DEFAULT NULL,
+	`product_id` INT(11) NULL DEFAULT NULL,
+	PRIMARY KEY (`OrderProduct_Index`) USING BTREE
+)
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=44
+;
+
+
+### product 테이블
+CREATE TABLE `product` (
+	`product_id` INT(11) NOT NULL AUTO_INCREMENT,
+	`category_id` INT(11) NULL DEFAULT NULL,
+	`product_name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`price` INT(11) NOT NULL,
+	`sale` INT(11) NULL DEFAULT NULL,
+	`stock_quantity` INT(11) NOT NULL,
+	`timestamp` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	`img1` VARCHAR(500) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`img2` VARCHAR(500) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`delete_status` TINYINT(1) NULL DEFAULT '0',
+	`display_status` TINYINT(1) NULL DEFAULT '0',
+	`info` INT(11) NULL DEFAULT NULL,
+	PRIMARY KEY (`product_id`) USING BTREE
+)
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=6
+;
+
+
+### subscription 테이블
+CREATE TABLE `subscription` (
+	`subs_index` INT(11) NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`week` INT(11) NOT NULL,
+	`size` INT(11) NOT NULL,
+	`price` INT(11) NOT NULL,
+	PRIMARY KEY (`subs_index`) USING BTREE,
+	CONSTRAINT `week` CHECK (`week` MOD 4 = 0),
+	CONSTRAINT `size` CHECK (`size` MOD 4 = 0)
+)
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=7
+;
+
+### users 테이블
+CREATE TABLE `users` (
+	`User_Index` INT(11) NOT NULL AUTO_INCREMENT,
+	`userId` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`password` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`name` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`birth` DATE NOT NULL,
+	`phone` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`email` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`address` VARCHAR(300) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`gender` CHAR(1) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`cash` INT(11) NULL DEFAULT NULL,
+	`timestamp` TIMESTAMP NULL DEFAULT current_timestamp(),
+	`signout` CHAR(1) NOT NULL DEFAULT 'N' COLLATE 'utf8mb4_general_ci',
+	`admin` TINYINT(1) NULL DEFAULT NULL,
+	`RegiMethod` TINYINT(1) NOT NULL,
+	`order_Index` TINYINT(4) NULL DEFAULT NULL,
+	PRIMARY KEY (`User_Index`) USING BTREE
+)
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=3002
+;

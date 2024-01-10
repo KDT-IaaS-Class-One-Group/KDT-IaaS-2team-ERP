@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import React, { useState, useEffect } from "react";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import styles from '@/styles/order.module.scss'
-import { useRouter ,useSearchParams } from 'next/navigation';
+import styles from "@/styles/order.module.scss";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface OrderClientSideProps {
   Subs_Index: number;
@@ -15,13 +15,13 @@ interface OrderClientSideProps {
 }
 
 interface UserInfo {
-  user_Index:number,
-  userId :string;
+  User_Index: number;
+  userId: string;
   name: string;
   phoneNumber: string;
   email: string;
   address: string;
-  cash:number;
+  cash: number;
   order_Index: number;
 }
 
@@ -31,41 +31,46 @@ interface ProductClientSideProps {
   name: string;
 }
 
-
 export default function OrderClientSide() {
-  const [data, setData] = useState<OrderClientSideProps []>([]);
+  const [data, setData] = useState<OrderClientSideProps[]>([]);
   const [token, setToken] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [Price, setPrice] = useState(0);
   const Subs_Index = useParams();
   const subs_index = Subs_Index.Sub_Index;
   const router = useRouter();
-  const searchParams = useSearchParams()
-  const selectedProducts = searchParams.get('selectedProducts')
-  console.log(selectedProducts)
+  const searchParams = useSearchParams();
+  const selectedProducts = searchParams.get("selectedProducts");
+  console.log(selectedProducts);
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
   const [productData, setProductData] = useState<ProductClientSideProps[]>([]);
-
+  const [addressInput, setAddressInput] = useState("");
 
   const setsToken = (token: string) => {
-    localStorage.setItem('token', token);
+    localStorage.setItem("token", token);
     setToken(token);
+  };
+
+  const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAddressInput(event.target.value);
   };
 
   useEffect(() => {
     if (selectedProducts) {
-      const ids = selectedProducts.split(',').map((id) => parseInt(id, 10));
-      console.log(`ids = ${ids}`)
+      const ids = selectedProducts.split(",").map((id) => parseInt(id, 10));
+      console.log(`ids = ${ids}`);
       setSelectedProductIds(ids);
 
       // 서버로 선택한 상품 정보 요청
-      fetch(`/api/productss?productIds=${ids.join(',')}`)
+      fetch(`/api/productss?productIds=${ids.join(",")}`)
         .then((response) => response.json())
         .then((productDataFromServer) => {
-          console.log('Selected Products Data:', productDataFromServer);
+          console.log("Selected Products Data:", productDataFromServer);
           setProductData(productDataFromServer);
         })
-        .catch((error) => console.error('상품 정보를 가져오는 도중 오류 발생:', error));
+        .catch((error) =>
+          console.error("상품 정보를 가져오는 도중 오류 발생:", error)
+        );
     }
   }, [selectedProducts]);
 
@@ -80,8 +85,8 @@ export default function OrderClientSide() {
         if (dataFromServer) {
           setPrice(dataFromServer[0].Price);
           console.log("Price set successfully:", dataFromServer[0].Price);
-          console.log("Updated Price state:", Price)
-        }else {
+          console.log("Updated Price state:", Price);
+        } else {
           console.log("No price data in the response:", dataFromServer);
         }
       } catch (error) {
@@ -91,13 +96,12 @@ export default function OrderClientSide() {
     fetchData();
   }, []);
 
-
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
+    const storedToken = localStorage.getItem("token");
     setToken(storedToken);
 
     if (!storedToken) {
-      router.push('/login');
+      router.push("/login");
     } else {
       // 토큰에서 사용자 정보를 읽어와서 화면에 표시
       loadUserFromToken(storedToken);
@@ -109,10 +113,19 @@ export default function OrderClientSide() {
       const decodedToken = jwt.decode(token) as JwtPayload;
 
       if (decodedToken) {
-        const {user_Index,userId,name, phoneNumber, email, address, cash , order_Index} = decodedToken;
+        const {
+          User_Index,
+          userId,
+          name,
+          phoneNumber,
+          email,
+          address,
+          cash,
+          order_Index,
+        } = decodedToken;
 
         const userInformation: UserInfo = {
-          user_Index,
+          User_Index,
           userId,
           name,
           phoneNumber,
@@ -124,12 +137,12 @@ export default function OrderClientSide() {
 
         setUserInfo(userInformation);
       } else {
-        console.error('토큰이 유효하지 않습니다.');
+        console.error("토큰이 유효하지 않습니다.");
         // userInfo가 null인 경우 초기화
         setUserInfo(null);
       }
     } catch (error) {
-      console.error('토큰 해석 오류:', error);
+      console.error("토큰 해석 오류:", error);
       // userInfo가 null인 경우 초기화
       setUserInfo(null);
     }
@@ -137,47 +150,58 @@ export default function OrderClientSide() {
 
   const handlePayment = async () => {
     try {
-      if (userInfo && userInfo.order_Index !== null) {
-        console.log('이미 구독 중입니다.');
-        alert('이미 구독 중입니다.');
-        router.push('/');
-        return;
-      }
+      // if (userInfo && userInfo.User_Index !== null) {
+      //   console.log("이미 구독 중입니다.");
+      //   alert("이미 구독 중입니다.");
+      //   router.push("/");
+      //   return;
+      // }
 
-      const response = await fetch('/api/payment', {
-        method: 'POST',
+      const response = await fetch("/api/payment", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           token: localStorage.token,
-          sub_index: subs_index, // 추가: sub_index 전달
+          sub_index: subs_index,
           price: Price,
           ids: selectedProducts,
+          address: addressInput, // 주소 정보 추가
         }),
       });
 
-      console.log('Request Data:', JSON.stringify({
-        token: localStorage.token,
-        sub_index: subs_index,
-        price: Price,
-        ids: selectedProducts,
-    }));
-  
+      console.log(
+        "Request Data:",
+        JSON.stringify({
+          token: localStorage.token,
+          sub_index: subs_index,
+          price: Price,
+          ids: selectedProducts,
+        })
+      );
+
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        // 400 에러가 발생하면 수동으로 페이지 이동하거나 에러 처리를 할 수 있습니다.
+        if (response.status === 400) {
+          // 수동으로 페이지 이동
+          router.push('/400-error-page');
+        } else {
+          // 다른 에러 상태 코드의 경우에 대한 처리
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return;
       }
-  
+
       const responseData = await response.json();
       console.log(responseData); // 서버로부터의 응답 처리
-      
+
       const updatedToken = await fetchUpdatedToken();
-      
+
       if (updatedToken) {
         // 토큰 업데이트 및 로컬 스토리지에 저장
         setToken(updatedToken);
       }
-
     } catch (error) {
       console.error(error);
     }
@@ -185,31 +209,28 @@ export default function OrderClientSide() {
 
   const fetchUpdatedToken = async () => {
     try {
-      const response = await fetch('/api/refresh-token', {
-        method: 'POST',
+      const response = await fetch("/api/refresh-token", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           token: localStorage.token,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       const { newToken } = await response.json();
-      console.log(`newtoken:${newToken}`)
+      console.log(`newtoken:${newToken}`);
       return newToken;
-      
     } catch (error) {
-      console.error('토큰 갱신 중 오류 발생:', error);
+      console.error("토큰 갱신 중 오류 발생:", error);
       return null;
     }
   };
-
-  
 
   return (
     <div>
@@ -221,37 +242,40 @@ export default function OrderClientSide() {
         </div>
       ))}
 
-        {productData.map((product, productIndex) => (
-           
-              <div key={productIndex}>
-                <p>Product Name: {product.name}</p>
-                {/* 필요한 상품 정보 추가 */}
-              </div>
-            
-          ))}
-
+      {productData.map((product, productIndex) => (
+        <div key={productIndex}>
+          <p>Product Name: {product.name}</p>
+          {/* 필요한 상품 정보 추가 */}
+        </div>
+      ))}
 
       <Link href={`/payment`}>
-      <button onClick={handlePayment}>결제하기</button>
+        <button onClick={handlePayment}>결제하기</button>
       </Link>
 
-
-      <div className='myinfo'>
+      <div className="myinfo">
         {/* 사용자 정보를 표시하는 부분 */}
         {userInfo && (
           <div>
             <div>
-                <p>이름: {userInfo.name}</p>
-                <p>전화번호: {userInfo.phoneNumber}</p>
-                <p>이메일: {userInfo.email}</p>
-                <p>주소: {userInfo.address}</p>
+              <p>이름: {userInfo.name}</p>
+              <p>전화번호: {userInfo.phoneNumber}</p>
+              <p>이메일: {userInfo.email}</p>
+              <p>주소: {userInfo.address}</p>
             </div>
             <div>
-            <p>나의 캐쉬:{userInfo.cash}</p>
+              <p>나의 캐쉬:{userInfo.cash}</p>
             </div>
-            </div>
-            )}
+            <label htmlFor="addressInput">주소 입력:</label>
+            <input
+              type="text"
+              id="addressInput"
+              value={addressInput}
+              onChange={handleAddressChange}
+            />
+          </div>
+        )}
       </div>
-      </div>
+    </div>
   );
 }
