@@ -6,13 +6,21 @@ import React from "react";
 import Link from "next/link";
 
 interface item {
+  boardKey: number;
   title: string;
   password: string;
   content: string;
+  userID: string;
 }
 
 export default function Page() {
-  const [data, setData] = useState({ title: "", content: "", password: "" });
+  const [data, setData] = useState<item>({
+    boardKey: 0,
+    title: "",
+    password: "",
+    content: "",
+    userID: "",
+  });
   const [showContent, setShowContent] = useState(false); // 추가: 컨텐츠를 보여줄지 여부 상태
   const [titles, setTitles] = useState([]);
   const [userId, setUserId] = useState<string>("");
@@ -57,24 +65,35 @@ export default function Page() {
     }
   };
 
+  const handleGoToWritingPage = () => {
+    // Check if the user is logged in (token exists)
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      // If the token exists, navigate to the writing page
+      window.location.href = "/customer/writingPage";
+    } else {
+      // If the token doesn't exist, show an alert
+      alert("로그인이 필요합니다. 로그인 후 다시 시도해주세요.");
+    }
+  };
+
   return (
     <div className={styles.root}>
-      <Topbar />
+      <div className={styles.top}><Topbar /></div>
       <div className={styles.main}>
       {titles.map((item: item, index: number) => (
-        <h1
+        <p
           key={index}
           onClick={() =>
             handleTitleClick(item.title, item.password, item.content)
           }
         >
-          {item.title}
-        </h1>
+        글번호: {item.boardKey} 글제목: {item.title} , 작성자:{item.userID}
+        </p>
       ))}
       <p>사용자 ID: {userId}</p>
-      <Link href="/customer/writingPage">
-        <button>Go to Writing Page</button>
-      </Link>
+      <button onClick={handleGoToWritingPage}>Go to Writing Page</button>
       {showContent && <p>내용 : {data.content}</p>}
       </div>
     </div>

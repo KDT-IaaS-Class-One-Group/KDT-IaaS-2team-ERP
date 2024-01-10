@@ -78,12 +78,13 @@ CREATE TABLE Order (
 CREATE TABLE Board (
     boardKey INT AUTO_INCREMENT PRIMARY KEY,
     User_Index INT NOT NULL,
+    email VARCHAR NOT NULL,
+    userID VARCHAR NOT NULL,
     title VARCHAR(100) NOT NULL,
     content VARCHAR(500) NOT NULL,
     date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     password VARCHAR(50) NOT NULL,
-    image VARCHAR(500) NULL,
-    FOREIGN KEY (User_Index) REFERENCES User(User_Index)
+    FOREIGN KEY (User_Index) REFERENCES Users(User_Index)
 );
 
 ### Product 상품 정보 (원두 종류가 들어갑니다.)
