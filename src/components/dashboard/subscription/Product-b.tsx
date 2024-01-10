@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
-import styles from "@/styles/adminorder-b.module.scss";
+import styles from "@/styles/adminorder.module.scss";
 import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links-b";
 
 interface ProductInfo {
@@ -235,7 +235,7 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            stock_quantity:
+            stock:
               <input
                 type="text"
                 name="stock_quantity"
@@ -265,7 +265,7 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            delete_status:
+            delete:
               <input
                 type="text"
                 name="delete_status"
@@ -275,7 +275,7 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            display_status:
+            display:
               <input
                 type="text"
                 name="display_status"
@@ -332,7 +332,7 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            stock_quantity:
+            stock:
               <input
                 type="text"
                 name="stock_quantity"
@@ -362,7 +362,7 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            delete_status:
+            delete:
               <input
                 type="text"
                 name="delete_status"
@@ -372,7 +372,7 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            display_status:
+            display:
               <input
                 type="text"
                 name="display_status"

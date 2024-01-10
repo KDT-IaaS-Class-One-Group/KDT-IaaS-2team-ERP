@@ -92,10 +92,19 @@
   }
 }
 
+.addSubscription{
+  width: 65vw;
+  position: relative;
+  bottom: 2vh;
+  right: 10vw;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
 .addButton{
   width: 80px;
   height: 40px;
-  margin-left: 40px;
   background-color: #BBBFCA;
   border: 0;
   line-height: 40px;
@@ -103,7 +112,7 @@
   border-radius: 5px;
   font-weight: bold;
   position: relative;
-  left: 53vw;
+  left: 55vw;
   font-size: large;
 }
 
@@ -123,8 +132,8 @@
 }
 
 .addInput {
-  margin-right: 10px;
-  margin-left: 5px;
+  margin-right: 2px;
+  width: 100px;
 }
 
 .editingRow {

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
-import styles from "@/styles/adminorder-b.module.scss";
+import styles from "@/styles/adminorder.module.scss";
 import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links-b";
 
 interface SubscriptionInfo {
