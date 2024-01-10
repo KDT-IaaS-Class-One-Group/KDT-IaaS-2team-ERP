@@ -281,24 +281,24 @@ app.prepare().then(() => {
       switch (xAxis) {
         case 'timestamp':
           query = `
-            SELECT DATE_FORMAT(timestamp, '%Y-%m') as label, COUNT(DISTINCT id) as userCount
-            FROM User
+            SELECT DATE_FORMAT(timestamp, '%Y-%m') as label, COUNT(DISTINCT User_Index) as userCount
+            FROM Users
             GROUP BY label
             ORDER BY label;
           `;
           break;
         case 'birth':
           query = `
-            SELECT YEAR(birth) as label, COUNT(DISTINCT id) as userCount
-            FROM User
+            SELECT YEAR(birth) as label, COUNT(DISTINCT User_Index) as userCount
+            FROM Users
             GROUP BY label
             ORDER BY label;
           `;
           break;
           case 'gender':
             query = `
-              SELECT gender as label, COUNT(DISTINCT id) as userCount
-              FROM User
+              SELECT gender as label, COUNT(DISTINCT User_Index) as userCount
+              FROM Users
               GROUP BY label
               ORDER BY label;
             `;
