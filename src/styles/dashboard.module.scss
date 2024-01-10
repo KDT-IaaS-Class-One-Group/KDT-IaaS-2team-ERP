@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&family=Noto+Sans+KR&display=swap');
+
 .main {
   width: 100vw;
   height: 100vh;
@@ -5,13 +7,13 @@
   padding: 0;
   display: flex;
   flex-wrap: wrap;
+  font-family: 'Noto Sans', sans-serif;
 }
 
 .side {
   width: 13vw;
   height: 80vh;
   background-color: #E8E8E8;
-  // color: #495464;
   top: 17vh;
   justify-content: center;
   align-items: center;
@@ -29,5 +31,4 @@
   margin: 10px;
   top: 17vh;
   position: relative;
-
 }

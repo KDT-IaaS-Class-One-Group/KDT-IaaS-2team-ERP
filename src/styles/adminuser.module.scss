@@ -1,0 +1,111 @@
+.sidemenu {
+  width: 20vw;
+  height: 85vh;
+  display: flex;
+}
+
+.sidelink {
+  font-size: 2vw;
+  width: 20vw;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  position: relative;
+  right: 14vw;
+  text-align: center;
+}
+
+.title {
+  position: relative;
+  left: 15vw;
+}
+
+.search {
+  position: relative;
+  left: 14vw;
+  margin-left: 10px;
+  height: 25px;
+}
+
+.select {
+  position: relative;
+  left: 14vw;
+  height: 30px;
+}
+
+.userContent {
+  display: flex;
+  flex-direction: column;
+  width: 70vw;
+  position: relative;
+  right: 10vw;
+  margin-top: 20px;
+}
+
+.userTable {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #f4f4f4;
+}
+
+.userTable th,
+.userTable td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #f4f4f4;
+  text-align: center;
+}
+
+.userTable td {
+  margin-top: 1px;
+}
+
+.userTable th {
+  background-color: #f4f4f4;
+  font-size: 1rem;
+}
+
+.pagination {
+  display: flex;
+}
+
+.paginationButton {
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  width: 25px;
+  height: 25px;
+  margin-left: 3px;
+  background-color: #BBBFCA;
+  line-height: 20px;
+  border-radius: 2px;
+  position: relative;
+  left: 29vw;
+  margin-top: 20px;
+
+  &.active {
+    background-color: #495464;
+  }
+}
+
+.cashInput {
+  margin-right: 10px;
+}
+
+.cashButton {
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  width: 40px;
+  height: 25px;
+  background-color: #495464;
+  line-height: 20px;
+  border-radius: 2px;
+}
