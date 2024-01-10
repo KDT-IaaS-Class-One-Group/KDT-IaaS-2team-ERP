@@ -137,6 +137,30 @@ app.prepare().then(() => {
     }
   });
 
+  server.get("/api/userinfo", async (req, res) => {
+    try {
+      // 헤더에서 토큰 추출
+      const token = req.headers.authorization.split(" ")[1];
+  
+      // 토큰 확인 및 디코딩
+      const decodedToken = await verifyToken(token);
+      const userIndex = decodedToken.User_Index;
+  
+      // 데이터베이스에서 user_Index를 기반으로 name 조회
+      const [rows] = await pool.query(
+        "SELECT name FROM users WHERE User_Index = ?",
+        [userIndex]
+      );
+  
+      // 조회된 name 전송
+      const userName = rows.length > 0 ? rows[0].name : null;
+      res.json({ name: userName });
+    } catch (error) {
+      console.error("Error querying database:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
   cron.schedule("0 * * * *", () => {
     try {
       checkAndRenewSubscriptions(pool); 
@@ -155,15 +179,16 @@ app.prepare().then(() => {
       const token = req.headers.authorization.split(" ")[1];
       const decodedToken = jwt.verify(token, secretKey);
   
-      if (!decodedToken || !decodedToken.user_Index) {
+      if (!decodedToken || !decodedToken.User_Index) {
         console.error('Invalid token or user index not found');
         return res.status(401).json({ error: "Unauthorized" });
       }
   
-      const userIndex = decodedToken.user_Index;
-      console.log('userIndex : ' ,userIndex)
-      // 사용자의 주문 정보만 가져오기
-      const [rows, fields] = await pool.query("SELECT Order_Index FROM orderdetails WHERE User_Index = ?", [userIndex]);
+      const userIndex = decodedToken.User_Index;
+      console.log('userIndex: ', userIndex);
+  
+      // 사용자의 주문 정보 가져오기
+      const [rows, fields] = await pool.query("SELECT * FROM orderdetails WHERE User_Index = ?", [userIndex]);
   
       // 결과를 JSON 형식으로 응답
       res.json(rows);
@@ -173,6 +198,23 @@ app.prepare().then(() => {
     }
   });
   
+  server.get("/api/orderproducts/:orderIndex", async (req, res) => {
+    try {
+      const orderIndex = req.params.orderIndex;
+  
+      // Order_Index를 기반으로 OrderProduct 테이블에서 product_id 조회
+      const [rows] = await pool.query(
+        "SELECT product_id FROM OrderProduct WHERE Order_Index = ?",
+        [orderIndex]
+      );
+  
+      const productIds = rows.map((row) => row.product_id);
+      res.json(productIds);
+    } catch (error) {
+      console.error("Error querying orderproducts:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
 
   // // ! 테스트 목적 즉시 실행되게 
   // checkAndRenewSubscriptions(pool); 
@@ -612,8 +654,6 @@ app.prepare().then(() => {
  * ? /Order 엔드포인트
  */
 
-
-
 server.post("/api/order", async (req, res) => {
   try {
     // 클라이언트로부터 받은 상품 이름
@@ -646,8 +686,6 @@ server.post("/api/order", async (req, res) => {
     res.status(500).send("주문 생성 중 오류가 발생했습니다.");
   }
 });
-
-// server.js
 
 server.post('/api/payment', async (req, res) => {
   try {
@@ -695,21 +733,21 @@ server.post('/api/payment', async (req, res) => {
 
       // 사용자의 user_Index 값으로 주문 정보를 추가
       const orderQuery = `
-        INSERT INTO Orderdetails (subs_index, user_Index, Subs_Start, Subs_End, address, order_name, order_phone, zip_code) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-      const orderValues = [
-        subsIndex,
-        userIndex,
-        new Date(),
-        new Date(Date.now() + week * 7 * 24 * 60 * 60 * 1000),
-        address,
-        orderName,
-        orderPhone,
-        zipCode,
-      ];
-
-      const [orderResult] = await connection.query(orderQuery, orderValues);
+      INSERT INTO Orderdetails (subs_index, user_Index, Subs_Start, Subs_End, address, order_name, order_phone, zip_code) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const orderValues = [
+      subsIndex,
+      userIndex,
+      new Date(),
+      new Date(Date.now() + week * 7 * 24 * 60 * 60 * 1000),
+      address,
+      orderName,  // 사용자로부터 받은 주문자 이름
+      orderPhone, // 사용자로부터 받은 주문자 전화번호
+      zipCode,
+    ];
+    
+    const [orderResult] = await connection.query(orderQuery, orderValues);
       const orderId = orderResult.insertId;
 
       // ids를 배열로 변환

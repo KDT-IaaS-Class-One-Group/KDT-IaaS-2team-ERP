@@ -1,12 +1,16 @@
-'use client'
+"use client";
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 const jwt = require("jsonwebtoken");
+import PaymentInfo from "../../components/payment/PaymentInfo";
+import OrderDetailsList from "../../components/payment/OrderDetailsList";
 
 const PaymentPage = () => {
   const [orderIndexData, setOrderIndexData] = useState([]);
   const [userIndex, setUserIndex] = useState(null);
+  const [userName, setUserName] = useState("");
+  const [orderDetails, setOrderDetails] = useState([]);
 
   useEffect(() => {
     // 서버에서 데이터를 가져오는 함수
@@ -34,7 +38,57 @@ const PaymentPage = () => {
     fetchData();
   }, []);
 
-  const decodeToken = (token) => {
+  const fetchUserName = async () => {
+    try {
+      // 서버에 사용자 이름을 조회하는 요청을 보냄
+      const response = await fetch("/api/userinfo", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.error("Error fetching user info");
+        return;
+      }
+
+      const data = await response.json();
+      // 조회된 사용자 이름을 상태에 저장
+      setUserName(data.name);
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
+  };
+
+  const fetchOrderDetails = async () => {
+    try {
+      // 서버에 주문 상세 정보를 조회하는 요청을 보냄
+      const response = await fetch("/api/orderdetails", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.error("Error fetching order details");
+        return;
+      }
+
+      const data = await response.json();
+      // 조회된 주문 상세 정보를 상태에 저장
+      setOrderDetails(data);
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+    }
+  };
+
+  // 수정: 컴포넌트가 마운트되면 사용자 이름과 주문 상세 정보 조회 함수 호출
+  useEffect(() => {
+    fetchUserName();
+    fetchOrderDetails();
+  }, []);
+
+  const decodeToken = (token: string | null) => {
     // 토큰 디코딩 함수 (실제로는 더 안전한 방법 사용을 고려해야 함)
     const decoded = jwt.decode(token, { complete: true });
     return decoded.payload;
@@ -42,13 +96,8 @@ const PaymentPage = () => {
 
   return (
     <div>
-      <h1>결제 페이지</h1>
-      <p>User_Index: {userIndex}</p>
-      <ul>
-        {orderIndexData.map((orderIndex) => (
-          <li key={orderIndex}>{orderIndex}</li>
-        ))}
-      </ul>
+      <PaymentInfo userName={userName} />
+      <OrderDetailsList orderDetails={orderDetails} />
     </div>
   );
 };
