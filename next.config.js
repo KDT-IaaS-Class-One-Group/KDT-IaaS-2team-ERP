@@ -9,3 +9,7 @@ module.exports = {
     return config;
   },
 };
+
+const withVideos = require('next-videos')
+
+module.exports = withVideos()

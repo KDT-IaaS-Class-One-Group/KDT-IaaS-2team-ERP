@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-}
+  max-width:100%;}
 
 .div {
   width: 100vw;
@@ -17,19 +17,67 @@
 }
 
 .gray {
-  background-color: gray;
-  background: url("../../public/image/커피.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-}
+  position: relative;
+  display:flex;
 
+  .box1{
+    width:25vw;
+    height: 30vh;
+    margin-top: 60vh;
+    margin-left:70vw;
+    font-size: 2rem;
+    font-family:Georgia, Serif;
+    color:brown;
+    font-weight: 900;
+  }
+  button{
+    width:15vw;
+    height:5vh;
+  }
+}
+.video {
+  position: absolute;
+  display:flex;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+}
 .blue {
-  background-color: blue;
+  background-color: brown;
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  .infobox1{
+    width:28vw;
+    height:40vh;
+    background-color: #f6f1eb;
+  }
+  .infobox2{
+    width:57vw;
+    height:40vh;
+    background-color: #f6f1eb;
+  }
+  .infobox3{
+    width:57vw;  
+    height:40vh;
+    background-color: #f6f1eb;
+  }
+  .infobox4{
+    width:28vw;
+    height:40vh;
+    background-color: #f6f1eb;
+  }
 }
 
 .yellow {
   overflow: hidden;
+  background-color: #f6f1eb;
+  display:flex;
+  place-content: center;
 }
 
 .purple {
@@ -40,6 +88,12 @@
   display:flex;
   margin-top:15vh;
 }
+// .swipercontainer{
+//   width:80vw;
+//   height:80vh;
+//   overflow: hidden;
+// }
+
 
 .swiperpagination{
   top: 200vh;
@@ -50,19 +104,38 @@
 }
 
 .subscriptionItem {
-  width: 30vw;
+  width: 20vw;
   height: 80vh;
-  background-color: lightgray;
+  background-color: #f6f1eb;
   margin-top: 10vh;
+  margin-right: 2.5vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   transition: border 0.3s ease; /* 테두리에 트랜지션 효과를 추가 */
+  p{
+    font-size: 1.5rem;
+  }
 
   /* 호버 시 테두리 스타일 */
   &:hover {
     border: 5px solid black; /* 테두리 색 및 두께 설정 */
   }
+}
+.noslidesubscriptioncontainer{
+  width:100vw;
+  height:100vh;
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin:0;
+}
+.noslidesubscriptionItem{
+  width: 15vw;
+  height: 30vh;
+  background-color: lightgray;
+  margin-top: 10vh;
+  display: flex;
 }

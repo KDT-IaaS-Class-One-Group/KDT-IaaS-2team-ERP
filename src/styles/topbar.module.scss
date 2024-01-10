@@ -1,39 +1,64 @@
 .topbar {
-  
-  position: absolute;
   width: 100vw;
-  height: 15vh;
+  height: 12vh;
   opacity: 0/5;
   display:flex;
   justify-content: space-between;
-  color:white;
-  backdrop-filter: blur(10px);
+  color:brown;
+  background-color: #f7f0ec;
+  max-width:100%;
 }
 
 .div1 {
-  width:10vw;
-  height:15vh;
+  width:20vw;
+  height:12vh;
   
-  font-size:2vw;
+}
+
+.div2 {
+  width:20vw;
+  height:12vh;
+  font-family:Georgia, Serif;
+  font-size:3rem;
   display:flex;
   justify-content: center;
   align-items: center;
 }
 
-.div2 {
-  width:40vw;
-  height:15vh;
-  color:white;
-  
-}
-
 .div3 {
   width:20vw;
-  height:15vh;
-  color:white;
+  height:12vh;
+  color:brown;
   display:flex;
   align-items: center;
-  font-size: 1vw;
+  flex-wrap: wrap;
+
+  p{
+    width: 20vw;
+    height:5vh;
+    font-size:1rem;
+    margin:0;
+    margin-top:2vh;
+    padding:0;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+  }
+  a{
+    width:12vw;
+    height:5vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:brown;
+    text-decoration: none;
+  }
+  button{
+    width:8vw;
+    height:3vh;
+    background-color: white;
+    color:gray;
+  }
 }
 
 .link{
