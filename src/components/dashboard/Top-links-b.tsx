@@ -5,7 +5,7 @@ import styles from "@/styles/admintoplink.module.scss";
 
 const links = [
   { name: "회원관리", href: "/admin/dashboard/user/user-info" },
-  { name: "구독관리", href: "/admin/dashboard/subscription/service" },
+  { name: "구독관리", href: "/admin/dashboard/subscription/order" },
   { name: "통계분석", href: "/admin/dashboard/analysis/user-data" },
   { name: "고객지원", href: "/admin/dashboard/service" },
 ];
