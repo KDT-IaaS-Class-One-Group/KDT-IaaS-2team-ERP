@@ -30,7 +30,7 @@ export default function LoginForm() {
       localStorage.setItem("token", token);
       console.log("로그인 성공");
 
-      router.push("/admin/dashboard");
+      router.push("/admin/dashboard/user/user-info");
       setIsLoggedIn(true);
     } else {
       alert("로그인 실패!");
@@ -39,7 +39,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.push("/admin/dashboard");
+      router.push("/admin/dashboard/user/user-info");
     }
   }, [isLoggedIn, router]);
 
