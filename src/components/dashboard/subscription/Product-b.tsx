@@ -48,7 +48,7 @@ export default function Product() {
         category_id: "",
         product_name: "",
         stock_quantity: "",
-         info: "",
+        info: "",
       });
       setShowForm(false); // 폼 닫기
     } catch (error) {
@@ -64,7 +64,7 @@ export default function Product() {
       {showForm && (
         <div>
           <label>
-          category_id:
+            category_id:
             <input
               type="text"
               name="category_id"
@@ -73,7 +73,7 @@ export default function Product() {
             />
           </label>
           <label>
-          product_name:
+            product_name:
             <input
               type="text"
               name="product_name"
@@ -82,7 +82,7 @@ export default function Product() {
             />
           </label>
           <label>
-          stock_quantity:
+            stock_quantity:
             <input
               type="text"
               name="stock_quantity"
@@ -91,7 +91,7 @@ export default function Product() {
             />
           </label>
           <label>
-          info:
+            info:
             <input
               type="text"
               name="info"

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, ChangeEvent, useEffect } from "react";
-import styles from "@/styles/adminsubproduct.module.scss";
+import styles from "@/styles/adminuser.module.scss";
 
 interface SubscriptionInfo {
   Subs_Index: string;
@@ -36,8 +36,7 @@ export default function SubsProduct() {
         `/api/subs-product?page=${page}&pageSize=${pageSize}`
       );
       const data = await response.json();
-    setSubs(data.subs);
-      
+      setSubs(data.subs);
 
       setPageInfo({
         currentPage: data.pageInfo.currentPage,
@@ -100,9 +99,9 @@ export default function SubsProduct() {
   };
 
   return (
-      <div className={styles.subproduct}>
-        <h1>구독 상품 관리</h1>
-        <button onClick={() => setShowForm(!showForm)}>구독 상품 추가</button>
+    <div className={styles.subproduct}>
+      <h1>구독 상품 관리</h1>
+      <button onClick={() => setShowForm(!showForm)}>구독 상품 추가</button>
       {showForm && (
         <div>
           <label>
@@ -142,44 +141,48 @@ export default function SubsProduct() {
             />
           </label>
           <button onClick={handleSubmit}>추가</button>
-          </div>
-          )}
-          <div className="subscription">
-          <table className={styles.subscriptionTable}>
-            <thead>
-              <tr>
-                <th>Subs_Index</th>
-                <th>product_Index</th>
-                <th>name</th>
-                <th>week</th>
-                <th>price</th>
+        </div>
+      )}
+      <div className="subscription">
+        <table className={styles.subscriptionTable}>
+          <thead>
+            <tr>
+              <th>Subs_Index</th>
+              <th>product_Index</th>
+              <th>name</th>
+              <th>week</th>
+              <th>price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {subs.map((sub) => (
+              <tr key={sub.Subs_Index}>
+                <td>{sub.Subs_Index}</td>
+                <td>{sub.product_Index}</td>
+                <td>{sub.name}</td>
+                <td>{sub.week}</td>
+                <td>{sub.price}</td>
               </tr>
-            </thead>
-            <tbody>
-              {subs.map((sub) => (
-                <tr key={sub.Subs_Index}>
-                  <td>{sub.Subs_Index}</td>
-                  <td>{sub.product_Index}</td>
-                  <td>{sub.name}</td>
-                  <td>{sub.week}</td>
-                  <td>{sub.price}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className={styles.pagination}>
-            {Array.from({ length: pageInfo.totalPages }, (_, index) => index + 1).map((pageNumber) => (
-              <button
-                key={pageNumber}
-                className={`pagination-button ${
-                  pageNumber === pageInfo.currentPage ? 'active' : ''
-                }`}
-                onClick={() => handlePageChange(pageNumber)}
-              >
-                {pageNumber}
-              </button>
             ))}
-            </div>
-          </div>
+          </tbody>
+        </table>
+        <div className={styles.pagination}>
+          {Array.from(
+            { length: pageInfo.totalPages },
+            (_, index) => index + 1
+          ).map((pageNumber) => (
+            <button
+              key={pageNumber}
+              className={`pagination-button ${
+                pageNumber === pageInfo.currentPage ? "active" : ""
+              }`}
+              onClick={() => handlePageChange(pageNumber)}
+            >
+              {pageNumber}
+            </button>
+          ))}
+        </div>
       </div>
-  )}
+    </div>
+  );
+}
