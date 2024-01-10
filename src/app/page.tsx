@@ -10,6 +10,7 @@ import Link from "next/link";
 import Image from 'next/image';
 import Video from 'next-video';
 import { usePathname , useRouter } from 'next/navigation';
+import { relative } from 'path';
 
 
 interface DataItem {
@@ -40,7 +41,8 @@ function Index() {
 
   useEffect(() => {
     const swiper = new Swiper(".swiper-container", {
-      spaceBetween: 70,
+      
+      spaceBetween: 80,
       slidesPerView: 4,
       navigation: {
         nextEl: ".swiper-button-next",
@@ -94,16 +96,18 @@ function Index() {
                 style={{
                   width: "20vw",
                   height: "80vh",
-                  backgroundColor: "#f6f1eb;",
-                  marginTop: "10vh",
+                  backgroundColor: "#f6f1eb",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
+                  marginRight: "4vw",
                   cursor: "pointer",
                 }}
               >
-                <Image width={250} height={400} src={`/image/image${index+1}.jpg`} alt={`Product ${index + 1}`} />
+                <div className={styles.image}> 
+                  <Image layout={"fill"} src={`/image/image${index+1}.jpg`} alt={`Product ${index + 1}`} />
+                </div>
                 <p style={{ margin: 0 }}>Name: {item.name}</p>
                 <p style={{ margin: 0 }}>Price: {item.price}</p>
                 <p style={{ margin: 0 }}>Week: {item.week}</p>
@@ -125,7 +129,7 @@ function Index() {
         </div>
       </div>
       <div className={`${styles.div} ${styles.purple}`}>
-        <SlideComponent/>
+        {/* <SlideComponent/> */}
       </div>
       <div className={`${styles.div} ${styles.blue}`} >
         <div className={styles.infobox1}></div>

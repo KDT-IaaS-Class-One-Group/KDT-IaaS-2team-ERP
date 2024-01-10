@@ -9,19 +9,19 @@
 .top{
   display:flex;
   width:100vw;
-  height:15vh;
-  background-color: gray;
+  height:12vh;
 }
 .side{
-  width: 20vw;
-  height: 85vh;
-  background-color: lightgray;
-  color: lightblue;
+  width: 13vw;
+  height: 88vh;
   justify-content: center;
   align-items: center;
+  background-color: #f6f1eb;
+
+
 }
 .content{
-  width:80vw;
-  height:85vh;
-  background-color: bisque;
+  width:87vw;
+  height:88vh;
+ 
 }

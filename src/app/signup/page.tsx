@@ -6,10 +6,7 @@ import styles from "@/styles/signup.module.scss";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRouter } from 'next/navigation'
-import Adress from '@/components/test/adress';
-
 import { Input, Button } from "@chakra-ui/react";
-import styled from "styled-components";
 import { useSearchParams } from "next/navigation"
 import Search from "@/components/test/modal";
 
@@ -42,46 +39,17 @@ interface FormData {
 
 const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
 
-  const searchParams = useSearchParams()
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedaress, setSelectedadress] = useState<string | null>(null);
+  const [selectedAdress, setSelectedadress] = useState<string | null>(null);
   const [selectedZonecode, setSelectedZonecode] = useState<string | null>(null);
-  const [isFormComplete, setIsFormComplete] = useState<boolean>(false);
   const [detailadress, setDetailadress] = useState<string>("");
-  const [adress, setadress] = useState<string | null>('');
-  const [postcode, setPostcode] = useState<string | null>('');
+  const [adress, setadress] = useState<string>('');
+  const [postcode, setPostcode] = useState<string>('');
 
- 
-  const handleSearch = () => {
-    setIsModalOpen(true);
-  };
+  const [isPasswordValid, setIsPasswordValid] = useState<boolean | null>(null);
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const getadress = (data : any) => {
-    console.log(data)
-    const  adress1 = data;
-    // 필요한 주소 정보를 조합하여 주소 문자열 반환
-    return adress1
-  };
-
-  // 모달에서 주소를 선택했을 때 호출되는 함수
-  const handleSelectadress = (data: any) => {
-    const adress = getadress(data);
-    setSelectedadress(adress);
-    setadress(adress);
-    setIsModalOpen(false);
-    
-  };
-
-  const handleSelectZonecode = (data: any) => {
-    const postcodeData = getadress(data);
-    setSelectedZonecode(postcodeData);
-    setPostcode(postcodeData);
-  };
-  
+  const [passwordConfirm, setPasswordConfirm] = useState<string>('');
+  const [isPasswordMatch, setIsPasswordMatch] = useState<boolean | null>(null);
 
   const [formData, setFormData] = useState<{
     userId: string;
@@ -107,6 +75,47 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     gender: signup.gender || '',
   });
   const [isUserIdValid, setIsUserIdValid] = useState<'unknown' | boolean | null>(null);
+
+ 
+  const handleSearch = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const getadress = (data : any) => {
+    console.log(data)
+    const  adress1 = data;
+    // 필요한 주소 정보를 조합하여 주소 문자열 반환
+    return adress1
+  };
+
+  // 모달에서 주소를 선택했을 때 호출되는 함수
+  const handleSelectadress = (data: any) => {
+    const adress = getadress(data);
+    setSelectedadress(adress);
+    setadress(adress);
+    setIsModalOpen(false);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      adress: adress
+    }));
+    
+  };
+
+  const handleSelectZonecode = (data: any) => {
+    const postcodeData = getadress(data);
+    setSelectedZonecode(postcodeData);
+    setPostcode(postcodeData);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      postcode: postcodeData
+    }));
+  };
+  
+
   const router = useRouter()
 
   useEffect(() => {
@@ -114,26 +123,53 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | Date) => {
-
-  
     if (event instanceof Date) {
-      // Date일 경우
       setFormData({
         ...formData,
         birthdate: event,
       });
     } else {
-      // HTML 요소일 경우
       const target = event.target as HTMLInputElement | HTMLSelectElement;
+      
+      if (target.name === 'password') {
+        const password = target.value;
+        
+        // 비밀번호 유효성 검사
+        const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$/;
+        const isValid = passwordPattern.test(password);
+  
+        setFormData({
+          ...formData,
+          password: password,
+        });
+  
+        setIsPasswordValid(isValid);
+      }
 
-      setFormData({
-        ...formData,
-        [target.name]: target.value,
-      });
+      if (target.name === 'passwordConfirm') {
+        const confirmPassword = target.value;
 
-      if (target.name === 'userId') {
-        // 아이디가 변경될 때, 중복 체크 상태 초기화
-        setIsUserIdValid(null);
+        // 비밀번호 확인
+        setIsPasswordMatch(confirmPassword === formData.password);
+
+        setPasswordConfirm(confirmPassword);}
+      
+      // 주소 관련 필드의 경우 분리해서 업데이트( 이거 손좀 봐야함)
+      if (target.name === 'postcode' || target.name === 'adress' || target.name === 'detailadress') {
+        setFormData({
+          ...formData,
+          [target.name]: target.value,
+        });
+      } else {
+        // 나머지 필드는 기존과 동일하게 처리
+        setFormData({
+          ...formData,
+          [target.name]: target.value,
+        });
+  
+        if (target.name === 'userId') {
+          setIsUserIdValid(null);
+        }
       }
     }
   };
@@ -165,11 +201,18 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
+ 
+  const handleSubmitClick = async () => {
+    console.log(JSON.stringify(formData));
     if (!isUserIdValid) {
       alert('아이디 중복 확인을 해주세요.');
+      return;
+    }
+    
+    const isAnyFieldEmpty = Object.values(formData).some(value => value === '');
+
+    if (isAnyFieldEmpty) {
+      alert('모든 필드를 입력해주세요.');
       return;
     }
 
@@ -183,7 +226,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
       const data = await response.json();
 
       if (data.message === '회원가입 성공') {
-        router.push('/login')
+        router.push('/login');
       } else {
         alert(data.error);
       }
@@ -192,11 +235,30 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     }
   };
 
+  const handleInputChange = (name: string, value: string) => {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+  
+  // 예를 들어, postcode 변경 시
+  const handlePostcodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    handleInputChange('postcode', value);
+  };
+  
+  // 예를 들어, address 변경 시
+  const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    handleInputChange('adress', value);
+  };
+
 
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>회원가입</h1>
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form className={styles.form}>
         <label className={styles.formLabel}>
           아이디:
           <input type="text" name="userId" value={formData.userId} onChange={handleChange} className={styles.input} />
@@ -215,10 +277,44 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
         </label>
         <br />
         <label className={styles.formLabel}>
-           비밀번호:
-          <input type="password" name="password" value={formData.password} onChange={handleChange} className={styles.input} />
+          비밀번호:
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className={styles.input}
+          />
+          {/* 비밀번호 유효성 아이콘 표시 */}
+          {isPasswordValid !== null && (
+            <span className={styles.passwordValidation}>
+              {isPasswordValid ? '✔' : '✘'}
+            </span>
+          )}
+          {/* 비밀번호 유효성 메시지 표시 */}
+          {isPasswordValid === false && (
+            <span className={styles.validMessage}>
+              비밀번호는 8글자 이상, 영문, 숫자, 특수문자를 모두 사용해야 합니다.
+            </span>
+          )}
+          </label>
+
+          <label className={styles.formLabel}>
+          비밀번호 확인:
+          <input
+            type="password"
+            name="passwordConfirm"
+            value={passwordConfirm}
+            onChange={handleChange}
+            className={styles.input}
+          />
+          {isPasswordMatch !== null && (
+            <span className={styles.validMessage}>
+              {isPasswordMatch ? '비밀번호가 일치합니다.' : '비밀번호가 일치하지 않습니다.'}
+            </span>
+          )}
         </label>
-        <br />
+
         <label className={styles.formLabel}>
           이름:
           <input type="text" name="name" value={formData.name} onChange={handleChange} className={styles.input} />
@@ -244,19 +340,22 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
         </label>
         <br />
         <label className={styles.formLabel}>
-  주소:
-  <div className={styles.jusoContainer}>
-    <div className={styles.AdressWrapper}>
+          주소:
+      <div className={styles.jusoContainer}>
+      <div className={styles.AdressWrapper}>
       <div className={styles.PostCodeAndButton}>
         {/* 이 부분은 주소 검색 결과가 선택되면 자동으로 업데이트되므로 readOnly로 유지 */}
         <Input
           m="3px"
           size="md"
+          name="postcode"
           type="text"
           placeholder="우편번호"
-          value={postcode || ""}
+          value={postcode}
+          onChange={handlePostcodeChange} 
           readOnly
         />
+        
         <button onClick={() => setIsModalOpen(true)}>주소 검색</button>
         <Search
           open={isModalOpen}
@@ -272,27 +371,27 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
         m="3px"
         size="md"
         type="text"
+        name="adress"
         placeholder="주소"
-        value={adress || ""}
+        value={adress}
+        onChange={handleAddressChange}
         readOnly
       />
       <Input
         m="3px"
         size="md"
+        name="detailadress"
         type="text"
         placeholder="상세주소"
         value={detailadress}
-        onChange={(e) => setDetailadress(e.target.value)}
+        onChange={(e) => {setDetailadress(e.target.value); handleChange(e);
+        }}
       />
     </div>
     <div className={styles.ButtonWrapper}>
-      {/* hidden input은 onChange 이벤트가 필요 없음 */}
-      <input type="hidden" name="postcode" value={postcode || ""} />
-      <input type="hidden" name="adress" value={adress || ""} />
-      <input type="hidden" name="detailadress" value={detailadress || ""} />
     </div>
-  </div>
-</label>
+    </div>
+    </label>
         <label className={styles.formLabel}>
           성별:
           <select name="gender" value={formData.gender} onChange={handleChange} className={styles.input}>
@@ -302,7 +401,9 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
           </select>
         </label>
         <br />
-        <button type="submit" className={styles.button} disabled={isUserIdValid === false}>회원가입</button>
+        <button type="button" className={styles.button} onClick={handleSubmitClick} disabled={isUserIdValid === false}>
+          회원가입
+        </button>
       </form>
     </div>
   );

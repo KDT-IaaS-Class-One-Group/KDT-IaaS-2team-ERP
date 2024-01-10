@@ -860,7 +860,9 @@ server.post('/api/payment', async (req, res) => {
           birthdate,
           phoneNumber,
           email,
-          address,
+          postcode,
+          adress,
+          detailadress,
           gender,
         } = req.body;
 
@@ -869,7 +871,7 @@ server.post('/api/payment', async (req, res) => {
         const isWithdrawn = false;
 
         const [rows, fields] = await db.query(
-          `INSERT INTO users (userId, password, name, birthdate, phoneNumber, email, address, gender, cash, joinDate, isWithdrawn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO users (userId, password, name, birthdate, phoneNumber, email, postcode, adress, detailadress, gender, cash, joinDate, isWithdrawn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)`,
           [
             userId,
             password,
@@ -877,7 +879,9 @@ server.post('/api/payment', async (req, res) => {
             new Date(birthdate),
             phoneNumber,
             email,
-            address,
+            postcode,
+            adress,
+            detailadress,
             gender,
             cash,
             joinDate,
@@ -930,13 +934,15 @@ server.post('/api/payment', async (req, res) => {
           // 로그인 성공
           const token = jwt.sign(
             {
-              User_Index: user.User_Index,
+              user_Index: user.user_Index,
               userId: user.userId ,
               name: user.name,
               birthdate: user.birthdate,
               phoneNumber: user.phoneNumber,
               email: user.email,
-              address: user.address,
+              postcode: user.postcode,
+              adress: user.adress,
+              detailadress: user.detailadress,
               gender: user.gender,
               cash: user.cash,
               order_Index:user.order_Index,

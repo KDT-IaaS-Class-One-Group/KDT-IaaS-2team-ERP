@@ -9,7 +9,9 @@ interface UserInfo {
   birthdate: string;
   phoneNumber: string;
   email: string;
-  address: string;
+  postcode: string;
+  adress: string;
+  detailadress: string;
   gender: string;
 }
 
@@ -36,7 +38,7 @@ export default function MyPageinfo() {
       const decodedToken = jwt.decode(token) as JwtPayload;
 
       if (decodedToken) {
-        const { userId, name, birthdate, phoneNumber, email, address, gender } = decodedToken;
+        const { userId, name, birthdate, phoneNumber, email, postcode , adress, detailadress, gender } = decodedToken;
 
         const birthdateDate = new Date(birthdate);
 
@@ -49,7 +51,9 @@ export default function MyPageinfo() {
           birthdate: birthdateLocalString,
           phoneNumber,
           email,
-          address,
+          postcode,
+          adress,
+          detailadress,
           gender,
         };
 
@@ -92,7 +96,7 @@ export default function MyPageinfo() {
           birthdate: userInfo.birthdate,
           phoneNumber: userInfo.phoneNumber,
           email: userInfo.email,           
-          address: userInfo.address,        
+          adress: userInfo.adress,        
           gender: userInfo.gender,           
         }),
       });
@@ -153,7 +157,7 @@ export default function MyPageinfo() {
                     value={userInfo.name}
                     onChange={(e) =>
                       setUserInfo((prevInfo) => 
-                        prevInfo ? { ...prevInfo, name: e.target.value } : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '', address: '', gender: '' }
+                        prevInfo ? { ...prevInfo, name: e.target.value } : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', adress: '', detailadress:'' ,gender: '' }
                       )
                     }
                   />
@@ -165,7 +169,7 @@ export default function MyPageinfo() {
                     value={userInfo.birthdate}
                     onChange={(e) =>
                       setUserInfo((prevInfo) => 
-                        prevInfo ? { ...prevInfo, birthdate: e.target.value } : { userId: '', name: '', birthdate: e.target.value, phoneNumber: '', email: '', address: '', gender: '' }
+                        prevInfo ? { ...prevInfo, birthdate: e.target.value } : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', adress: '', detailadress:'' ,gender: '' }
                       )
                     }
                   />
@@ -179,15 +183,7 @@ export default function MyPageinfo() {
       setUserInfo((prevInfo) =>
         prevInfo
           ? { ...prevInfo, phoneNumber: e.target.value }
-          : {
-              userId: '',
-              name: '',
-              birthdate: '',
-              phoneNumber: e.target.value,
-              email: '',
-              address: '',
-              gender: '',
-            }
+          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', adress: '', detailadress:'' ,gender: '' }
       )
     }
   />
@@ -201,15 +197,7 @@ export default function MyPageinfo() {
       setUserInfo((prevInfo) =>
         prevInfo
           ? { ...prevInfo, email: e.target.value }
-          : {
-              userId: '',
-              name: '',
-              birthdate: '',
-              phoneNumber: '',
-              email: e.target.value,
-              address: '',
-              gender: '',
-            }
+          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', adress: '', detailadress:'' ,gender: '' }
       )
     }
   />
@@ -218,20 +206,12 @@ export default function MyPageinfo() {
   주소:
   <input
     type='text'
-    value={userInfo.address}
+    value={userInfo.adress}
     onChange={(e) =>
       setUserInfo((prevInfo) =>
         prevInfo
           ? { ...prevInfo, address: e.target.value }
-          : {
-              userId: '',
-              name: '',
-              birthdate: '',
-              phoneNumber: '',
-              email: '',
-              address: e.target.value,
-              gender: '',
-            }
+          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', adress: '', detailadress:'' ,gender: '' }
       )
     }
   />
@@ -245,15 +225,7 @@ export default function MyPageinfo() {
       setUserInfo((prevInfo) =>
         prevInfo
           ? { ...prevInfo, gender: e.target.value }
-          : {
-              userId: '',
-              name: '',
-              birthdate: '',
-              phoneNumber: '',
-              email: '',
-              address: '',
-              gender: e.target.value,
-            }
+          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', adress: '', detailadress:'' ,gender: '' }
       )
     }
   />
@@ -270,7 +242,9 @@ export default function MyPageinfo() {
                 <p>생년월일: {userInfo.birthdate}</p>
                 <p>전화번호: {userInfo.phoneNumber}</p>
                 <p>이메일: {userInfo.email}</p>
-                <p>주소: {userInfo.address}</p>
+                <p>우편번호:{userInfo.postcode}</p>
+                <p>주소: {userInfo.adress}</p>
+                <p>상세주소:{userInfo.detailadress}</p>
                 <p>성별: {userInfo.gender}</p>
                 <button onClick={handleEditModeToggle}>수정</button>
               </div>
