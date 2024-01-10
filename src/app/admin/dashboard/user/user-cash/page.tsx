@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import NavLinks from "@/components/dashboard/user/User-nav-links-b";
-import styles from "@/styles/adminsidenav.module.scss";
+import styles from "@/styles/adminuser.module.scss";
 
 interface UserInfo {
   id: string;
@@ -13,13 +13,13 @@ interface UserInfo {
   isWithdrawn: number;
 }
 
-const pageSize = 20; // 페이지당 표시할 항목 수
+const pageSize = 12; // 페이지당 표시할 항목 수
 
 export default function UsercashPage() {
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 20,
+    pageSize: 12,
     totalPages: 1,
   });
 
@@ -102,41 +102,39 @@ export default function UsercashPage() {
       <div className={styles.sidelink}>
         <NavLinks />
       </div>
-      <main>
-        <h1>회원 캐시 관리</h1>
-        <label htmlFor="searchOption">검색 옵션:</label>
+      <div className={styles.main}>
+        <h1 className={styles.title}>회원 캐시 관리</h1>
+        <label htmlFor="searchOption"></label>
         <select
           id="searchOption"
           value={searchOption}
           onChange={(e) => setSearchOption(e.target.value)}
+          className={styles.select}
         >
-          <option value="userId">User ID</option>
+          <option value="userId">ID</option>
           <option value="name">Name</option>
         </select>
         <input
           type="text"
-          placeholder={`${
-            searchOption === "userId" ? "userId" : "name"
-          }로 검색`}
+          placeholder={`${searchOption === "userId" ? "ID" : "Name"}로 검색`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          className={styles.search}
         />
-        <div className={styles.userinfocontent}>
+        <div className={styles.userContent}>
           <table className={styles.userTable}>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>User ID</th>
-                <th>Name</th>
-                <th>Birthdate</th>
-                <th>Cash</th>
-                <th>수정</th>
+                <th>아이디</th>
+                <th>이름</th>
+                <th>생년월일</th>
+                <th>캐쉬</th>
+                <th>캐쉬 수정</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
+                <tr key={user.userId}>
                   <td>{user.userId}</td>
                   <td>{user.name}</td>
                   <td>{formatBirthdate(user.birthdate)}</td>
@@ -151,8 +149,9 @@ export default function UsercashPage() {
                           [user.userId]: e.target.value,
                         }))
                       }
-                    />
-                    <button onClick={() => handleCashEdit(user.userId)}>
+                      className={styles.cashInput} 
+                      />
+                    <button className={styles.cashButton} onClick={() => handleCashEdit(user.userId)}>
                       수정
                     </button>
                   </td>
@@ -167,8 +166,8 @@ export default function UsercashPage() {
             ).map((pageNumber) => (
               <button
                 key={pageNumber}
-                className={`pagination-button ${
-                  pageNumber === pageInfo.currentPage ? "active" : ""
+                className={`${styles.paginationButton} ${
+                  pageNumber === pageInfo.currentPage ? styles.active : ""
                 }`}
                 onClick={() => handlePageChange(pageNumber)}
               >
@@ -177,7 +176,7 @@ export default function UsercashPage() {
             ))}
           </div>
         </div>
-      </main>
+      </div>
     </>
   );
 }
