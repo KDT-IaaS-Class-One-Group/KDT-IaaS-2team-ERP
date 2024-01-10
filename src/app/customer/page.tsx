@@ -3,7 +3,7 @@ import Topbar from "@/components/Topbar/Topbar";
 import styles from "@/styles/customer.module.scss";
 import { useState, useEffect } from "react";
 import React from "react";
-import Link from "next/link";
+import Modal from "@/components/customer/Modal"; // 모달 컴포넌트 import 추가
 
 interface item {
   boardKey: number;
@@ -14,14 +14,14 @@ interface item {
 }
 
 export default function Page() {
-  const [data, setData] = useState<item>({
+  const [modalData, setModalData] = useState<item>({
     boardKey: 0,
     title: "",
     password: "",
     content: "",
     userID: "",
   });
-  const [showContent, setShowContent] = useState(false); // 추가: 컨텐츠를 보여줄지 여부 상태
+  const [showModal, setShowModal] = useState(false); // 추가: 컨텐츠를 보여줄지 여부 상태
   const [titles, setTitles] = useState([]);
   const [userId, setUserId] = useState<string>("");
 
@@ -58,11 +58,15 @@ export default function Page() {
     const enteredPassword = prompt("암호를 입력하세요:");
 
     if (enteredPassword === password) {
-      setData({ ...data, title: title, content: content });
-      setShowContent(true);
+      setModalData({ ...modalData, title, content });
+      setShowModal(true); // 모달을 열고 데이터 설정
     } else {
       alert("잘못된 암호입니다.");
     }
+  };
+
+  const closeModal = () => {
+    setShowModal(false); // 모달 닫기
   };
 
   const handleGoToWritingPage = () => {
@@ -95,22 +99,30 @@ export default function Page() {
             </div>
           </div>
           <div className={`${styles.flex} ${styles.marginTop}`}>
-          <div className={styles.marginRight}>
-          {titles.map((item: item, index: number) => (
-            <h3
-            key={index}
-            onClick={() =>
-              handleTitleClick(item.title, item.password, item.content)
-            }
+            <div className={styles.marginRight}>
+              {titles.map((item: item, index: number) => (
+                <h3
+                  key={index}
+                  onClick={() =>
+                    handleTitleClick(item.title, item.password, item.content)
+                  }
+                >
+                  글번호: {item.boardKey} 글제목: {item.title} , 작성자:
+                  {item.userID}
+                </h3>
+              ))}
+            </div>
+            <div
+              className={`${styles.flexSet} ${styles.width} ${styles.whiteBgc}`}
             >
-              글번호: {item.boardKey} 글제목: {item.title} , 작성자:
-              {item.userID}
-            </h3>
-          ))}
-          </div>
-          <div className={`${styles.flexSet} ${styles.width} ${styles.whiteBgc}`}>
-          {showContent && <p>내용 : {data.content}</p>}
-          </div>
+              {showModal && (
+                <Modal
+                  title={modalData.title}
+                  content={modalData.content}
+                  closeModal={closeModal}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
