@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
-import styles from "@/styles/order-b.module.scss";
+import styles from "@/styles/adminorder-b.module.scss";
 import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links-b";
 
 interface SubscriptionInfo {
@@ -15,6 +15,8 @@ const pageSize = 13; // 페이지당 표시할 항목 수
 
 export default function SubsProduct() {
   const [showForm, setShowForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingSubsIndex, setEditingSubsIndex] = useState<string | null>(null);
   const [subs, setSubs] = useState<SubscriptionInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
@@ -78,12 +80,12 @@ export default function SubsProduct() {
       });
 
       if (response.ok) {
-        // 성공적인 응답 처리
-        console.log("Subscription added successfully");
         fetchData(pageInfo.currentPage);
+        alert("등록 완료");
       } else {
         // 오류 응답 처리
         console.error(`Error adding subscription: ${response.status}`);
+        alert("등록 실패");
       }
 
       // 입력 폼 초기화
@@ -123,6 +125,43 @@ export default function SubsProduct() {
     }
   };
 
+  const handleCorrection = (subs_index: string) => {
+    // 수정 중인 열의 인덱스 설정
+    setEditingSubsIndex(subs_index);
+    // 수정 중인 열의 정보를 입력 폼에 표시
+    const editingSub = subs.find((sub) => sub.subs_index === subs_index);
+    if (editingSub) {
+      setSubscriptionInfo(editingSub);
+      setShowEditForm(true); // 수정 폼 표시
+    }
+  };
+
+  const handleUpdate = async (subs_index: string) => {
+    try {
+      const response = await fetch(`/api/subs-product/${subs_index}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(subscriptionInfo),
+      });
+
+      if (response.ok) {
+        alert("수정 완료");
+        fetchData(pageInfo.currentPage);
+        setEditingSubsIndex(null);
+        setShowEditForm(false); // 폼 닫기
+      } else {
+        // 오류 응답 처리
+        console.error(`Error updating subscription: ${response.status}`);
+        alert("수정 실패");
+      }
+
+    } catch (error) {
+      console.error("Error updating subscription:", error);
+    }
+  };
+
   return (
     <>
       <div className={styles.sidelink}>
@@ -139,7 +178,7 @@ export default function SubsProduct() {
         {showForm && (
           <div className={styles.addSubscription}>
             <label className={styles.addLabel}>
-              Name:  
+              Name:
               <input
                 type="text"
                 name="name"
@@ -149,7 +188,7 @@ export default function SubsProduct() {
               />
             </label>
             <label className={styles.addLabel}>
-              Week:  
+              Week:
               <input
                 type="text"
                 name="week"
@@ -159,7 +198,7 @@ export default function SubsProduct() {
               />
             </label>
             <label className={styles.addLabel}>
-              Size:  
+              Size:
               <input
                 type="text"
                 name="size"
@@ -169,7 +208,7 @@ export default function SubsProduct() {
               />
             </label>
             <label className={styles.addLabel}>
-              Price:  
+              Price:
               <input
                 type="text"
                 name="price"
@@ -178,7 +217,56 @@ export default function SubsProduct() {
                 className={styles.addInput}
               />
             </label>
-            <button onClick={handleSubmit} className={styles.delButton}>추가</button>
+            <button onClick={handleSubmit} className={styles.delButton}>
+              등록
+            </button>
+          </div>
+        )}
+        {showEditForm && (
+          <div className={styles.addSubscription}>
+            <label className={styles.addLabel}>
+              Name:
+              <input
+                type="text"
+                name="name"
+                value={subscriptionInfo.name}
+                onChange={handleChange}
+                className={styles.addInput}
+              />
+            </label>
+            <label className={styles.addLabel}>
+              Week:
+              <input
+                type="text"
+                name="week"
+                value={subscriptionInfo.week}
+                onChange={handleChange}
+                className={styles.addInput}
+              />
+            </label>
+            <label className={styles.addLabel}>
+              Size:
+              <input
+                type="text"
+                name="size"
+                value={subscriptionInfo.size}
+                onChange={handleChange}
+                className={styles.addInput}
+              />
+            </label>
+            <label className={styles.addLabel}>
+              Price:
+              <input
+                type="text"
+                name="price"
+                value={subscriptionInfo.price}
+                onChange={handleChange}
+                className={styles.addInput}
+              />
+            </label>
+            <button onClick={() => handleUpdate(subscriptionInfo.subs_index)} className={styles.delButton}>
+              수정
+            </button>
           </div>
         )}
         <div className={styles.orderContent}>
@@ -190,20 +278,36 @@ export default function SubsProduct() {
                 <th>week</th>
                 <th>size</th>
                 <th>price</th>
-              <th></th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {subs.map((sub) => (
-                <tr key={sub.subs_index}>
+                <tr
+                  key={sub.subs_index}
+                  className={`${styles.correction} ${
+                    editingSubsIndex === sub.subs_index ? styles.editingRow : ""
+                  }`}
+                >
                   <td>{sub.subs_index}</td>
                   <td>{sub.name}</td>
                   <td>{sub.week}</td>
                   <td>{sub.size}</td>
                   <td>{sub.price}</td>
                   <td>
-                  <button className={styles.delButton} onClick={() => handleDelete(sub.subs_index)}>삭제</button>
-                </td>
+                    <button
+                      className={styles.delButton}
+                      onClick={() => handleDelete(sub.subs_index)}
+                    >
+                      삭제
+                    </button>
+                    <button
+                      className={styles.delButton}
+                      onClick={() => handleCorrection(sub.subs_index)}
+                    >
+                      수정
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
