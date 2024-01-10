@@ -832,6 +832,36 @@ app.prepare().then(() => {
     }
   });
 
+  server.get("/api/admin/product", async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
+      const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
+
+      const offset = (page - 1) * pageSize;
+
+      const [products] = await db.query("SELECT * FROM product LIMIT ?, ? ", [
+        offset,
+        pageSize,
+      ]);
+      const [totalCount] = await db.query(
+        "SELECT COUNT(*) AS totalCount FROM product"
+      );
+      const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
+
+      res.json({
+        products,
+        pageInfo: {
+          currentPage: page,
+          pageSize,
+          totalPages,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching subs:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
   server.get("/customer/getData", async (req, res) => {
     try {
       const connection = await pool.getConnection();
@@ -1141,23 +1171,77 @@ app.prepare().then(() => {
     }
   });
 
-  server.post("/api/addproduct", async (req, res) => {
+  server.post("/api/admin/product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { category_id, product_name, stock_quantity, info } = req.body;
+        const { product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info } = req.body; // 변경된 부분
 
         // 데이터베이스에서 subscription 정보 추가
         const [result] = await db.query(
-          "INSERT INTO product (category_id, product_name, stock_quantity , info) VALUES (?, ?, ?, ?)",
-          [category_id, product_name, stock_quantity, info]
+          "INSERT INTO product (product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          [product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info] // 변경된 부분
         );
 
         if (result.affectedRows === 1) {
           // 성공적으로 추가된 경우
-          res.status(200).json({ message: "subscription 정보 추가 성공" });
+          res.status(200).json({ message: "product 정보 추가 성공" });
         } else {
           // 추가 실패
-          res.status(500).json({ error: "subscription 정보 추가 실패" });
+          res.status(500).json({ error: "product 정보 추가 실패" });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "내부 서버 오류" });
+    }
+  });
+
+  server.delete("/api/admin/product/:product_id", async (req, res) => {
+    const { product_id } = req.params;
+    try {
+      if (req.method === "DELETE") {
+        const [result] = await db.query(
+          "DELETE FROM product WHERE product_id = ?",
+          [product_id]
+        );
+
+        if (result.affectedRows === 1) {
+          res.status(200).json({ message: "product 삭제 성공" });
+        } else {
+          // 추가 실패
+          res.status(500).json({ error: "product 삭제 실패" });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  server.put("/api/admin/product/:product_id", async (req, res) => {
+    const { product_id } = req.params;
+    try {
+      if (req.method === "PUT") {
+        const { product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info } = req.body;
+
+        // 데이터베이스에서 구독 정보 업데이트
+        const [result] = await db.query(
+          "UPDATE product SET product_name = ?, price = ?, sale = ?, stock_quantity = ?, img1 = ?, img2 = ?, delete_status = ?, info = ?, display_status = ? WHERE product_id = ?",
+          [product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info, product_id]
+        );
+
+        if (result.affectedRows === 1) {
+          // 성공적으로 수정된 경우
+          res.status(200).json({ message: "product 수정 성공" });
+        } else {
+          // 삭제 실패 시
+          res.status(404).json({ error: "product_id 찾을 수 없습니다." });
         }
       } else {
         // 허용되지 않은 메서드
