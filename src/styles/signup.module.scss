@@ -56,3 +56,27 @@
   margin: 10px 0;
   border-radius: 4px;
 }
+
+.jusoContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10vh;
+}
+
+.AdressWrapper{
+  display: flex;
+  flex-direction: column;
+}
+
+.PostCodeAndButton{
+  display: flex;
+  justify-content: space-between;
+}
+
+.ButtonWrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}

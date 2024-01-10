@@ -7,6 +7,12 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRouter } from 'next/navigation'
 import Adress from '@/components/test/adress';
+
+import { Input, Button } from "@chakra-ui/react";
+import styled from "styled-components";
+import { useSearchParams } from "next/navigation"
+import Search from "@/components/test/modal";
+
 interface SignUpProps {
   signup?: {
     userId?: string;
@@ -15,7 +21,9 @@ interface SignUpProps {
     birthdate?: string;
     phoneNumber?: string;
     email?: string;
-    address?: string;
+    postcode?: string;
+    adress?: string;
+    detailadress?: string;
     gender?: string;
   };
 }
@@ -26,11 +34,55 @@ interface FormData {
   birthdate: Date;
   phoneNumber: string;
   email: string;
-  address: string;
+  postcode: string;
+  adress: string;
+  detailadress: string;
   gender: string;
 }
 
 const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
+
+  const searchParams = useSearchParams()
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedaress, setSelectedadress] = useState<string | null>(null);
+  const [selectedZonecode, setSelectedZonecode] = useState<string | null>(null);
+  const [isFormComplete, setIsFormComplete] = useState<boolean>(false);
+  const [detailadress, setDetailadress] = useState<string>("");
+  const [adress, setadress] = useState<string | null>('');
+  const [postcode, setPostcode] = useState<string | null>('');
+
+ 
+  const handleSearch = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const getadress = (data : any) => {
+    console.log(data)
+    const  adress1 = data;
+    // 필요한 주소 정보를 조합하여 주소 문자열 반환
+    return adress1
+  };
+
+  // 모달에서 주소를 선택했을 때 호출되는 함수
+  const handleSelectadress = (data: any) => {
+    const adress = getadress(data);
+    setSelectedadress(adress);
+    setadress(adress);
+    setIsModalOpen(false);
+    
+  };
+
+  const handleSelectZonecode = (data: any) => {
+    const postcodeData = getadress(data);
+    setSelectedZonecode(postcodeData);
+    setPostcode(postcodeData);
+  };
+  
+
   const [formData, setFormData] = useState<{
     userId: string;
     password: string;
@@ -38,7 +90,9 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     birthdate: Date;
     phoneNumber: string;
     email: string;
-    address: string;
+    postcode: string;
+    adress: string;
+    detailadress: string;
     gender: string;
   }>({
     userId: signup.userId || '',
@@ -47,7 +101,9 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     birthdate: signup.birthdate ? new Date(signup.birthdate) : new Date(),
     phoneNumber: signup.phoneNumber || '',
     email: signup.email || '',
-    address: signup.address || '',
+    postcode: signup.postcode || '',
+    adress: signup.adress || '',
+    detailadress: signup.detailadress || '',
     gender: signup.gender || '',
   });
   const [isUserIdValid, setIsUserIdValid] = useState<'unknown' | boolean | null>(null);
@@ -159,7 +215,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
         </label>
         <br />
         <label className={styles.formLabel}>
-          비밀번호:
+           비밀번호:
           <input type="password" name="password" value={formData.password} onChange={handleChange} className={styles.input} />
         </label>
         <br />
@@ -188,9 +244,55 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
         </label>
         <br />
         <label className={styles.formLabel}>
-          주소:
-          <input type="text" name="address" value={formData.address} onChange={handleChange} className={styles.input} />
-        </label>
+  주소:
+  <div className={styles.jusoContainer}>
+    <div className={styles.AdressWrapper}>
+      <div className={styles.PostCodeAndButton}>
+        {/* 이 부분은 주소 검색 결과가 선택되면 자동으로 업데이트되므로 readOnly로 유지 */}
+        <Input
+          m="3px"
+          size="md"
+          type="text"
+          placeholder="우편번호"
+          value={postcode || ""}
+          readOnly
+        />
+        <button onClick={() => setIsModalOpen(true)}>주소 검색</button>
+        <Search
+          open={isModalOpen}
+          onClose={handleCloseModal}
+          onSelectAdress={handleSelectadress}
+          onSelectZonecode={handleSelectZonecode}
+        >
+          모달 내용
+        </Search>
+      </div>
+      {/* 주소 입력 값들은 자동으로 업데이트되므로 readOnly로 유지 */}
+      <Input
+        m="3px"
+        size="md"
+        type="text"
+        placeholder="주소"
+        value={adress || ""}
+        readOnly
+      />
+      <Input
+        m="3px"
+        size="md"
+        type="text"
+        placeholder="상세주소"
+        value={detailadress}
+        onChange={(e) => setDetailadress(e.target.value)}
+      />
+    </div>
+    <div className={styles.ButtonWrapper}>
+      {/* hidden input은 onChange 이벤트가 필요 없음 */}
+      <input type="hidden" name="postcode" value={postcode || ""} />
+      <input type="hidden" name="adress" value={adress || ""} />
+      <input type="hidden" name="detailadress" value={detailadress || ""} />
+    </div>
+  </div>
+</label>
         <label className={styles.formLabel}>
           성별:
           <select name="gender" value={formData.gender} onChange={handleChange} className={styles.input}>

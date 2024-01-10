@@ -12,9 +12,11 @@ interface ModalProps {
   open: boolean;
   onClose: () => void;
   children: ReactNode;
+  onSelectAdress: (data: any) => void;
+  onSelectZonecode: (zonecode: any) => void;
 }
 
-const Search = ({ open, onClose, children }: ModalProps) => {
+const Search = ({ open, onClose, onSelectAdress, onSelectZonecode, children }: ModalProps) => {
   const router = useRouter();
 
   useEffect(() => {
@@ -32,9 +34,12 @@ const Search = ({ open, onClose, children }: ModalProps) => {
   }, [router]);
 
   const handleComplete = (data: any) => {
+    console.log(data.zonecode)
     const address = getAddress(data);
-
-    router.push(`/singup/?postcode=${data.zonecode}&address=${encodeURIComponent(address)}`);
+    console.log("두개가나오나",address)
+    onSelectAdress(address);
+    onSelectZonecode(data.zonecode);
+    // router.push(`/singup/?postcode=${data.zonecode}&address=${encodeURIComponent(address)}`);
     onClose()
   };
 
