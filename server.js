@@ -1089,22 +1089,55 @@ app.prepare().then(() => {
 
   server.delete("/api/subs-product/:subs_index", async (req, res) => {
     const { subs_index } = req.params;
-
     try {
-      const [result] = await db.query(
-        "DELETE FROM subscription WHERE subs_index = ?",
-        [subs_index]
-      );
+      if (req.method === "DELETE") {
+        const [result] = await db.query(
+          "DELETE FROM subscription WHERE subs_index = ?",
+          [subs_index]
+        );
 
-      if (result.affectedRows === 1) {
-        res.status(200).json({ message: "subscription 삭제 성공" });
+        if (result.affectedRows === 1) {
+          res.status(200).json({ message: "subscription 삭제 성공" });
+        } else {
+          // 추가 실패
+          res.status(500).json({ error: "subscription 삭제 실패" });
+        }
       } else {
-        // 추가 실패
-        res.status(500).json({ error: "subscription 삭제 실패" });
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
       }
     } catch (error) {
       console.error("Error deleting subscription:", error);
       res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  server.put("/api/subs-product/:subs_index", async (req, res) => {
+    const { subs_index } = req.params;
+    try {
+      if (req.method === "PUT") {
+        const { name, week, size, price } = req.body;
+
+        // 데이터베이스에서 구독 정보 업데이트
+        const [result] = await db.query(
+          "UPDATE subscription SET name = ?, week = ?, size = ?, price = ? WHERE subs_index = ?",
+          [name, week, size, price, subs_index]
+        );
+
+        if (result.affectedRows === 1) {
+          // 성공적으로 수정된 경우
+          res.status(200).json({ message: "subscription 수정 성공" });
+        } else {
+          // 삭제 실패 시
+          res.status(404).json({ error: "subs_index를 찾을 수 없습니다." });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "내부 서버 오류" });
     }
   });
 
