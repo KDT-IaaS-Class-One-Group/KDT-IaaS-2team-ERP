@@ -28,7 +28,7 @@ export default function OrderInfoPage() {
     totalPages: 1,
   });
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchOption, setSearchOption] = useState("userId"); // 기본값은 userId로 설정
+  const [searchOption, setSearchOption] = useState("user_Index"); // 기본값은 userId로 설정
 
   const fetchData = useCallback(
     async (page: number) => {
