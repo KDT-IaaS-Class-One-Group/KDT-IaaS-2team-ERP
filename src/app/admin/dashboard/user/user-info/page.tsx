@@ -145,7 +145,7 @@ export default function UserinfoPage() {
                   <td>{user.isWithdrawn === 1 ? "신청" : "미신청"}</td>
                   <td>
                     {user.isWithdrawn === 1 && (
-                      <button onClick={() => handleApproval(user.userId)}>
+                      <button className={styles.approveButton} onClick={() => handleApproval(user.userId)}>
                         승인
                       </button>
                     )}
