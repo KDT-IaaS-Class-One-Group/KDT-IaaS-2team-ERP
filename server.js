@@ -230,7 +230,7 @@ app.prepare().then(() => {
     }
   });
 
-  server.get("/api/users", async (req, res) => {
+  server.get("/api/admin/users", async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
       const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
@@ -334,6 +334,60 @@ app.prepare().then(() => {
       });
     } catch (error) {
       console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  server.get("/api/admin/order", async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
+      const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
+      const searchTerm = req.query.searchTerm || "";
+      const searchOption = req.query.searchOption || "user_Index";
+
+      let query = "SELECT * FROM orderdetails";
+      let queryParams = [];
+
+      if (searchTerm) {
+        if (searchOption === "user_Index") {
+          query += " WHERE user_Index LIKE ?";
+        } else if (searchOption === "order_name") {
+          query += " WHERE order_name LIKE ?";
+        }
+
+        queryParams = [`%${searchTerm}%`];
+      }
+
+      query += " LIMIT ?, ?";
+      queryParams.push((page - 1) * pageSize, pageSize);
+
+      const [orders] = await db.query(query, queryParams);
+
+      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM orderdetails";
+      if (searchTerm) {
+        if (searchOption === "user_Index") {
+          totalCountQuery += " WHERE user_Index LIKE ?";
+        } else if (searchOption === "order_name") {
+          totalCountQuery += " WHERE order_name LIKE ?";
+        }
+      }
+
+      const [totalCount] = await db.query(
+        totalCountQuery,
+        queryParams.slice(0, 2)
+      );
+      const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
+
+      res.json({
+        orders,
+        pageInfo: {
+          currentPage: page,
+          pageSize,
+          totalPages,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching orders:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
