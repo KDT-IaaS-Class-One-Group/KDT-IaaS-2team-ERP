@@ -115,9 +115,7 @@ export default function Page() {
                 </h3>
               ))}
             </div>
-            <div
-              className={`${styles.flexSet} ${styles.width} ${styles.whiteBgc}`}
-            >
+            <div>
               {showModal && (
                 <Modal
                   title={modalData.title}
