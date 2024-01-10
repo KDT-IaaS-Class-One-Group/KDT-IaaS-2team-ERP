@@ -45,6 +45,9 @@ export default function OrderClientSide() {
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
   const [productData, setProductData] = useState<ProductClientSideProps[]>([]);
   const [addressInput, setAddressInput] = useState("");
+  const [orderNameInput, setOrderNameInput] = useState("");
+  const [orderPhoneInput, setOrderPhoneInput] = useState("");
+  const [zipCodeInput, setZipCodeInput] = useState("");
 
   const setsToken = (token: string) => {
     localStorage.setItem("token", token);
@@ -167,7 +170,11 @@ export default function OrderClientSide() {
           sub_index: subs_index,
           price: Price,
           ids: selectedProducts,
-          address: addressInput, // 주소 정보 추가
+          address: addressInput,
+          user_Index: userInfo?.User_Index,
+          order_name: orderNameInput, // 주문자 이름 추가
+          order_phone: orderPhoneInput, // 주문자 전화번호 추가
+          zip_code: zipCodeInput, // 우편번호 추가
         }),
       });
 
@@ -185,7 +192,7 @@ export default function OrderClientSide() {
         // 400 에러가 발생하면 수동으로 페이지 이동하거나 에러 처리를 할 수 있습니다.
         if (response.status === 400) {
           // 수동으로 페이지 이동
-          router.push('/400-error-page');
+          router.push("/400-error-page");
         } else {
           // 다른 에러 상태 코드의 경우에 대한 처리
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -272,6 +279,29 @@ export default function OrderClientSide() {
               id="addressInput"
               value={addressInput}
               onChange={handleAddressChange}
+            />
+            <label htmlFor="orderNameInput">주문자 이름:</label>
+            <input
+              type="text"
+              id="orderNameInput"
+              value={orderNameInput}
+              onChange={(e) => setOrderNameInput(e.target.value)}
+            />
+
+            <label htmlFor="orderPhoneInput">주문자 전화번호:</label>
+            <input
+              type="text"
+              id="orderPhoneInput"
+              value={orderPhoneInput}
+              onChange={(e) => setOrderPhoneInput(e.target.value)}
+            />
+
+            <label htmlFor="zipCodeInput">우편번호:</label>
+            <input
+              type="text"
+              id="zipCodeInput"
+              value={zipCodeInput}
+              onChange={(e) => setZipCodeInput(e.target.value)}
             />
           </div>
         )}

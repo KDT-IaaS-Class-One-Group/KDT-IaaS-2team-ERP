@@ -647,17 +647,22 @@ server.post("/api/order", async (req, res) => {
   }
 });
 
+// server.js
+
 server.post('/api/payment', async (req, res) => {
   try {
     const token = req.body.token;
     const price = req.body.price;
     const subsIndex = req.body.sub_index;
     const ids = req.body.ids;
-    const address = req.body.address; // 추가된 부분
+    const address = req.body.address;
+    const userIndex = req.body.user_Index; // 사용자의 user_Index
+    const orderName = req.body.order_name; // 주문자 이름
+    const orderPhone = req.body.order_phone; // 주문자 전화번호
+    const zipCode = req.body.zip_code; // 우편번호
 
     // 토큰 해독
     const decodedToken = jwt.verify(token, secretKey);
-    const userIndex = decodedToken.User_Index;
 
     // 데이터베이스 연결
     const connection = await pool.getConnection();
@@ -688,17 +693,20 @@ server.post('/api/payment', async (req, res) => {
 
       const week = weekResult[0].Week;
 
-      // 추가된 부분: 사용자의 user_Index 값으로 주문 정보를 추가
+      // 사용자의 user_Index 값으로 주문 정보를 추가
       const orderQuery = `
-        INSERT INTO Orderdetails (subs_index, user_Index, Subs_Start, Subs_End, address) 
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO Orderdetails (subs_index, user_Index, Subs_Start, Subs_End, address, order_name, order_phone, zip_code) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `;
       const orderValues = [
         subsIndex,
-        userIndex, // 추가된 부분
+        userIndex,
         new Date(),
         new Date(Date.now() + week * 7 * 24 * 60 * 60 * 1000),
         address,
+        orderName,
+        orderPhone,
+        zipCode,
       ];
 
       const [orderResult] = await connection.query(orderQuery, orderValues);
