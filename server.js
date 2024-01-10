@@ -16,7 +16,7 @@ const { checkAndRenewSubscriptions } = require("./src/components/checkAndRenewSu
 const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
-  port: "3307",
+  port: "3306",
   user: "root",
   password: "0000",
   database: "erp",
@@ -104,6 +104,38 @@ app.prepare().then(() => {
   //     }
   //   }
   // }
+
+  const verifyToken = (token) => {
+    return new Promise((resolve, reject) => {
+      jwt.verify(token, secretKey, (err, decoded) => {
+        if (err) reject(err);
+        resolve(decoded);
+      });
+    });
+  };
+  
+  server.get("/api/orderindex", async (req, res) => {
+    try {
+      // 헤더에서 토큰 추출
+      const token = req.headers.authorization.split(" ")[1];
+  
+      // 토큰 확인 및 디코딩
+      const decodedToken = await verifyToken(token);
+      const userIndex = decodedToken.User_Index;
+  
+      // 데이터베이스에서 user_Index를 기반으로 일치하는 Order_Index 조회
+      const [rows] = await pool.query(
+        "SELECT Order_Index FROM orderdetails WHERE User_Index = ?",
+        [userIndex]
+      );
+  
+      const orderIndexArray = rows.map((row) => row.Order_Index);
+      res.json(orderIndexArray);
+    } catch (error) {
+      console.error("Error querying database:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
 
   cron.schedule("0 * * * *", () => {
     try {
@@ -529,6 +561,8 @@ app.prepare().then(() => {
  * ? /Order 엔드포인트
  */
 
+
+
 server.post("/api/order", async (req, res) => {
   try {
     // 클라이언트로부터 받은 상품 이름
@@ -605,13 +639,12 @@ server.post('/api/payment', async (req, res) => {
 
       // 추가된 부분: 사용자의 user_Index 값으로 주문 정보를 추가
       const orderQuery = `
-        INSERT INTO Orderdetails (subs_index, user_Index, price, Subs_Start, Subs_End, address) 
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO Orderdetails (subs_index, user_Index, Subs_Start, Subs_End, address) 
+        VALUES (?, ?, ?, ?, ?)
       `;
       const orderValues = [
         subsIndex,
         userIndex, // 추가된 부분
-        price,
         new Date(),
         new Date(Date.now() + week * 7 * 24 * 60 * 60 * 1000),
         address,

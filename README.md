@@ -126,22 +126,26 @@ CREATE TABLE Cart (
 -------------------------------------------------------------------------------
 ## NULL 설정은 편의성을 위해 해뒀는데 후에 다시 수정해야 합니다.
 
-### orderdetails 테이블
 CREATE TABLE `orderdetails` (
 	`Order_Index` INT(11) NOT NULL AUTO_INCREMENT,
 	`subs_index` INT(11) NULL DEFAULT NULL,
 	`user_Index` INT(11) NULL DEFAULT NULL,
-	`price` INT(11) NULL DEFAULT NULL,
 	`Subs_Start` TIMESTAMP NULL DEFAULT NULL,
 	`Subs_End` TIMESTAMP NULL DEFAULT NULL,
+	`order_name` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`order_phone` INT(50) NULL DEFAULT NULL,
 	`address` VARCHAR(300) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`zip_code` INT(30) NULL DEFAULT NULL,
 	`auto_renew` TINYINT(1) NULL DEFAULT '1',
+	`staus` TINYINT(4) NULL DEFAULT NULL,
 	PRIMARY KEY (`Order_Index`) USING BTREE
 )
 COLLATE='utf8mb4_general_ci'
 ENGINE=InnoDB
-AUTO_INCREMENT=71
+AUTO_INCREMENT=106
 ;
+
+
 
 ### orderproduct 테이블
 CREATE TABLE `orderproduct` (
@@ -152,8 +156,9 @@ CREATE TABLE `orderproduct` (
 )
 COLLATE='utf8mb4_general_ci'
 ENGINE=InnoDB
-AUTO_INCREMENT=16
+AUTO_INCREMENT=44
 ;
+
 
 ### product 테이블
 CREATE TABLE `product` (
@@ -175,6 +180,7 @@ COLLATE='utf8mb4_general_ci'
 ENGINE=InnoDB
 AUTO_INCREMENT=6
 ;
+
 
 ### subscription 테이블
 CREATE TABLE `subscription` (
@@ -213,5 +219,5 @@ CREATE TABLE `users` (
 )
 COLLATE='utf8mb4_general_ci'
 ENGINE=InnoDB
-AUTO_INCREMENT=1002
+AUTO_INCREMENT=3002
 ;

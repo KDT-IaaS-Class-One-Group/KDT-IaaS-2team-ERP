@@ -1,65 +1,56 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
-import jwt from 'jsonwebtoken';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+const jwt = require("jsonwebtoken");
 
-const OrderDetailsPage = () => {
-  const [orderDetails, setOrderDetails] = useState([]);
-  const [loading, setLoading] = useState(true);
+const PaymentPage = () => {
+  const [orderIndexData, setOrderIndexData] = useState([]);
+  const [userIndex, setUserIndex] = useState(null);
 
   useEffect(() => {
+    // 서버에서 데이터를 가져오는 함수
     const fetchData = async () => {
       try {
-        // 토큰에서 user_Index 추출
-        const token = localStorage.getItem('token');
-        
-        if (!token) {
-          console.error('Token not found');
-          return;
-        }
+        // 로컬 스토리지에서 토큰 가져오기 (실제로는 보안상의 이유로 더 안전한 방법 사용을 고려해야 함)
+        const token = localStorage.getItem("token");
 
-        const decodedToken = jwt.verify(token, 'nts9604');
+        // 서버에 토큰을 포함하여 요청
+        const response = await axios.get("/api/orderindex", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-        if (!decodedToken || !decodedToken.user_Index) {
-          console.error('Invalid token or user index not found');
-          return;
-        }
+        // 토큰에서 User_Index 추출
+        const decodedToken = decodeToken(token);
+        setUserIndex(decodedToken.User_Index);
 
-        const userIndex = decodedToken.user_Index;
-
-        // 서버에서 orderdetails 데이터를 가져오기
-        const response = await fetch(`/api/orderdetails?userIndex=${userIndex}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch order details');
-        }
-
-        const data = await response.json();
-        setOrderDetails(data);
-        setLoading(false);
+        setOrderIndexData(response.data);
       } catch (error) {
-        console.error('Error fetching order details:', error);
-        setLoading(false);
+        console.error("Error fetching data:", error);
       }
     };
 
+    // 페이지 로딩 시 데이터 가져오기
     fetchData();
-  }, []); // 빈 배열은 페이지 로딩 시 한 번만 실행하도록 함
+  }, []);
+
+  const decodeToken = (token) => {
+    // 토큰 디코딩 함수 (실제로는 더 안전한 방법 사용을 고려해야 함)
+    const decoded = jwt.decode(token, { complete: true });
+    return decoded.payload;
+  };
 
   return (
     <div>
-      <h1>주문 상세 정보</h1>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <ul>
-          {orderDetails.map((order, index) => (
-            <li key={index}>{`Order Index: ${order.Order_Index}`}</li>
-          ))}
-        </ul>
-      )}
+      <h1>결제 페이지</h1>
+      <p>User_Index: {userIndex}</p>
+      <ul>
+        {orderIndexData.map((orderIndex) => (
+          <li key={orderIndex}>{orderIndex}</li>
+        ))}
+      </ul>
     </div>
   );
 };
 
-export default OrderDetailsPage;
+export default PaymentPage;
