@@ -91,7 +91,6 @@ export default function UserinfoPage() {
     setSearchTerm("");
   }, []);
 
-
   return (
     <>
       <div className={styles.sidelink}>
@@ -104,19 +103,17 @@ export default function UserinfoPage() {
           id="searchOption"
           value={searchOption}
           onChange={(e) => setSearchOption(e.target.value)}
-          className={styles.select}        
-          >
-          <option  value="userId">ID</option>
+          className={styles.select}
+        >
+          <option value="userId">ID</option>
           <option value="name">Name</option>
         </select>
         <input
           type="text"
-          placeholder={`${
-            searchOption === "userId" ? "ID" : "Name"
-          }로 검색`}
+          placeholder={`${searchOption === "userId" ? "ID" : "Name"}로 검색`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={styles.search}     
+          className={styles.search}
         />
         <div className={styles.userContent}>
           <table className={styles.userTable}>

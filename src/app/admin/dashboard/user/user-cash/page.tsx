@@ -10,7 +10,6 @@ interface UserInfo {
   name: string;
   birthdate: string;
   cash: string;
-  isWithdrawn: number;
 }
 
 const pageSize = 12; // 페이지당 표시할 항목 수
@@ -149,9 +148,12 @@ export default function UsercashPage() {
                           [user.userId]: e.target.value,
                         }))
                       }
-                      className={styles.cashInput} 
-                      />
-                    <button className={styles.cashButton} onClick={() => handleCashEdit(user.userId)}>
+                      className={styles.cashInput}
+                    />
+                    <button
+                      className={styles.cashButton}
+                      onClick={() => handleCashEdit(user.userId)}
+                    >
                       수정
                     </button>
                   </td>
