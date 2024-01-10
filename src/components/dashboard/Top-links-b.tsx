@@ -20,7 +20,7 @@ export default function TopNavLinks() {
           href={link.href}
           className={styles.link}
         >
-          <p>{link.name}</p>
+          <p className={styles.linkName}>{link.name}</p>
         </Link>
       ))}
     </>
