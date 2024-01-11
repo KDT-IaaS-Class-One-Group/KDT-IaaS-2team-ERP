@@ -935,6 +935,7 @@ app.prepare().then(() => {
     }
   });
 
+
   server.get("/api/cash", async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
@@ -989,6 +990,7 @@ app.prepare().then(() => {
           totalPages,
         },
       });
+      
     } catch (error) {
       console.error("Error fetching subs:", error);
       res.status(500).json({ error: "Internal Server Error" });
@@ -1412,34 +1414,6 @@ app.prepare().then(() => {
         } else {
           // 삭제 실패 시
           res.status(404).json({ error: "product_id 찾을 수 없습니다." });
-        }
-      } else {
-        // 허용되지 않은 메서드
-        res.status(405).json({ error: "허용되지 않은 메서드" });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "내부 서버 오류" });
-    }
-  });
-
-  server.put("/api/updateReply/:userId", async (req, res) => {
-    try {
-      if (req.method === "PUT") {
-        const { userId } = req.params;
-        const { reply } = req.body;
-        // 데이터베이스에서 게시판 정보 수정
-        const [result] = await db.query(
-          "UPDATE board SET reply = ? WHERE userId = ?",
-          [reply, userId]
-        );
-
-        if (result.affectedRows === 1) {
-          // 성공적으로 수정된 경우
-          res.status(200).json({ message: "Q&A 답변 등록 성공" });
-        } else {
-          // 삭제 실패 시
-          res.status(404).json({ error: "사용자를 찾을 수 없습니다." });
         }
       } else {
         // 허용되지 않은 메서드
