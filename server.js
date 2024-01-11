@@ -861,7 +861,7 @@ app.prepare().then(() => {
 
       // 토큰 해독
       const decodedToken = jwt.verify(token, secretKey);
-      
+
       // 데이터베이스 연결
       const connection = await pool.getConnection();
 
@@ -870,8 +870,6 @@ app.prepare().then(() => {
         const checkCashQuery = `SELECT cash FROM users WHERE User_Index = ?`;
         const [cashResult] = await connection.query(checkCashQuery, [userIndex]);
         const userCash = cashResult[0].cash;
-        console.log(userCash)
-        console.log("cashResult:", cashResult);
 
         // 캐시 부족한 경우 에러 응답
         if (userCash < price) {
