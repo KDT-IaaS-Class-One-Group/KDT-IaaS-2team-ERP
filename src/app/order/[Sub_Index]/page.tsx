@@ -20,7 +20,7 @@ interface OrderClientSideProps {
 }
 
 interface UserInfo {
-  User_Index: number;
+  user_Index: number;
   userId: string;
   name: string;
   phoneNumber: string;
@@ -122,7 +122,7 @@ export default function OrderClientSide() {
 
       if (decodedToken) {
         const {
-          User_Index,
+          user_Index,
           userId,
           name,
           phoneNumber,
@@ -133,7 +133,7 @@ export default function OrderClientSide() {
         } = decodedToken;
 
         const userInformation: UserInfo = {
-          User_Index,
+          user_Index,
           userId,
           name,
           phoneNumber,
@@ -176,13 +176,12 @@ export default function OrderClientSide() {
           price: Price,
           ids: selectedProducts,
           address: addressInput,
-          user_Index: userInfo?.User_Index,
+          user_index: userInfo?.user_Index,
           order_name: orderNameInput, // 주문자 이름 추가
           order_phone: orderPhoneInput, // 주문자 전화번호 추가
           zip_code: zipCodeInput, // 우편번호 추가
         }),
       });
-
       console.log(
         "Request Data:",
         JSON.stringify({
@@ -190,6 +189,7 @@ export default function OrderClientSide() {
           sub_index: subs_index,
           price: Price,
           ids: selectedProducts,
+          user_index: userInfo?.user_Index,
         })
       );
 
@@ -213,6 +213,7 @@ export default function OrderClientSide() {
       if (updatedToken) {
         // 토큰 업데이트 및 로컬 스토리지에 저장
         setToken(updatedToken);
+        localStorage.setItem("token", updatedToken);
       }
     } catch (error) {
       console.error(error);

@@ -178,13 +178,14 @@ app.prepare().then(() => {
       // 토큰에서 user_Index 추출
       const token = req.headers.authorization.split(" ")[1];
       const decodedToken = jwt.verify(token, secretKey);
+      console.log("decodedToken: ", decodedToken); // 디버그용 로그
 
-      if (!decodedToken || !decodedToken.User_Index) {
+      if (!decodedToken || !decodedToken.user_Index) {
         console.error("Invalid token or user index not found");
         return res.status(401).json({ error: "Unauthorized" });
       }
-
-      const userIndex = decodedToken.User_Index;
+      
+      const userIndex = decodedToken.user_Index;
       console.log("userIndex: ", userIndex);
 
       // 사용자의 주문 정보 가져오기
@@ -853,24 +854,24 @@ app.prepare().then(() => {
       const subsIndex = req.body.sub_index;
       const ids = req.body.ids;
       const address = req.body.address;
-      const userIndex = req.body.user_Index; // 사용자의 user_Index
+      const userIndex = req.body.user_index; 
       const orderName = req.body.order_name; // 주문자 이름
       const orderPhone = req.body.order_phone; // 주문자 전화번호
       const zipCode = req.body.zip_code; // 우편번호
 
       // 토큰 해독
       const decodedToken = jwt.verify(token, secretKey);
-
+      
       // 데이터베이스 연결
       const connection = await pool.getConnection();
 
       try {
         // 사용자의 캐시 확인
-        const checkCashQuery = `SELECT cash FROM users WHERE user_Index = ?`;
-        const [cashResult] = await connection.query(checkCashQuery, [
-          userIndex,
-        ]);
+        const checkCashQuery = `SELECT cash FROM users WHERE User_Index = ?`;
+        const [cashResult] = await connection.query(checkCashQuery, [userIndex]);
         const userCash = cashResult[0].cash;
+        console.log(userCash)
+        console.log("cashResult:", cashResult);
 
         // 캐시 부족한 경우 에러 응답
         if (userCash < price) {
@@ -1180,7 +1181,7 @@ app.prepare().then(() => {
           // 로그인 성공
           const token = jwt.sign(
             {
-              user_Index: user.user_Index,
+              user_Index: user.User_Index,
               userId: user.userId ,
               name: user.name,
               birthdate: user.birthdate,
