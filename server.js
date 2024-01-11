@@ -280,9 +280,9 @@ app.prepare().then(() => {
     try {
       let query;
       switch (xAxis) {
-        case "joinDate":
+        case "joindate":
           query = `
-            SELECT DATE_FORMAT(joinDate, '%Y-%m') as label, COUNT(DISTINCT id) as userCount
+            SELECT DATE_FORMAT(joinDate, '%Y-%m') as label, COUNT(DISTINCT User_Index) as userCount
             FROM Users
             GROUP BY label
             ORDER BY label;
@@ -290,7 +290,7 @@ app.prepare().then(() => {
           break;
         case "birthdate":
           query = `
-            SELECT YEAR(birthdate) as label, COUNT(DISTINCT id) as userCount
+            SELECT YEAR(birthdate) as label, COUNT(DISTINCT User_Index) as userCount
             FROM Users
             GROUP BY label
             ORDER BY label;
@@ -298,7 +298,7 @@ app.prepare().then(() => {
           break;
         case "gender":
           query = `
-              SELECT gender as label, COUNT(DISTINCT id) as userCount
+              SELECT gender as label, COUNT(DISTINCT User_Index) as userCount
               FROM Users
               GROUP BY label
               ORDER BY label;

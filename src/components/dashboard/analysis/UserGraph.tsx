@@ -15,7 +15,7 @@ import axios from "axios";
 
 const UserGraph = () => {
   const [dynamicGraphData, setDynamicGraphData] = useState([]);
-  const [selectedXAxis, setSelectedXAxis] = useState("timestamp");
+  const [selectedXAxis, setSelectedXAxis] = useState("joindate");
 
   useEffect(() => {
     // 서버에서 동적 그래프 데이터를 가져오는 API 호출
@@ -49,7 +49,7 @@ const UserGraph = () => {
         <option value="gender">성별</option>
       </select>
 
-      <ResponsiveContainer width="200%" height={400}>
+      <ResponsiveContainer width="150%" height={400}>
         <BarChart
           data={dynamicGraphData}
           margin={{ top: 20, right: 30, left: 20, bottom: 50 }}
