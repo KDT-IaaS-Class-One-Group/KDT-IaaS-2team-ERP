@@ -28,33 +28,34 @@ app.use(express.json());
 // 더미 데이터 생성 및 데이터베이스에 삽입
 app.get('/', async (req, res) => {
   for (let i = 0; i < 1000; i++) {
-    const id = faker.internet.userName();
+    const userId = faker.internet.userName();
     const password = 'hashed_password'; // 암호화된 비밀번호로 교체 필요
     const name = faker.name.findName();
-    const birth = faker.date.between('1950-01-01', '2004-01-01').toISOString().split('T')[0].replace(/-/g, '');
-    const phone = faker.phone.phoneNumber().slice(0, 16); // 최대 16자로 제한
+    const birthdate = faker.date.between('1950-01-01', '2004-01-01').toISOString().slice(0, 19).replace('T', ' ');
+    const phoneNumber = faker.phone.phoneNumber().slice(0, 16); // 최대 16자로 제한
     const email = faker.internet.email();
+    const postcode = faker.address.zipCode().replace('-', '');
     const address = faker.address.streetAddress();
+    const detailaddress = faker.address.secondaryAddress();
     const gender = faker.random.arrayElement(['M', 'F']);
     const cash = faker.datatype.number({ min: 50000, max: 150000 });
-    const signout = 'N';
-    const admin = 0;
-    const RegiMethod = 1;
-    const timestamp = faker.date.between('2022-01-01T00:00:00', '2023-12-31T23:59:59').toISOString().slice(0, 19).replace('T', ' ');
+    const joinDate = faker.date.between('2022-01-01T00:00:00', '2023-12-31T23:59:59').toISOString().slice(0, 19).replace('T', ' ');
+    const isWithdrawn = faker.datatype.boolean() ? 1 : 0;
+    const order_Index = faker.datatype.number({ min: 1, max: 10 }); // 변경 가능한 최대 값
 
-    // 쿼리 실행
-    const query = `INSERT INTO Users (userId, password, name, birth, phone, email, address, gender, cash, signout, admin, RegiMethod, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const values = [id, password, name, birth, phone, email, address, gender, cash, signout, admin, RegiMethod, timestamp];
+   // 쿼리 실행
+   const query = `INSERT INTO Users (userId, password, name, birthdate, phoneNumber, email, postcode, address, detailaddress, gender, cash, joinDate, isWithdrawn, order_Index) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+   const values = [userId, password, name, birthdate, phoneNumber, email, postcode, address, detailaddress, gender, cash, joinDate, isWithdrawn, order_Index];
 
-    try {
-      await connection.execute(query, values);
-      console.log('쿼리 실행 성공');
-    } catch (err) {
-      console.error('쿼리 실행 실패:', err);
-    }
-  }
+   try {
+     await connection.execute(query, values);
+     console.log('쿼리 실행 성공');
+   } catch (err) {
+     console.error('쿼리 실행 실패:', err);
+   }
+ }
 
-  res.send('더미 데이터가 성공적으로 삽입되었습니다.');
+ res.send('더미 데이터가 성공적으로 삽입되었습니다.');
 });
 
 // 서버 시작
