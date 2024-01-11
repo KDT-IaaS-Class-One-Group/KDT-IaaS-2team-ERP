@@ -405,8 +405,8 @@ app.prepare().then(() => {
       if (searchTerm) {
         if (searchOption === "userId") {
           query += " WHERE userId LIKE ?";
-        } else if (searchOption === "name") {
-          query += " WHERE name LIKE ?";
+        } else if (searchOption === "title") {
+          query += " WHERE title LIKE ?";
         }
 
         queryParams = [`%${searchTerm}%`];
@@ -415,14 +415,14 @@ app.prepare().then(() => {
       query += " LIMIT ?, ?";
       queryParams.push((page - 1) * pageSize, pageSize);
 
-      const [boards] = await db.query(query, queryParams);
+      const [reverseBoards] = await db.query(query, queryParams);
 
       let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM Board";
       if (searchTerm) {
         if (searchOption === "userId") {
           totalCountQuery += " WHERE userId LIKE ?";
-        } else if (searchOption === "name") {
-          totalCountQuery += " WHERE name LIKE ?";
+        } else if (searchOption === "title") {
+          totalCountQuery += " WHERE title LIKE ?";
         }
       }
 
@@ -432,6 +432,8 @@ app.prepare().then(() => {
       );
       const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
 
+      const boards = reverseBoards.reverse();
+      
       res.json({
         boards,
         pageInfo: {
