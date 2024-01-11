@@ -702,19 +702,19 @@ app.prepare().then(() => {
         return;
       }
 
-      // 데이터베이스에 삽입할 쿼리문
-      const insertQuery = `INSERT INTO cart (Product_Index) VALUES (?)`;
+      // // 데이터베이스에 삽입할 쿼리문
+      // const insertQuery = `INSERT INTO cart (Product_Index) VALUES (?)`;
 
-      // 쿼리 실행
-      db.query(insertQuery, [product], (error, results) => {
-        if (error) {
-          console.error("쿼리 실행 오류:", error);
-          res.status(500).send("주문 생성 중 오류가 발생했습니다.");
-        } else {
-          console.log("주문이 성공적으로 생성되었습니다.");
-          res.status(200).send("주문이 성공적으로 생성되었습니다.");
-        }
-      });
+      // // 쿼리 실행
+      // db.query(insertQuery, [product], (error, results) => {
+      //   if (error) {
+      //     console.error("쿼리 실행 오류:", error);
+      //     res.status(500).send("주문 생성 중 오류가 발생했습니다.");
+      //   } else {
+      //     console.log("주문이 성공적으로 생성되었습니다.");
+      //     res.status(200).send("주문이 성공적으로 생성되었습니다.");
+      //   }
+      // });
     } catch (error) {
       console.error("주문 생성 중 오류:", error);
       res.status(500).send("주문 생성 중 오류가 발생했습니다.");
@@ -835,6 +835,7 @@ app.prepare().then(() => {
     const { subs_index } = req.params;
 
     try {
+    
       const [rows] = await db.execute(
         "SELECT Subs_Index, Name, Price, Week, size FROM subscription WHERE Subs_Index = ?",
         [subs_index]
