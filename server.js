@@ -857,8 +857,8 @@ app.prepare().then(() => {
       const userIndex = req.body.user_index; 
       const orderName = req.body.order_name; // 주문자 이름
       const orderPhone = req.body.order_phone; // 주문자 전화번호
-      const zipCode = req.body.zip_code; // 우편번호
-
+      const zipCode = req.body.postcode; // 우편번호
+      console.log('address : ', address)
       // 토큰 해독
       const decodedToken = jwt.verify(token, secretKey);
 

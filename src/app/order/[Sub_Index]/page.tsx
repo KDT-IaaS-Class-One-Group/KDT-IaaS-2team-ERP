@@ -47,7 +47,6 @@ export default function OrderClientSide() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedProducts = searchParams.get("selectedProducts");
-  console.log(selectedProducts);
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
   const [productData, setProductData] = useState<ProductClientSideProps[]>([]);
   const [addressInput, setAddressInput] = useState("");
@@ -68,7 +67,6 @@ export default function OrderClientSide() {
   useEffect(() => {
     if (selectedProducts) {
       const ids = selectedProducts.split(",").map((id) => parseInt(id, 10));
-      console.log(`ids = ${ids}`);
       setSelectedProductIds(ids);
 
       // 서버로 선택한 상품 정보 요청
@@ -90,7 +88,6 @@ export default function OrderClientSide() {
         const response = await fetch(`/api/subscription/${subs_index}`);
         const dataFromServer = await response.json();
         setData(dataFromServer);
-        console.log(dataFromServer);
 
         if (dataFromServer) {
           setPrice(dataFromServer[0].Price);
@@ -179,23 +176,13 @@ export default function OrderClientSide() {
           sub_index: subs_index,
           price: Price,
           ids: selectedProducts,
-          address: addressInput,
+          address: selectedAddressType === 1 ? userInfo?.address : addressInput,
           user_index: userInfo?.user_Index,
-          order_name: orderNameInput, // 주문자 이름 추가
-          order_phone: orderPhoneInput, // 주문자 전화번호 추가
-          zip_code: zipCodeInput, // 우편번호 추가
+          order_name: selectedAddressType === 1 ? userInfo?.name : orderNameInput,
+          order_phone: selectedAddressType === 1 ? userInfo?.phoneNumber : orderPhoneInput,
+          zip_code: selectedAddressType === 1 ? userInfo?.postcode : zipCodeInput,
         }),
       });
-      console.log(
-        "Request Data:",
-        JSON.stringify({
-          token: localStorage.token,
-          sub_index: subs_index,
-          price: Price,
-          ids: selectedProducts,
-          user_index: userInfo?.user_Index,
-        })
-      );
 
       if (!response.ok) {
         // 400 에러가 발생하면 수동으로 페이지 이동하거나 에러 처리를 할 수 있습니다.
@@ -210,7 +197,6 @@ export default function OrderClientSide() {
       }
 
       const responseData = await response.json();
-      console.log(responseData); // 서버로부터의 응답 처리
 
       const updatedToken = await fetchUpdatedToken();
 
@@ -241,7 +227,6 @@ export default function OrderClientSide() {
       }
 
       const { newToken } = await response.json();
-      console.log(`newtoken:${newToken}`);
       return newToken;
     } catch (error) {
       console.error("토큰 갱신 중 오류 발생:", error);
