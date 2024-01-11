@@ -9,7 +9,6 @@ import Image from 'next/image';
 interface Product {
   name: string;
   info: string;
-  // 추가적인 필드들을 필요에 따라 정의
 }
 
 const SlideComponent: React.FC = () => {

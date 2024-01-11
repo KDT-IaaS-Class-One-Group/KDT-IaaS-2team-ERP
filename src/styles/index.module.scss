@@ -82,7 +82,8 @@
   overflow: hidden;
   background-color: #f6f1eb;
   display:flex;
-  place-content: center;
+  justify-content: center;
+  align-items: center;
 }
 
 .purple {
