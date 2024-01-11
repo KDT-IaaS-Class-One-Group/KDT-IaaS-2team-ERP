@@ -76,16 +76,33 @@ CREATE TABLE Order (
 
 ### Board (고객센터 관련)
 CREATE TABLE Board (
-    boardKey INT AUTO_INCREMENT PRIMARY KEY,
-    User_Index INT NOT NULL,
-    email VARCHAR NOT NULL,
-    userID VARCHAR NOT NULL,
+    boardKey INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    userId VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
     title VARCHAR(100) NOT NULL,
     content VARCHAR(500) NOT NULL,
-    date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    password VARCHAR(50) NOT NULL,
-    FOREIGN KEY (User_Index) REFERENCES Users(User_Index)
+    reply VARCHAR(500) NULL,
+    replyStatus TINYINT(1) NOT NULL,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    image VARCHAR(500),
+    FOREIGN KEY (userId) REFERENCES Users(userId),
+    FOREIGN KEY (email) REFERENCES Users(email)
 );
+
+<!-- Board Table reply 값이 있으면 replyStatus 1, 없으면 replyStatus 0 -->
+DELIMITER //
+CREATE TRIGGER set_reply_status BEFORE INSERT ON Board
+FOR EACH ROW
+BEGIN
+    IF NEW.reply IS NOT NULL THEN
+        SET NEW.replyStatus = 1;
+    ELSE
+        SET NEW.replyStatus = 0;
+    END IF;
+END;
+//
+DELIMITER ;
 
 ### Product 상품 정보 (원두 종류가 들어갑니다.)
 CREATE TABLE Product (

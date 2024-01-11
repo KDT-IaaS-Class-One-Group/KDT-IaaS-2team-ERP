@@ -1,21 +1,10 @@
-.linkname{
+.linkname {
   text-decoration: none;
-  width: 20vw;
   color: #495464;
   font-size: 1.5rem;
-  position: relative;
-  left: 7.5vw;
 }
 
-.link {
+.linkname:active {
+  font-weight: 700;
   text-decoration: none;
-  // margin-left: 2vw;
-  color: #495464;
-  font-size: 1.5rem;
-  position: relative;
-  right: 3vw;
-}
-
-.link:active {
-font-weight: 700;
 }

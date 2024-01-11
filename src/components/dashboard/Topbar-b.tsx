@@ -46,7 +46,9 @@ export default function Topbar() {
         <TopNav />
       </div>
       <div className={styles.div3}>
-        <button className={styles.logout} onClick={handleLogout}>로그아웃</button>
+        <button className={styles.logout} onClick={handleLogout}>
+          로그아웃
+        </button>
       </div>
     </div>
   );
