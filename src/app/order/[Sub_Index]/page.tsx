@@ -28,6 +28,7 @@ interface UserInfo {
   address: string;
   cash: number;
   order_Index: number;
+  postcode: number;
 }
 
 interface ProductClientSideProps {
@@ -53,6 +54,7 @@ export default function OrderClientSide() {
   const [orderNameInput, setOrderNameInput] = useState("");
   const [orderPhoneInput, setOrderPhoneInput] = useState("");
   const [zipCodeInput, setZipCodeInput] = useState("");
+  const [selectedAddressType, setSelectedAddressType] = useState(1);
 
   const setsToken = (token: string) => {
     localStorage.setItem("token", token);
@@ -130,6 +132,7 @@ export default function OrderClientSide() {
           address,
           cash,
           order_Index,
+          postcode,
         } = decodedToken;
 
         const userInformation: UserInfo = {
@@ -141,6 +144,7 @@ export default function OrderClientSide() {
           address,
           cash,
           order_Index,
+          postcode,
         };
 
         setUserInfo(userInformation);
@@ -259,29 +263,85 @@ export default function OrderClientSide() {
 
       <h2 className={styles.deliveryInfoTitle}>배송지 정보 입력</h2>
 
-      <OrderInfoInput
-        label="수령자 이름"
-        value={orderNameInput}
-        onChange={setOrderNameInput}
-      />
+      <div>
+        <input
+          type="radio"
+          id="addressType1"
+          name="addressType"
+          value={1}
+          checked={selectedAddressType === 1}
+          onChange={() => setSelectedAddressType(1)}
+        />
+        <label htmlFor="addressType1">주문자 동일</label>
 
-      <OrderInfoInput
-        label="수령자 전화번호"
-        value={orderPhoneInput}
-        onChange={setOrderPhoneInput}
-      />
+        <input
+          type="radio"
+          id="addressType2"
+          name="addressType"
+          value={2}
+          checked={selectedAddressType === 2}
+          onChange={() => setSelectedAddressType(2)}
+        />
+        <label htmlFor="addressType2">새로 입력</label>
+      </div>
 
-      <OrderInfoInput
-        label="주소"
-        value={addressInput}
-        onChange={setAddressInput}
-      />
+      {/* 조건부로 배송지 정보 입력 표시 */}
+      {selectedAddressType === 1 && (
+        <>
+          <OrderInfoInput
+            label="수령자 이름"
+            value={orderNameInput || userInfo?.name || ""}
+            onChange={setOrderNameInput}
+          />
 
-      <OrderInfoInput
-        label="우편번호"
-        value={zipCodeInput}
-        onChange={setZipCodeInput}
-      />
+          <OrderInfoInput
+            label="수령자 전화번호"
+            value={orderPhoneInput || userInfo?.phoneNumber || ""}
+            onChange={setOrderPhoneInput}
+          />
+
+          <OrderInfoInput
+            label="주소"
+            value={addressInput || userInfo?.address || ""}
+            onChange={setAddressInput}
+          />
+
+          <OrderInfoInput
+            label="우편번호"
+            value={zipCodeInput || userInfo?.postcode || ""}
+            onChange={setZipCodeInput}
+          />
+        </>
+      )}
+
+      {selectedAddressType === 2 && (
+        <>
+          <OrderInfoInput
+            label="수령자 이름"
+            value={orderNameInput}
+            onChange={setOrderNameInput}
+          />
+
+          <OrderInfoInput
+            label="수령자 전화번호"
+            value={orderPhoneInput}
+            onChange={setOrderPhoneInput}
+          />
+
+          <OrderInfoInput
+            label="주소"
+            value={addressInput}
+            onChange={setAddressInput}
+          />
+
+          <OrderInfoInput
+            label="우편번호"
+            value={zipCodeInput}
+            onChange={setZipCodeInput}
+          />
+        </>
+      )}
+
       <PaymentButton onClick={handlePayment} />
     </div>
   );
