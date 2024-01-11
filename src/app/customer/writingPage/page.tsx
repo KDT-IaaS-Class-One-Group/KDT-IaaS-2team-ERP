@@ -8,7 +8,7 @@ export default function Page() {
     boardKey: "",
     userID:"",
     email: "",
-    user_Index: 0,
+    User_index: 0,
     title: "",
     content: "",
     date: "",
@@ -28,7 +28,7 @@ export default function Page() {
   
       // 사용자 ID와 사용자 인덱스, 이메일 추출
       const userId = payload.userId;
-      const userIndex = payload.user_Index;
+      const userIndex = payload.User_index;
       const userEmail = payload.email;
       console.log(userId)
       console.log(userIndex)
@@ -37,7 +37,7 @@ export default function Page() {
       setFormData((prevData) => ({
         ...prevData,
         userID: userId,
-        user_Index: userIndex,
+        User_index: userIndex,
         email: userEmail,
       }));
     }

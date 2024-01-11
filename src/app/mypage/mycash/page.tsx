@@ -8,15 +8,18 @@ interface UserInfo {
   birthdate: string;
   phoneNumber: string;
   email: string;
+  postcode: string;
   address: string;
+  detailaddress: string;
   gender: string;
-  cash: string;
+  cash: number;
 }
-
 export default function MyPagecash() {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null); 
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [selectedCashAmount, setSelectedCashAmount] = useState<number>(0);
+  const [isPaymentEnabled, setIsPaymentEnabled] = useState<boolean>(false);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -35,7 +38,7 @@ export default function MyPagecash() {
       const decodedToken = jwt.decode(token) as JwtPayload;
 
       if (decodedToken) {
-        const { userId, name, birthdate, phoneNumber, email, address, gender, cash } = decodedToken;
+        const { userId, name, birthdate, phoneNumber, email, postcode , address, detailaddress, gender ,cash} = decodedToken;
 
         const birthdateDate = new Date(birthdate);
 
@@ -48,7 +51,9 @@ export default function MyPagecash() {
           birthdate: birthdateLocalString,
           phoneNumber,
           email,
+          postcode,
           address,
+          detailaddress,
           gender,
           cash,
         };
@@ -67,6 +72,47 @@ export default function MyPagecash() {
   };
 
 
+  const handleCashSelection = (amount: number) => {
+    setSelectedCashAmount(amount);
+    setIsPaymentEnabled(true); // 선택한 금액이 있으면 결제 버튼을 활성화
+  };
+
+  const handlePayment = async () => {
+    if (!userInfo || selectedCashAmount === 0) {
+      console.error('사용자 정보 또는 선택된 캐쉬 금액이 유효하지 않습니다.');
+      return;
+    }
+
+    const currentToken = token || '';
+    try {
+      // 서버로 결제 요청 보내기
+      const response = await fetch('/api/addCash', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${currentToken}`,
+        },
+        body: JSON.stringify({
+          userId: userInfo.userId,
+          cashAmount: selectedCashAmount,
+        }),
+      });
+
+      if (response.ok) {
+        // 결제 성공 시 사용자 정보 다시 불러오기
+        loadUserFromToken(currentToken);
+        // 결제 후 초기화
+        setSelectedCashAmount(0);
+        setIsPaymentEnabled(false);
+      } else {
+        console.error('캐쉬 추가 실패:', response.statusText);
+      }
+    } catch (error) {
+      console.error('서버 에러:', error);
+    }
+  };
+
+
   return (
     <main>
       <h1 className={`mb-4 text-xl md:text-2xl`}>
@@ -81,6 +127,20 @@ export default function MyPagecash() {
           </div>
         )}
       </div>
+
+      <div>
+          <p>캐쉬 추가</p>
+          <select onChange={(e) => handleCashSelection(Number(e.target.value))}>
+            <option value="0">선택하세요</option>
+            <option value="5000">5,000원</option>
+            <option value="10000">10,000원</option>
+            <option value="30000">30,000원</option>
+            <option value="50000">50,000원</option>
+          </select>
+          <button onClick={handlePayment} disabled={!isPaymentEnabled}>
+            결제
+          </button>
+        </div>
     </main>
   );
 }

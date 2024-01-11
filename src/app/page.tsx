@@ -18,6 +18,7 @@ interface DataItem {
   price: number;
   week: number;
   Subs_Index: number; // 또는 실제 타입에 맞게 지정
+  imageUrl: string;
 }
 
 function Index() {
@@ -106,7 +107,7 @@ function Index() {
                 }}
               >
                 <div className={styles.image}> 
-                  <Image layout={"fill"} src={`/image/image${index+1}.jpg`} alt={`Product ${index + 1}`} />
+                  <Image layout={"fill"} src={item.imageUrl} alt={`Product ${index + 1}`} />
                 </div>
                 <p style={{ margin: 0 }}>Name: {item.name}</p>
                 <p style={{ margin: 0 }}>Price: {item.price}</p>
@@ -129,7 +130,7 @@ function Index() {
         </div>
       </div>
       <div className={`${styles.div} ${styles.purple}`}>
-        {/* <SlideComponent/> */}
+        <SlideComponent/>
       </div>
       <div className={`${styles.div} ${styles.blue}`} >
         <div className={styles.infobox1}></div>

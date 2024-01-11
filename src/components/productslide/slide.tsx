@@ -51,7 +51,9 @@ const SlideComponent: React.FC = () => {
       <Slider {...settings}>
         {productData.map((product, index) => (
           <div key={index} onClick={() => handleSlideClick(index)} className={styles.customslide}>
-            <Image width={459} height={380} src={`/productimage/image${index+1}.jpg`} alt={`Product ${index + 1}`} />
+            <div className={styles.image} style={{width:"30vw",height:"45vh"}}> 
+              <Image layout={"fill"} src={`/productimage/image${index+1}.jpg`} alt={`Product ${index + 1}`} />
+            </div>
             <p style={{ margin: 0 }}>Name: {product.name}</p>
           </div>
         ))}

@@ -2,6 +2,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import styles from '@/styles/myinfo.module.scss'
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 interface UserInfo {
   userId: string;
@@ -95,8 +98,10 @@ export default function MyPageinfo() {
           name: userInfo.name,
           birthdate: userInfo.birthdate,
           phoneNumber: userInfo.phoneNumber,
-          email: userInfo.email,           
-          address: userInfo.address,        
+          email: userInfo.email,
+          postcode: userInfo.postcode,           
+          address: userInfo.address,
+          detailadress: userInfo.detailaddress,        
           gender: userInfo.gender,           
         }),
       });
@@ -163,15 +168,15 @@ export default function MyPageinfo() {
   return (
     <main>
       <h1 className={`mb-4 text-xl md:text-2xl`}>
-        myinfo
+        나의 정보
       </h1>
-      <div className='myinfo'>
+      <div className={styles.myinfo}>
         {/* 사용자 정보를 표시하는 부분 */}
         {userInfo && (
           <div>
             {/* 수정 모드일 때는 입력 폼을 표시 */}
             {isEditMode ? (
-              <div>
+              <div className={styles.myinfomodify}>
                 <p>사용자 ID: {userInfo.userId}</p>
                 <label>
                   이름:
@@ -187,72 +192,101 @@ export default function MyPageinfo() {
                 </label>
                 <label>
                   생년월일:
-                  <input
-                    type='text'
-                    value={userInfo.birthdate}
-                    onChange={(e) =>
-                      setUserInfo((prevInfo) => 
-                        prevInfo ? { ...prevInfo, birthdate: e.target.value } : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
+                  <DatePicker
+                    selected={new Date(userInfo.birthdate)} // 기존 날짜를 Date 객체로 변환하여 설정
+                    onChange={(date) =>
+                      setUserInfo((prevInfo) =>
+                        prevInfo
+                          ? { ...prevInfo, birthdate: date.toISOString() }
+                          : { userId: '', name: '', birthdate: date.toISOString(), phoneNumber: '', email: '', postcode:'', address: '', detailaddress:'' ,gender: '' }
                       )
                     }
                   />
                 </label>
                 <label>
-  전화번호:
-  <input
-    type='text'
-    value={userInfo.phoneNumber}
-    onChange={(e) =>
-      setUserInfo((prevInfo) =>
-        prevInfo
-          ? { ...prevInfo, phoneNumber: e.target.value }
-          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
-      )
-    }
-  />
-</label>
-<label>
-  이메일:
-  <input
-    type='text'
-    value={userInfo.email}
-    onChange={(e) =>
-      setUserInfo((prevInfo) =>
-        prevInfo
-          ? { ...prevInfo, email: e.target.value }
-          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
-      )
-    }
-  />
-</label>
-<label>
-  주소:
-  <input
-    type='text'
-    value={userInfo.address}
-    onChange={(e) =>
-      setUserInfo((prevInfo) =>
-        prevInfo
-          ? { ...prevInfo, address: e.target.value }
-          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
-      )
-    }
-  />
-</label>
-<label>
-  성별:
-  <input
-    type='text'
-    value={userInfo.gender}
-    onChange={(e) =>
-      setUserInfo((prevInfo) =>
-        prevInfo
-          ? { ...prevInfo, gender: e.target.value }
-          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
-      )
-    }
-  />
-</label>
+                  전화번호:
+                  <input
+                    type='text'
+                    value={userInfo.phoneNumber}
+                    onChange={(e) =>
+                      setUserInfo((prevInfo) =>
+                        prevInfo
+                          ? { ...prevInfo, phoneNumber: e.target.value }
+                          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
+                      )
+                    }
+                  />
+                </label>
+                <label>
+                  이메일:
+                  <input
+                    type='text'
+                    value={userInfo.email}
+                    onChange={(e) =>
+                      setUserInfo((prevInfo) =>
+                        prevInfo
+                          ? { ...prevInfo, email: e.target.value }
+                          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
+                      )
+                    }
+                  />
+                </label>
+                <label>
+                  우편변호:
+                  <input
+                    type='text'
+                    value={userInfo.postcode}
+                    onChange={(e) =>
+                      setUserInfo((prevInfo) =>
+                        prevInfo
+                          ? { ...prevInfo, postcode: e.target.value }
+                          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
+                      )
+                    }
+                  />
+                </label>
+                <label>
+                  주소:
+                  <input
+                    type='text'
+                    value={userInfo.address}
+                    onChange={(e) =>
+                      setUserInfo((prevInfo) =>
+                        prevInfo
+                          ? { ...prevInfo, address: e.target.value }
+                          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
+                      )
+                    }
+                  />
+                </label>
+                <label>
+                  상세주소:
+                  <input
+                    type='text'
+                    value={userInfo.detailaddress}
+                    onChange={(e) =>
+                      setUserInfo((prevInfo) =>
+                        prevInfo
+                          ? { ...prevInfo, detailaddress: e.target.value }
+                          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
+                      )
+                    }
+                  />
+                </label>
+                <label>
+                  성별:
+                  
+                  <select name="gender" value={userInfo.gender}  onChange={(e) =>
+                      setUserInfo((prevInfo) =>
+                        prevInfo
+                          ? { ...prevInfo, gender: e.target.value }
+                          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
+                      ) }>
+                    <option value="">선택하세요</option>
+                    <option value="남성">남성</option>
+                    <option value="여성">여성</option>
+                  </select>
+                </label>
 
                 {/* 나머지 수정 폼들도 추가 */}
                 {/* ... */}

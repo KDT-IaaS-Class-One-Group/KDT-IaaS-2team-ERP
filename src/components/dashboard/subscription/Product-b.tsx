@@ -2,26 +2,21 @@
 import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
 import styles from "@/styles/adminorder.module.scss";
 import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links-b";
-
+import ImageUploadp
+ from "@/components/test/ImageUploadp";
 interface ProductInfo {
   product_id: string;
-  category_id: string;
   product_name: string;
-  price: string;
-  sale: string;
-  stock_quantity: string;
-  timestamp: string;
-  img1: string;
-  img2: string;
-  delete_status: string;
+  stock_quantity: number;
+  registration_date: string;
+  imageurl: string;
   display_status: string;
   info: string;
-
 }
 
 const pageSize = 13; // 페이지당 표시할 항목 수
 
-export default function Product() {
+export default function Product() : React.ReactNode {
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingProductIndex, setEditingProductIndex] = useState<string | null>(null);
@@ -31,6 +26,7 @@ export default function Product() {
     pageSize: 13,
     totalPages: 1,
   });
+  const [imageurl, setImageurl] = useState<string | null>(null);
 
   const handlePageChange = (newPage: number) => {
     setPageInfo({
@@ -63,15 +59,10 @@ export default function Product() {
 
   const [productInfo, setProductInfo] = useState<ProductInfo>({
     product_id: "",
-    category_id: "",
     product_name: "",
-    price: "",
-    sale: "",
-    stock_quantity: "",
-    timestamp: "",
-    img1: "",
-    img2: "",
-    delete_status: "",
+    stock_quantity: 0,
+    registration_date: "",
+    imageurl: "",
     display_status: "",
     info: ""
   });
@@ -86,12 +77,18 @@ export default function Product() {
 
   const handleSubmit = async () => {
     try {
+      const updatedProductInfo = {
+        ...productInfo,
+        imageUrl: imageurl, // 이미지 URL 추가
+      };
+
+
       const response = await fetch("/api/admin/product", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(productInfo),
+        body: JSON.stringify(updatedProductInfo),
       });
 
       if (response.ok) {
@@ -106,15 +103,10 @@ export default function Product() {
       // 입력 폼 초기화
       setProductInfo({
         product_id: "",
-        category_id: "",
         product_name: "",
-        price: "",
-        sale: "",
-        stock_quantity: "",
-        timestamp: "",
-        img1: "",
-        img2: "",
-        delete_status: "",
+        stock_quantity: 0,
+        registration_date: "",
+        imageurl: "",
         display_status: "",
         info: ""
       });
@@ -189,6 +181,13 @@ export default function Product() {
     return dateLocalString;
   };
 
+
+  const handleImageUpload = (imageUrl: string) => {
+    // 이미지 업로드 성공 시, 이미지 URL을 state에 업데이트
+    setImageurl(imageUrl);
+    console.log("이미지 업로드 성공:", imageUrl);
+  };
+
   return (
     <>
       <div className={styles.sidelink}>
@@ -205,6 +204,11 @@ export default function Product() {
         {showForm && (
           <div className={styles.addSubscription}>
             <label className={styles.addLabel}>
+              <div>
+                <ImageUploadp onImageUpload={handleImageUpload} />
+              </div>
+             </label>
+            <label className={styles.addLabel}>
               Name:
               <input
                 type="text"
@@ -215,61 +219,11 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            price:
-              <input
-                type="text"
-                name="price"
-                value={productInfo.price}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            sale:
-              <input
-                type="text"
-                name="sale"
-                value={productInfo.sale}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
             stock:
               <input
                 type="text"
                 name="stock_quantity"
                 value={productInfo.stock_quantity}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            img1:
-              <input
-                type="text"
-                name="img1"
-                value={productInfo.img1}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            img2:
-              <input
-                type="text"
-                name="img2"
-                value={productInfo.img2}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            delete:
-              <input
-                type="text"
-                name="delete_status"
-                value={productInfo.delete_status}
                 onChange={handleChange}
                 className={styles.addInput}
               />
@@ -312,26 +266,6 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            price:
-              <input
-                type="text"
-                name="price"
-                value={productInfo.price}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            sale:
-              <input
-                type="text"
-                name="sale"
-                value={productInfo.sale}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
             stock:
               <input
                 type="text"
@@ -341,36 +275,7 @@ export default function Product() {
                 className={styles.addInput}
               />
             </label>
-            <label className={styles.addLabel}>
-            img1:
-              <input
-                type="text"
-                name="img1"
-                value={productInfo.img1}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            img2:
-              <input
-                type="text"
-                name="img2"
-                value={productInfo.img2}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            delete:
-              <input
-                type="text"
-                name="delete_status"
-                value={productInfo.delete_status}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
+
             <label className={styles.addLabel}>
             display:
               <input
@@ -401,18 +306,12 @@ export default function Product() {
             <thead>  
               <tr>
                 <th>product_id</th>
-                <th>category_id</th>
                 <th>product_name</th>
-                <th>price</th>
-                <th>sale</th>
                 <th>stock</th>
-                <th>timestamp</th>
-                <th>img1</th>
-                <th>img2</th>
-                <th>delete</th>
+                <th>registration_date</th>
+                <th>imggeUrl</th>
                 <th>display</th>
                 <th>info</th>
-                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -424,17 +323,12 @@ export default function Product() {
                   }`}
                 >
                   <td>{product.product_id}</td>
-                  <td>{product.category_id}</td>
                   <td>{product.product_name}</td>
-                  <td>{product.price}</td>
-                  <td>{product.sale}</td>
                   <td>{product.stock_quantity}</td>
-                  <td>{formatdate(product.timestamp)}</td>
-                  <td>{product.img1}</td>
-                  <td>{product.img2}</td>
-                  <td>{product.delete_status}</td>
+                  <td>{formatdate(product.registration_date)}</td>
+                  <td>{product.imageurl}</td>
                   <td>{product.display_status}</td>
-                  <td>{product.info}</td>
+                  <td className={styles.truncate} >{product.info}</td>
                   <td>
                     <button
                       className={styles.delButton}

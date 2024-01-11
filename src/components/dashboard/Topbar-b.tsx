@@ -35,7 +35,7 @@ export default function Topbar() {
 
   const handleDiv1Click = () => {
     // 관리자 홈페이지로 이동
-    window.location.href = "/admin/dashboard";
+    window.location.href = "/admin/dashboard/user/user-info";
   };
   return (
     <div className={styles.topbar}>

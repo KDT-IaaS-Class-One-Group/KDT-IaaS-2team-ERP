@@ -35,20 +35,30 @@ pool
   });
 
 app.prepare().then(() => {
+
   const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "public/uploads"); // 업로드된 파일이 저장될 경로 (public/uploads 폴더를 사용)
+    destination: function (req, file, cb) {
+      cb(null, path.join(__dirname, "/public/image")); // 이미지 저장 폴더 경로
     },
-    filename: (req, file, cb) => {
-      // 파일 이름 설정 (현재는 'image' + timestamp + 확장자로 설정)
-      const timestamp = Date.now();
-      const ext = path.extname(file.originalname);
-      cb(null, `image${timestamp}${ext}`);
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
     },
   });
+  const upload = multer({ storage: storage });
 
+  const storagep = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, path.join(__dirname, "/public/productimage")); // 이미지 저장 폴더 경로
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
+    },
+  });
+  const uploadp= multer({ storage: storagep });
 
-  const upload = multer({ storage });
+  
 
   const server = express();
   server.use(bodyParser.json());
@@ -114,6 +124,8 @@ app.prepare().then(() => {
     });
   };
 
+  
+
   server.get("/api/orderindex", async (req, res) => {
     try {
       // 헤더에서 토큰 추출
@@ -148,7 +160,7 @@ app.prepare().then(() => {
 
       // 데이터베이스에서 user_Index를 기반으로 name 조회
       const [rows] = await pool.query(
-        "SELECT name FROM users WHERE user_Index = ?",
+        "SELECT name FROM users WHERE User_index = ?",
         [userIndex]
       );
 
@@ -529,14 +541,14 @@ app.prepare().then(() => {
       const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
       const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
       const searchTerm = req.query.searchTerm || "";
-      const searchOption = req.query.searchOption || "user_Index";
+      const searchOption = req.query.searchOption || "User_Index";
 
       let query = "SELECT * FROM orderdetails";
       let queryParams = [];
 
       if (searchTerm) {
-        if (searchOption === "user_Index") {
-          query += " WHERE user_Index LIKE ?";
+        if (searchOption === "User_Index") {
+          query += " WHERE User_Index LIKE ?";
         } else if (searchOption === "order_name") {
           query += " WHERE order_name LIKE ?";
         }
@@ -551,8 +563,8 @@ app.prepare().then(() => {
 
       let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM orderdetails";
       if (searchTerm) {
-        if (searchOption === "user_Index") {
-          totalCountQuery += " WHERE user_Index LIKE ?";
+        if (searchOption === "User_Index") {
+          totalCountQuery += " WHERE User_Index LIKE ?";
         } else if (searchOption === "order_name") {
           totalCountQuery += " WHERE order_name LIKE ?";
         }
@@ -724,13 +736,14 @@ app.prepare().then(() => {
   server.get("/api/data", async (req, res) => {
     try {
       const [rows] = await db.execute(
-        "SELECT Subs_Index, name, price, week FROM subscription"
+        "SELECT Subs_Index, name, price, week, imageUrl FROM subscription"
       );
       const dataFromDB = rows.map((row) => ({
         Subs_Index: row.Subs_Index,
         name: row.name,
         price: row.price,
         week: row.week,
+        imageUrl: row.imageUrl,
       }));
       res.json(dataFromDB);
     } catch (error) {
@@ -751,11 +764,10 @@ app.prepare().then(() => {
   server.get("/api/products", async (req, res) => {
     try {
       const [rows] = await db.execute(
-        "SELECT product_id , category_id, product_name, stock_quantity , info FROM product"
+        "SELECT product_id , product_name, stock_quantity , info FROM product"
       );
       const dataFromDB = rows.map((row) => ({
         id: row.product_id,
-        category: row.category_id,
         name: row.product_name,
         stock: row.stock_quantity,
         info: row.info,
@@ -853,20 +865,20 @@ app.prepare().then(() => {
       const subsIndex = req.body.sub_index;
       const ids = req.body.ids;
       const address = req.body.address;
-      const userIndex = req.body.user_Index; // 사용자의 user_Index
+      const userIndex = req.body.User_Index; // 사용자의 user_Index
       const orderName = req.body.order_name; // 주문자 이름
       const orderPhone = req.body.order_phone; // 주문자 전화번호
       const zipCode = req.body.zip_code; // 우편번호
 
       // 토큰 해독
       const decodedToken = jwt.verify(token, secretKey);
-
+      console.log(decodedToken)
       // 데이터베이스 연결
       const connection = await pool.getConnection();
 
       try {
         // 사용자의 캐시 확인
-        const checkCashQuery = `SELECT cash FROM users WHERE user_Index = ?`;
+        const checkCashQuery = `SELECT cash FROM users WHERE User_Index = ?`;
         const [cashResult] = await connection.query(checkCashQuery, [
           userIndex,
         ]);
@@ -882,7 +894,7 @@ app.prepare().then(() => {
         await connection.beginTransaction();
 
         // 사용자의 캐시 차감
-        const updateCashQuery = `UPDATE users SET cash = cash - ? WHERE user_Index = ?`;
+        const updateCashQuery = `UPDATE users SET cash = cash - ? WHERE User_Index = ?`;
         const updateCashValues = [price, userIndex];
         await connection.query(updateCashQuery, updateCashValues);
 
@@ -894,7 +906,7 @@ app.prepare().then(() => {
 
         // 사용자의 user_Index 값으로 주문 정보를 추가
         const orderQuery = `
-      INSERT INTO Orderdetails (subs_index, user_Index, Subs_Start, Subs_End, address, order_name, order_phone, zip_code) 
+      INSERT INTO Orderdetails (subs_index, User_Index, Subs_Start, Subs_End, address, order_name, order_phone, zip_code) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
         const orderValues = [
@@ -915,7 +927,7 @@ app.prepare().then(() => {
         const productIds = ids.split(",").map((id) => parseInt(id, 10));
 
         // users 테이블 구독상탭 변경
-        const updateUserOrderIndexQuery = `UPDATE users SET order_Index = ? WHERE user_Index = ?`;
+        const updateUserOrderIndexQuery = `UPDATE users SET order_Index = ? WHERE User_Index = ?`;
         const updateUserOrderIndexValues = [orderId, userIndex];
         await connection.query(
           updateUserOrderIndexQuery,
@@ -961,14 +973,14 @@ app.prepare().then(() => {
 
     try {
       const [rows] = await db.execute(
-        "SELECT Subs_Index, Name, Price, Week, size FROM subscription WHERE Subs_Index = ?",
+        "SELECT Subs_Index, Name, price, Week, size FROM subscription WHERE Subs_Index = ?",
         [subs_index]
       );
 
       const dataFromDB = rows.map((row) => ({
         Subs_Index: row.Subs_Index,
         Name: row.Name,
-        Price: row.Price,
+        price: row.price,
         Week: row.Week,
         size: row.size,
       }));
@@ -1180,7 +1192,7 @@ app.prepare().then(() => {
           // 로그인 성공
           const token = jwt.sign(
             {
-              user_Index: user.user_Index,
+              User_Index: user.User_Index,
               userId: user.userId ,
               name: user.name,
               birthdate: user.birthdate,
@@ -1304,34 +1316,6 @@ app.prepare().then(() => {
     }
   });
 
-  server.post("/api/subs-product", async (req, res) => {
-    try {
-      if (req.method === "POST") {
-        const { product_Index, name, price, week } = req.body; // 변경된 부분
-
-        // 데이터베이스에서 subscription 정보 추가
-        const [result] = await db.query(
-          "INSERT INTO subscription (name, week, size, price ) VALUES (?, ?, ?, ?)",
-          [name, week, size, price] // 변경된 부분
-        );
-
-        if (result.affectedRows === 1) {
-          // 성공적으로 추가된 경우
-          res.status(200).json({ message: "subscription 정보 추가 성공" });
-        } else {
-          // 추가 실패
-          res.status(500).json({ error: "subscription 정보 추가 실패" });
-        }
-      } else {
-        // 허용되지 않은 메서드
-        res.status(405).json({ error: "허용되지 않은 메서드" });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "내부 서버 오류" });
-      res.status(500).json({ error: "내부 서버 오류" });
-    }
-  });
 
   server.delete("/api/subs-product/:subs_index", async (req, res) => {
     const { subs_index } = req.params;
@@ -1387,33 +1371,7 @@ app.prepare().then(() => {
     }
   });
 
-  server.post("/api/admin/product", async (req, res) => {
-    try {
-      if (req.method === "POST") {
-        const { product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info } = req.body; // 변경된 부분
 
-        // 데이터베이스에서 subscription 정보 추가
-        const [result] = await db.query(
-          "INSERT INTO product (product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          [product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info] // 변경된 부분
-        );
-
-        if (result.affectedRows === 1) {
-          // 성공적으로 추가된 경우
-          res.status(200).json({ message: "product 정보 추가 성공" });
-        } else {
-          // 추가 실패
-          res.status(500).json({ error: "product 정보 추가 실패" });
-        }
-      } else {
-        // 허용되지 않은 메서드
-        res.status(405).json({ error: "허용되지 않은 메서드" });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "내부 서버 오류" });
-    }
-  });
 
   server.delete("/api/admin/product/:product_id", async (req, res) => {
     const { product_id } = req.params;
@@ -1490,18 +1448,20 @@ app.prepare().then(() => {
         const userId = decodedToken.userId;
 
         // 클라이언트에서 보낸 업데이트할 사용자 정보
-        const { name, birthdate, phoneNumber, email, address, gender } =
+        const { name, birthdate, phoneNumber, email, postcode, address, detailaddress, gender } =
           req.body;
 
         // 데이터베이스에서 사용자 정보 업데이트
         const [result] = await db.query(
-          "UPDATE users SET name = ?, birthdate = ?, phoneNumber = ?, email = ?, address = ?, gender = ? WHERE userId = ?",
+          "UPDATE users SET name = ?, birthdate = ?, phoneNumber = ?, email = ?, postcode = ? , address = ?, detailaddress = ? , gender = ? WHERE userId = ?",
           [
             name,
             new Date(birthdate),
             phoneNumber,
             email,
+            postcode,
             address,
+            detailaddress,
             gender,
             userId,
           ]
@@ -1516,7 +1476,9 @@ app.prepare().then(() => {
               birthdate,
               phoneNumber,
               email,
+              postcode,
               address,
+              detailaddress,
               gender,
               cash: decodedToken.cash, // 이 부분은 사용자 정보에 따라 추가 또는 수정해야 할 수 있습니다.
             },
@@ -1557,7 +1519,7 @@ app.prepare().then(() => {
       // 현재 토큰의 정보를 기반으로 새로운 토큰을 발급
       const newToken = jwt.sign(
         {
-          user_Index: decodedToken.user_Index,
+          User_Index: decodedToken.User_Index,
           userId: decodedToken.userId,
           name: decodedToken.name,
           birthdate: decodedToken.birthdate,
@@ -1599,7 +1561,7 @@ app.prepare().then(() => {
       // 여기에서 새로운 액세스 토큰 발급
       const newAccessToken = jwt.sign(
         {
-          user_Index: decodedRefreshToken.user_Index,
+          User_Index: decodedRefreshToken.User_Index,
           userId: decodedRefreshToken.userId,
           name: decodedRefreshToken.name,
           birthdate: decodedRefreshToken.birthdate,
@@ -1658,15 +1620,91 @@ app.prepare().then(() => {
     }
   });
 
-  server.post("/api/uploadImage", upload.single("image"), async (req, res) => {
+ 
+
+  server.post("/api/uploadImage", upload.single("image"), (req, res) => {
     try {
-      // 업로드 성공 시 클라이언트에 응답
-      res.status(200).json({ success: true, message: "이미지 업로드 성공" });
+      if (!req.file) {
+        return res.status(400).json({ error: "이미지 파일이 없습니다." });
+      }
+  
+      const imageUrl = `/image/${req.file.filename}`;
+      res.status(200).json({ imageUrl });
     } catch (error) {
-      console.error("Error uploading image:", error);
-      res.status(500).json({ success: false, error: "Internal Server Error" });
+      console.error("이미지 업로드 중 오류:", error);
+      res.status(500).json({ error: "이미지 업로드 중 오류 발생" });
     }
   });
+
+  server.post("/api/uploadImagep", uploadp.single("image"), (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "이미지 파일이 없습니다." });
+      }
+  
+      const imageUrl = `/proudctimage/${req.file.filename}`;
+      res.status(200).json({ imageUrl });
+    } catch (error) {
+      console.error("이미지 업로드 중 오류:", error);
+      res.status(500).json({ error: "이미지 업로드 중 오류 발생" });
+    }
+  });
+
+  server.post("/api/subs-product", async (req, res) => {
+    try {
+      if (req.method === "POST") {
+        const { name, price, size, week, imageUrl } = req.body;
+  
+        // 데이터베이스에서 subscription 정보 추가
+        const [result] = await db.query(
+          "INSERT INTO subscription (name, week, size, price, imageUrl) VALUES (?, ?, ?, ?, ?)",
+          [name, week, size, price, imageUrl]
+        );
+  
+        if (result.affectedRows === 1) {
+          // 성공적으로 추가된 경우
+          res.status(200).json({ message: "subscription 정보 추가 성공" });
+        } else {
+          // 추가 실패
+          res.status(500).json({ error: "subscription 정보 추가 실패" });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "내부 서버 오류" });
+    }
+  });
+
+  server.post("/api/admin/product", async (req, res) => {
+    try {
+      if (req.method === "POST") {
+        const { product_name, stock_quantity, imageUrl, display_status, info } = req.body; // 변경된 부분
+
+        const [result] = await db.query(
+          "INSERT INTO product (product_name, stock_quantity, imageUrl, display_status, info) VALUES (?, ?, ?, ?, ?)",
+          [product_name, stock_quantity, imageUrl,display_status, info] // 변경된 부분
+        );
+
+        if (result.affectedRows === 1) {
+          // 성공적으로 추가된 경우
+          res.status(200).json({ message: "product 정보 추가 성공" });
+        } else {
+          // 추가 실패
+          res.status(500).json({ error: "product 정보 추가 실패" });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "내부 서버 오류" });
+    }
+  });
+
 
   server.post("/customer/writingPage/create-post", async (req, res) => {
     const formData = req.body;
@@ -1675,17 +1713,17 @@ app.prepare().then(() => {
     try {
       // users 테이블에서 해당 User_Index 값이 존재하는지 확인
       const [userResult] = await db.query(
-        "SELECT * FROM users WHERE user_Index = ?",
-        [formData.user_Index]
+        "SELECT * FROM users WHERE User_Index = ?",
+        [formData.User_Index]
       );
-      console.log(formData.user_Index);
+      console.log(formData.User_Index);
       // User_Index 값이 존재하는 경우에만 게시글을 삽입
       if (userResult.length === 1) {
         // 데이터베이스에 데이터 삽입
         const [result] = await db.query(
-          "INSERT INTO board (user_Index, userID, email, title, content, date, password) VALUES (?, ?, ?, ?, ?, NOW(), ?)",
+          "INSERT INTO board (User_Index, userID, email, title, content, date, password) VALUES (?, ?, ?, ?, ?, NOW(), ?)",
           [
-            formData.user_Index,
+            formData.User_Index,
             formData.userID,
             formData.email,
             formData.title,
@@ -1703,10 +1741,10 @@ app.prepare().then(() => {
           res.status(500).json({ error: "Failed to create board" });
         }
       } else {
-        // User_Index 값이 존재하지 않는 경우 클라이언트에 오류 응답
+        // User_index 값이 존재하지 않는 경우 클라이언트에 오류 응답
         console.error(
           "User not found for given User_Index:",
-          formData.user_Index
+          formData.User_Index
         );
         res.status(404).json({ error: "User not found for given User_Index" });
       }
@@ -1715,6 +1753,51 @@ app.prepare().then(() => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
+
+  server.post("/api/addCash", async (req, res) => {
+    try {
+      if (req.method === "POST") {
+        const { userId, cashAmount } = req.body;
+  
+        // 데이터베이스에서 사용자의 현재 캐쉬 가져오기
+        const [getUserResult] = await db.query(
+          "SELECT cash FROM users WHERE userId = ?",
+          [userId]
+        );
+  
+        if (getUserResult.length === 1) {
+          const currentCash = getUserResult[0].cash;
+  
+          // 현재 캐쉬와 추가할 캐쉬를 합산하여 업데이트
+          const updatedCash = currentCash + cashAmount;
+  
+          // 데이터베이스에서 사용자의 캐쉬 업데이트
+          const [updateResult] = await db.query(
+            "UPDATE users SET cash = ? WHERE userId = ?",
+            [updatedCash, userId]
+          );
+  
+          if (updateResult.affectedRows === 1) {
+            // 업데이트 성공 시
+            res.status(200).json({ message: "캐쉬 추가 성공" });
+          } else {
+            // 업데이트 실패 시
+            res.status(500).json({ error: "캐쉬 추가 실패" });
+          }
+        } else {
+          // 사용자를 찾을 수 없는 경우
+          res.status(404).json({ error: "사용자를 찾을 수 없습니다." });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error("Error adding cash:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
 
   const PORT = process.env.PORT || 3000;
 

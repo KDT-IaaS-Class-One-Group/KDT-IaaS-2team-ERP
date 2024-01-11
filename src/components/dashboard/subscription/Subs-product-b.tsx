@@ -2,22 +2,24 @@
 import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
 import styles from "@/styles/adminorder.module.scss";
 import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links-b";
-
+import ImageUpload from "@/components/test/ImageUpload";
 interface SubscriptionInfo {
   subs_index: string;
   name: string;
   week: string;
   size: string;
   price: string;
+  imageUrl?: string; 
 }
 
 const pageSize = 13; // 페이지당 표시할 항목 수
 
-export default function SubsProduct() {
+export default function SubsProduct(): React.ReactNode {
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingSubsIndex, setEditingSubsIndex] = useState<string | null>(null);
   const [subs, setSubs] = useState<SubscriptionInfo[]>([]);
+  const [imageurl, setImageurl] = useState<string | null>(null);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
     pageSize: 13,
@@ -59,6 +61,7 @@ export default function SubsProduct() {
     week: "",
     size: "",
     price: "",
+    imageUrl:"",
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -71,14 +74,19 @@ export default function SubsProduct() {
 
   const handleSubmit = async () => {
     try {
+      const updatedSubscriptionInfo = {
+        ...subscriptionInfo,
+        imageUrl: imageurl, // 이미지 URL 추가
+      };
+
       const response = await fetch("/api/subs-product", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(subscriptionInfo),
+        body: JSON.stringify(updatedSubscriptionInfo),
       });
-
+  
       if (response.ok) {
         fetchData(pageInfo.currentPage);
         alert("등록 완료");
@@ -87,7 +95,7 @@ export default function SubsProduct() {
         console.error(`Error adding subscription: ${response.status}`);
         alert("등록 실패");
       }
-
+  
       // 입력 폼 초기화
       setSubscriptionInfo({
         subs_index: "",
@@ -161,6 +169,13 @@ export default function SubsProduct() {
       console.error("Error updating subscription:", error);
     }
   };
+ 
+  const handleImageUpload = (imageUrl: string) => {
+    // 이미지 업로드 성공 시, 이미지 URL을 state에 업데이트
+    setImageurl(imageUrl);
+    console.log("이미지 업로드 성공:", imageUrl);
+  };
+  
 
   return (
     <>
@@ -177,6 +192,11 @@ export default function SubsProduct() {
         </button>
         {showForm && (
           <div className={styles.addSubscription}>
+            <label className={styles.addLabel}>
+              <div>
+                <ImageUpload onImageUpload={handleImageUpload} />
+              </div>
+             </label>
             <label className={styles.addLabel}>
               Name:
               <input

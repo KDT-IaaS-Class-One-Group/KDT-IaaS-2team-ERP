@@ -2,5 +2,13 @@
   text-decoration: none;
   color:brown;
 
- 
+}
+
+.linkbox{
+  display: flex;
+  width:13vw;
+  justify-content: center;
+}
+.activeLink{
+  background-color: burlywood;
 }

@@ -15,7 +15,7 @@ import OrderReceipt from "../../../components/subscription/OrderReceipt";
 interface OrderClientSideProps {
   Subs_Index: number;
   Name: string;
-  Price: number;
+  price: number;
   Week: number;
 }
 
@@ -40,7 +40,7 @@ export default function OrderClientSide() {
   const [data, setData] = useState<OrderClientSideProps[]>([]);
   const [token, setToken] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [Price, setPrice] = useState(0);
+  const [price, setPrice] = useState(0);
   const Subs_Index = useParams();
   const subs_index = Subs_Index.Sub_Index;
   const router = useRouter();
@@ -91,9 +91,9 @@ export default function OrderClientSide() {
         console.log(dataFromServer);
 
         if (dataFromServer) {
-          setPrice(dataFromServer[0].Price);
-          console.log("Price set successfully:", dataFromServer[0].Price);
-          console.log("Updated Price state:", Price);
+          setPrice(dataFromServer[0].price);
+          console.log("price set successfully:", dataFromServer[0].price);
+          console.log("Updated price state:", price);
         } else {
           console.log("No price data in the response:", dataFromServer);
         }
@@ -173,10 +173,10 @@ export default function OrderClientSide() {
         body: JSON.stringify({
           token: localStorage.token,
           sub_index: subs_index,
-          price: Price,
+          price: price,
           ids: selectedProducts,
           address: addressInput,
-          user_Index: userInfo?.User_Index,
+          User_Index: userInfo?.User_Index,
           order_name: orderNameInput, // 주문자 이름 추가
           order_phone: orderPhoneInput, // 주문자 전화번호 추가
           zip_code: zipCodeInput, // 우편번호 추가
@@ -188,7 +188,7 @@ export default function OrderClientSide() {
         JSON.stringify({
           token: localStorage.token,
           sub_index: subs_index,
-          price: Price,
+          price: price,
           ids: selectedProducts,
         })
       );
