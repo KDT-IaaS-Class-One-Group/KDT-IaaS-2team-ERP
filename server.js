@@ -1009,32 +1009,33 @@ app.prepare().then(() => {
     }
   });
 
-  server.post("/api/approveUser/:userId", async (req, res) => {
-    try {
-      if (req.method === "POST") {
-        const { userId } = req.params;
+  // ! 회원탈퇴 승인 로직 삭제
+  // server.post("/api/approveUser/:userId", async (req, res) => {
+  //   try {
+  //     if (req.method === "POST") {
+  //       const { userId } = req.params;
 
-        // 데이터베이스에서 사용자 정보 삭제
-        const [result] = await db.query("DELETE FROM users WHERE userId = ?", [
-          userId,
-        ]);
+  //       // 데이터베이스에서 사용자 정보 삭제
+  //       const [result] = await db.query("DELETE FROM users WHERE userId = ?", [
+  //         userId,
+  //       ]);
 
-        if (result.affectedRows === 1) {
-          // 성공적으로 삭제된 경우
-          res.status(200).json({ message: "사용자 승인 성공" });
-        } else {
-          // 삭제 실패 시
-          res.status(404).json({ error: "사용자를 찾을 수 없습니다." });
-        }
-      } else {
-        // 허용되지 않은 메서드
-        res.status(405).json({ error: "허용되지 않은 메서드" });
-      }
-    } catch (error) {
-      console.error("Error approving user:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  });
+  //       if (result.affectedRows === 1) {
+  //         // 성공적으로 삭제된 경우
+  //         res.status(200).json({ message: "사용자 승인 성공" });
+  //       } else {
+  //         // 삭제 실패 시
+  //         res.status(404).json({ error: "사용자를 찾을 수 없습니다." });
+  //       }
+  //     } else {
+  //       // 허용되지 않은 메서드
+  //       res.status(405).json({ error: "허용되지 않은 메서드" });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error approving user:", error);
+  //     res.status(500).json({ error: "Internal Server Error" });
+  //   }
+  // });
 
   server.post("/api/insertData", async (req, res) => {
     try {
@@ -1176,12 +1177,12 @@ app.prepare().then(() => {
   server.post("/api/admin/product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info } = req.body; // 변경된 부분
+        const { product_name, stock_quantity, img1,display_status, info } = req.body; // 변경된 부분
 
         // 데이터베이스에서 subscription 정보 추가
         const [result] = await db.query(
-          "INSERT INTO product (product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          [product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info] // 변경된 부분
+          "INSERT INTO product (product_name, stock_quantity, img1, display_status, info) VALUES (?, ?, ?, ?, ?)",
+          [product_name, stock_quantity, img1, display_status, info] // 변경된 부분
         );
 
         if (result.affectedRows === 1) {
@@ -1230,12 +1231,12 @@ app.prepare().then(() => {
     const { product_id } = req.params;
     try {
       if (req.method === "PUT") {
-        const { product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info } = req.body;
+        const { product_name, stock_quantity, img1, display_status, info } = req.body;
 
         // 데이터베이스에서 구독 정보 업데이트
         const [result] = await db.query(
-          "UPDATE product SET product_name = ?, price = ?, sale = ?, stock_quantity = ?, img1 = ?, img2 = ?, delete_status = ?, info = ?, display_status = ? WHERE product_id = ?",
-          [product_name, price, sale, stock_quantity, img1, img2, delete_status, display_status, info, product_id]
+          "UPDATE product SET product_name = ?, stock_quantity = ?, img1 = ?, display_status = ?,  info = ? WHERE product_id = ?",
+          [product_name, stock_quantity, img1, display_status, info, product_id]
         );
 
         if (result.affectedRows === 1) {
