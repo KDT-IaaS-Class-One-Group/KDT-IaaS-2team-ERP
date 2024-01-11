@@ -188,32 +188,19 @@ app.prepare().then(() => {
 
       // 사용자의 주문 정보 가져오기
       const [rows, fields] = await pool.query(
-        "SELECT * FROM orderdetails WHERE User_Index = ?",
+        "SELECT orderdetails.*, orderproduct.product_id, subscription.*, product.* FROM orderdetails " +
+        "INNER JOIN orderproduct ON orderdetails.order_index = orderproduct.order_index " +
+        "LEFT JOIN subscription ON orderdetails.subs_index = subscription.subs_index " +
+        "INNER JOIN product ON orderproduct.product_id = product.product_id " +
+        "WHERE orderdetails.User_Index = ?",
         [userIndex]
       );
-
+      
+      console.log(rows);
       // 결과를 JSON 형식으로 응답
       res.json(rows);
     } catch (error) {
       console.error("Error fetching orderdetails:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  });
-
-  server.get("/api/orderproducts/:orderIndex", async (req, res) => {
-    try {
-      const orderIndex = req.params.orderIndex;
-
-      // Order_Index를 기반으로 OrderProduct 테이블에서 product_id 조회
-      const [rows] = await pool.query(
-        "SELECT product_id FROM OrderProduct WHERE Order_Index = ?",
-        [orderIndex]
-      );
-
-      const productIds = rows.map((row) => row.product_id);
-      res.json(productIds);
-    } catch (error) {
-      console.error("Error querying orderproducts:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
