@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import styles from "@/styles/adminqna.module.scss";
+import NavLinks from "@/components/dashboard/service/Service-nav-links-b";
 
 interface BoardInfo {
   boardKey: string;
@@ -42,8 +43,8 @@ export default function QA() {
 
         if (searchOption === "userId") {
           apiUrl += "&searchOption=userId&searchTerm=" + searchTerm;
-        } else if (searchOption === "name") {
-          apiUrl += "&searchOption=name&searchTerm=" + searchTerm;
+        } else if (searchOption === "title") {
+          apiUrl += "&searchOption=title&searchTerm=" + searchTerm;
         }
 
         const response = await fetch(apiUrl);
@@ -90,6 +91,7 @@ export default function QA() {
       fetchData(pageInfo.currentPage);
       // 수정된 Cash 값을 초기화
       setEditedReply((prev) => ({ ...prev, [userId]: "" }));
+      setSelectedBoard(null);
     } catch (error) {
       console.error("Error updating reply:", error);
     }
@@ -119,100 +121,112 @@ export default function QA() {
   }, []);
 
   return (
-    <div className={styles.subproduct}>
-      <h1>Q&A 관리</h1>
-      <label htmlFor="searchOption">검색 옵션:</label>
-      <select
-        id="searchOption"
-        value={searchOption}
-        onChange={(e) => setSearchOption(e.target.value)}
-      >
-        <option value="userId">User ID</option>
-        <option value="name">Name</option>
-      </select>
-      <input
-        type="text"
-        placeholder={`${searchOption === "userId" ? "userId" : "name"}로 검색`}
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <div className={styles.userinfocontent}>
-        <table className={styles.userTable}>
-          <thead>
-            <tr>
-              <th>User ID</th>
-              <th>name</th>
-              <th>title</th>
-              <th>content</th>
-              <th>date</th>
-              <th>reply</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {boards.map((board) => (
-              <tr key={board.boardKey} onClick={() => handleRowClick(board)}>
-                <td>{board.userId}</td>
-                <td>{board.name}</td>
-                <td>{board.title}</td>
-                <td>{board.content}</td>
-                <td>{formatDateTime(board.date)}</td>
-                <td>{board.reply}</td>
-                <td>
-                  <button onClick={() => handleRowClick(board)}>보기</button>
-                </td>
+    <>
+      <div className={styles.sidelink}>
+        <NavLinks />
+      </div>
+      <div className={styles.main}>
+        <h1 className={styles.title}>Q&A 관리</h1>
+        <label htmlFor="searchOption"></label>
+        <select
+          id="searchOption"
+          value={searchOption}
+          onChange={(e) => setSearchOption(e.target.value)}
+          className={styles.select}
+        >
+          <option value="userId">ID</option>
+          <option value="title">제목</option>
+        </select>
+        <input
+          type="text"
+          placeholder={`${
+            searchOption === "userId" ? "ID로 검색" : "제목으로 검색"
+          }`}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className={styles.search}
+        />
+        <div className={styles.qnaContent}>
+          <table className={styles.qnaTable}>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>email</th>
+                <th>제목</th>
+                <th>내용</th>
+                <th>답변</th>
+                <th>작성일자</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {selectedBoard !== null && (
-          <div className={`${styles.modal} ${styles.show}`}>
-            <div className={styles.modalContent}>
-              <span className={styles.close} onClick={handleModalClose}>
-                &times;
-              </span>
-              <h2>제목 : {selectedBoard.title}</h2>
-              <div>ID : {selectedBoard.userId}</div>
-              <div>이름 : {selectedBoard.name}</div>
-              <div>email : {selectedBoard.email}</div>
-              <div>phone : {selectedBoard.phoneNumber}</div>
-              <div>내용 : {selectedBoard.content}</div>
-              <div>답변 : {selectedBoard.reply}</div>
+            </thead>
+            <tbody>
+              {boards.map((board) => (
+                <tr key={board.boardKey}>
+                  <td>{board.userId}</td>
+                  <td>{board.email}</td>
+                  <td>{board.title}</td>
+                  <td>{board.content}</td>
+                  <td>{board.reply}</td>
+                  <td>{formatDateTime(board.date)}</td>
+                  <td>
+                    <button onClick={() => handleRowClick(board)} className={styles.replyButton}>답변</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {selectedBoard !== null && (
+            <div className={`${styles.modal} ${styles.show}`}>
               <div>
-                <input
-                  type="text"
-                  value={editedReply[selectedBoard.userId] || ""}
-                  onChange={(e) =>
-                    setEditedReply((prev) => ({
-                      ...prev,
-                      [selectedBoard.userId]: e.target.value,
-                    }))
-                  }
-                />
-                <button onClick={() => handleReplyEdit(selectedBoard.userId)}>
-                  등록
-                </button>
+                <div  className={styles.modalContent}>
+                <span className={styles.close} onClick={handleModalClose}>
+                  &times;
+                </span>
+                <div className={styles.info}>
+                <div className={styles.id}>ID : {selectedBoard.userId}</div>
+                <div className={styles.email}>email : {selectedBoard.email} </div>
+                </div>
+                <div className={styles.modalTitle}>제목 : {selectedBoard.title}</div>
+                <div className={styles.content}>내용 : {selectedBoard.content}</div>
+                <div className={styles.reply}>답변 : {selectedBoard.reply}</div>
+                <div>
+                  <input
+                    type="text"
+                    value={editedReply[selectedBoard.userId] || ""}
+                    onChange={(e) =>
+                      setEditedReply((prev) => ({
+                        ...prev,
+                        [selectedBoard.userId]: e.target.value,
+                      }))
+                    }
+                    className={styles.replyInput}
+                  />
+                  <button onClick={() => handleReplyEdit(selectedBoard.userId)} className={styles.replyButton}>
+                    등록
+                  </button>
+                  </div>
+                </div>
               </div>
             </div>
+          )}
+          <div>
+            {Array.from(
+              { length: pageInfo.totalPages },
+              (_, index) => index + 1
+            ).map((pageNumber) => (
+              <button
+                key={pageNumber}
+                className={`${styles.paginationButton} ${
+                  pageNumber === pageInfo.currentPage ? styles.active : ""
+                }`}
+                onClick={() => handlePageChange(pageNumber)}
+              >
+                {pageNumber}
+              </button>
+            ))}
           </div>
-        )}
-        <div className={styles.pagination}>
-          {Array.from(
-            { length: pageInfo.totalPages },
-            (_, index) => index + 1
-          ).map((pageNumber) => (
-            <button
-              key={pageNumber}
-              className={`pagination-button ${
-                pageNumber === pageInfo.currentPage ? "active" : ""
-              }`}
-              onClick={() => handlePageChange(pageNumber)}
-            >
-              {pageNumber}
-            </button>
-          ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }
