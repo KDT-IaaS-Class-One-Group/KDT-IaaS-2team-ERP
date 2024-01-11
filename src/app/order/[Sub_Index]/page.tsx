@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import styles from "@/styles/order.module.scss";
+import styles from "../../../styles/order.module.scss";
 import { useRouter, useSearchParams } from "next/navigation";
 import OrderInfoInput from "../../../components/subscription/OrderInfoInput";
 import PaymentButton from "../../../components/subscription/PaymentButton";
@@ -246,13 +246,18 @@ export default function OrderClientSide() {
 
   return (
     <div>
+      <h2> 상품 정보 </h2>
+
       <OrderReceipt data={data} />
 
       <OrderedProductsList products={productData} />
 
+      <h2> 주문자 정보 </h2>
+
       <UserInfoDisplay userInfo={userInfo} />
 
-      <h2> 배송지 정보 입력 </h2>
+      <h2 className={styles.deliveryInfoTitle}>배송지 정보 입력</h2>
+
       <OrderInfoInput
         label="수령자 이름"
         value={orderNameInput}

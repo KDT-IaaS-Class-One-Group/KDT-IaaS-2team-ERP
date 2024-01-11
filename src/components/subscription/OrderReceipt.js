@@ -5,8 +5,7 @@ const OrderReceipt = ({ data }) => {
   return (
     <div>
       {data.map((item, index) => (
-        <div key={index} className={styles.receipt}>
-          <h2>구독 상품 정보</h2>
+        <div key={index}>
           <p>구독명: {item.Name}</p>
           <p>가격: {item.Price}</p>
           <p>기간: {item.Week}주</p>
