@@ -13,14 +13,14 @@ import {
 } from "recharts";
 import axios from "axios";
 
-const UserGraph = () => {
+const ProductGraph = () => {
   const [dynamicGraphData, setDynamicGraphData] = useState([]);
-  const [selectedXAxis, setSelectedXAxis] = useState("timestamp");
+  const [selectedXAxis, setSelectedXAxis] = useState("subs_start");
 
   useEffect(() => {
     // 서버에서 동적 그래프 데이터를 가져오는 API 호출
     axios
-      .get(`/api/userGraph?xAxis=${selectedXAxis}`)
+      .get(`/api/productGraph?xAxis=${selectedXAxis}`)
       .then((response) => {
         setDynamicGraphData(response.data);
       })
@@ -44,9 +44,8 @@ const UserGraph = () => {
         value={selectedXAxis}
         onChange={handleXAxisChange}
       >
-        <option value="timestamp">가입일자</option>
-        <option value="birth">출생년도</option>
-        <option value="gender">성별</option>
+        <option value="subs_start"> 구독시작월별 </option>
+        <option value="address">지역별</option>
       </select>
 
       <ResponsiveContainer width="200%" height={400}>
@@ -55,15 +54,15 @@ const UserGraph = () => {
           margin={{ top: 20, right: 30, left: 20, bottom: 50 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="label" />
+          <XAxis dataKey="label" type="category" />
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="userCount" fill="#8884d8" />
+          <Bar dataKey="productCount" fill="#8884d8" />
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
 };
 
-export default UserGraph;
+export default ProductGraph;

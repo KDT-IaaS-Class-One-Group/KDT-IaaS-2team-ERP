@@ -5,7 +5,7 @@ async function checkAndRenewSubscriptions(pool) {
   
       // 종료일로부터 1일 이내의 데이터 가져오기
       const [rows, fields] = await pool.query(
-        "SELECT Order_Index, subs_index, user_Index, price, Subs_End, address FROM orderdetails WHERE Subs_End >= NOW() AND Subs_End <= NOW() + INTERVAL 1 DAY"
+        "SELECT Order_Index, subs_index, user_Index, Subs_End, address FROM orderdetails WHERE Subs_End >= NOW() AND Subs_End <= NOW() + INTERVAL 1 DAY"
       );
   
       // 데이터베이스의 Subs_End 값 출력
@@ -16,7 +16,7 @@ async function checkAndRenewSubscriptions(pool) {
   
       // 각 데이터에 대해 새로운 Subscription 데이터 추가
       for (const row of rows) {
-        const { Order_Index, subs_index, user_Index, price, Subs_End, address } = row;
+        const { Order_Index, subs_index, user_Index, Subs_End, address } = row;
   
         // 해당 주문의 구독 주기 조회
         const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
@@ -31,8 +31,8 @@ async function checkAndRenewSubscriptions(pool) {
   
           // INSERT 쿼리를 통해 새로운 Subscription 데이터를 DB에 추가
           await pool.query(
-            "INSERT INTO orderdetails (Subs_Start, Subs_End, subs_index, user_Index, price, address) VALUES (?, ?, ?, ?, ?, ?)",
-            [Subs_End, endDate, subs_index, user_Index, price, address]
+            "INSERT INTO orderdetails (Subs_Start, Subs_End, subs_index, user_Index, address) VALUES (?, ?, ?, ?, ?)",
+            [Subs_End, endDate, subs_index, user_Index, address]
           );
         }
       }

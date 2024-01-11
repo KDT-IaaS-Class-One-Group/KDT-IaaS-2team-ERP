@@ -6,19 +6,20 @@ const jwt = require("jsonwebtoken");
 const app = next({ dev });
 const handle = app.getRequestHandler();
 const mysql = require("mysql2/promise");
-const multer = require('multer');
-const path = require('path');
-const cron = require('node-cron');
+const multer = require("multer");
+const path = require("path");
+const cron = require("node-cron");
 
-const { checkAndRenewSubscriptions } = require("./src/components/checkAndRenewSubscriptions");
-
+const {
+  checkAndRenewSubscriptions,
+} = require("./src/components/checkAndRenewSubscriptions");
 
 const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "723546",
+  password: "0000",
   database: "erp",
   connectionLimit: 5,
 });
@@ -37,6 +38,7 @@ app.prepare().then(() => {
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, "public/uploads"); // 업로드된 파일이 저장될 경로 (public/uploads 폴더를 사용)
+      cb(null, "public/uploads"); // 업로드된 파일이 저장될 경로 (public/uploads 폴더를 사용)
     },
     filename: (req, file, cb) => {
       // 파일 이름 설정 (현재는 'image' + timestamp + 확장자로 설정)
@@ -46,11 +48,11 @@ app.prepare().then(() => {
     },
   });
 
+
   const upload = multer({ storage });
 
   const server = express();
   server.use(bodyParser.json());
-
 
   // cron.schedule('15 * * * *', async () => {
   //   try {
@@ -63,41 +65,41 @@ app.prepare().then(() => {
 
   // async function checkAndRenewSubscriptions() {
   //   const currentDate = new Date();
-  
+
   //   // 구독 갱신이 필요한 주문 조회
   //   const dueSubscriptionsQuery = `
   //     SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
   //     FROM Orderdetails
   //     WHERE Subs_End <= ?;
   //   `;
-  
+
   //   const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
-  
+
   //   for (const subscription of dueSubscriptionsResult) {
   //     const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
-  
+
   //     // 해당 주문의 구독 주기 조회
   //     const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
   //     const [weekResult] = await pool.query(weekQuery, [subs_index]);
-  
+
   //     if (weekResult.length > 0) {
   //       const week = weekResult[0].Week;
-  
+
   //       // 새로운 시작일 결정 (예: 이전 구독의 종료일)
   //       const newStartDate = Subs_End;
-  
+
   //       // 새로운 종료일 결정 (예: week * 7일 연장)
   //       const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
-  
+
   //       // 데이터베이스에서 구독 정보 업데이트
   //       const updateSubscriptionQuery = `
   //         UPDATE Orderdetails
   //         SET Subs_Start = ?, Subs_End = ?
   //         WHERE Order_Index = ?;
   //       `;
-  
+
   //       await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
-  
+
   //       // 갱신된 구독에 대한 로그 또는 알림
   //       console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
   //     }
@@ -112,22 +114,22 @@ app.prepare().then(() => {
       });
     });
   };
-  
+
   server.get("/api/orderindex", async (req, res) => {
     try {
       // 헤더에서 토큰 추출
       const token = req.headers.authorization.split(" ")[1];
-  
+
       // 토큰 확인 및 디코딩
       const decodedToken = await verifyToken(token);
       const userIndex = decodedToken.User_Index;
-  
+
       // 데이터베이스에서 user_Index를 기반으로 일치하는 Order_Index 조회
       const [rows] = await pool.query(
         "SELECT Order_Index FROM orderdetails WHERE User_Index = ?",
         [userIndex]
       );
-  
+
       const orderIndexArray = rows.map((row) => row.Order_Index);
       res.json(orderIndexArray);
     } catch (error) {
@@ -136,9 +138,33 @@ app.prepare().then(() => {
     }
   });
 
-  cron.schedule("0 * * * *", () => {
+  server.get("/api/userinfo", async (req, res) => {
     try {
-      checkAndRenewSubscriptions(pool); 
+      // 헤더에서 토큰 추출
+      const token = req.headers.authorization.split(" ")[1];
+
+      // 토큰 확인 및 디코딩
+      const decodedToken = await verifyToken(token);
+      const userIndex = decodedToken.User_Index;
+
+      // 데이터베이스에서 user_Index를 기반으로 name 조회
+      const [rows] = await pool.query(
+        "SELECT name FROM users WHERE User_Index = ?",
+        [userIndex]
+      );
+
+      // 조회된 name 전송
+      const userName = rows.length > 0 ? rows[0].name : null;
+      res.json({ name: userName });
+    } catch (error) {
+      console.error("Error querying database:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  cron.schedule("2 * * * *", () => {
+    try {
+      checkAndRenewSubscriptions(pool);
       console.log("checkAndRenewSubscriptions.js가 실행되었습니다.");
     } catch (error) {
       console.error(
@@ -146,24 +172,28 @@ app.prepare().then(() => {
         error.message
       );
     }
-  }); 
+  });
 
   server.get("/api/orderdetails", async (req, res) => {
     try {
       // 토큰에서 user_Index 추출
       const token = req.headers.authorization.split(" ")[1];
       const decodedToken = jwt.verify(token, secretKey);
-  
-      if (!decodedToken || !decodedToken.user_Index) {
-        console.error('Invalid token or user index not found');
+
+      if (!decodedToken || !decodedToken.User_Index) {
+        console.error("Invalid token or user index not found");
         return res.status(401).json({ error: "Unauthorized" });
       }
-  
-      const userIndex = decodedToken.user_Index;
-      console.log('userIndex : ' ,userIndex)
-      // 사용자의 주문 정보만 가져오기
-      const [rows, fields] = await pool.query("SELECT Order_Index FROM orderdetails WHERE User_Index = ?", [userIndex]);
-  
+
+      const userIndex = decodedToken.User_Index;
+      console.log("userIndex: ", userIndex);
+
+      // 사용자의 주문 정보 가져오기
+      const [rows, fields] = await pool.query(
+        "SELECT * FROM orderdetails WHERE User_Index = ?",
+        [userIndex]
+      );
+
       // 결과를 JSON 형식으로 응답
       res.json(rows);
     } catch (error) {
@@ -171,54 +201,70 @@ app.prepare().then(() => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
-  
 
-  // // ! 테스트 목적 즉시 실행되게 
-  // checkAndRenewSubscriptions(pool); 
+  server.get("/api/orderproducts/:orderIndex", async (req, res) => {
+    try {
+      const orderIndex = req.params.orderIndex;
+
+      // Order_Index를 기반으로 OrderProduct 테이블에서 product_id 조회
+      const [rows] = await pool.query(
+        "SELECT product_id FROM OrderProduct WHERE Order_Index = ?",
+        [orderIndex]
+      );
+
+      const productIds = rows.map((row) => row.product_id);
+      res.json(productIds);
+    } catch (error) {
+      console.error("Error querying orderproducts:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  // // ! 테스트 목적 즉시 실행되게
+  // checkAndRenewSubscriptions(pool);
 
   // async function checkAndRenewSubscriptions() {
   //   const currentDate = new Date();
-  
+
   //   // 구독 갱신이 필요한 주문 조회
   //   const dueSubscriptionsQuery = `
   //     SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
   //     FROM Orderdetails
   //     WHERE Subs_End <= ?;
   //   `;
-  
+
   //   const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
-  
+
   //   for (const subscription of dueSubscriptionsResult) {
   //     const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
-  
+
   //     // 해당 주문의 구독 주기 조회
   //     const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
   //     const [weekResult] = await pool.query(weekQuery, [subs_index]);
-  
+
   //     if (weekResult.length > 0) {
   //       const week = weekResult[0].Week;
-  
+
   //       // 새로운 시작일 결정 (예: 이전 구독의 종료일)
   //       const newStartDate = Subs_End;
-  
+
   //       // 새로운 종료일 결정 (예: week * 7일 연장)
   //       const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
-  
+
   //       // 데이터베이스에서 구독 정보 업데이트
   //       const updateSubscriptionQuery = `
   //         UPDATE Orderdetails
   //         SET Subs_Start = ?, Subs_End = ?
   //         WHERE Order_Index = ?;
   //       `;
-  
+
   //       await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
-  
+
   //       // 갱신된 구독에 대한 로그 또는 알림
   //       console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
   //     }
   //   }
   // }
-
 
   server.get("/api/classroom", async (req, res) => {
     try {
@@ -231,7 +277,9 @@ app.prepare().then(() => {
   });
 
   server.get("/api/userGraph", async (req, res) => {
+  server.get("/api/userGraph", async (req, res) => {
     const { xAxis } = req.query;
+
 
     try {
       let query;
@@ -260,6 +308,54 @@ app.prepare().then(() => {
               ORDER BY label;
             `;
           break;
+          break;
+        default:
+          res.status(400).send("Invalid xAxis parameter");
+          res.status(400).send("Invalid xAxis parameter");
+          return;
+      }
+
+
+      const connection = await pool.getConnection();
+      const [results] = await connection.query(query);
+      connection.release();
+
+
+      res.json(results);
+    } catch (error) {
+      console.error("Error executing query:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+
+  server.get("/api/admin/users", async (req, res) => {
+      console.error("Error executing query:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+
+  server.get("/api/productGraph", async (req, res) => {
+    const { xAxis } = req.query;
+
+    try {
+      let query;
+      switch (xAxis) {
+        case "subs_start":
+          query = `
+          SELECT DATE_FORMAT(Subs_Start, '%Y-%m') as label, COUNT(DISTINCT Order_Index) as productCount
+          FROM orderdetails
+          GROUP BY label
+          ORDER BY label;
+          `;
+          break;
+          case 'address':
+            query = `
+              SELECT SUBSTRING_INDEX(address, ' ', 1) as label, COUNT(DISTINCT Order_Index) as productCount
+              FROM orderdetails
+              GROUP BY label
+              ORDER BY productCount DESC;`;
+            break;
+
         default:
           res.status(400).send("Invalid xAxis parameter");
           return;
@@ -276,7 +372,7 @@ app.prepare().then(() => {
     }
   });
 
-  server.get("/api/admin/users", async (req, res) => {
+  server.get("/api/users", async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
       const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
@@ -673,12 +769,10 @@ app.prepare().then(() => {
    * ? /Order 엔드포인트
    */
 
-
-
-server.post("/api/order", async (req, res) => {
-  try {
-    // 클라이언트로부터 받은 상품 이름
-    const { product } = req.body;
+  server.post("/api/order", async (req, res) => {
+    try {
+      // 클라이언트로부터 받은 상품 이름
+      const { product } = req.body;
 
       // 클라이언트에서 전송된 토큰
       const token = req.headers.authorization;
@@ -708,58 +802,66 @@ server.post("/api/order", async (req, res) => {
     }
   });
 
-server.post('/api/payment', async (req, res) => {
-  try {
-    const token = req.body.token;
-    const price = req.body.price;
-    const subsIndex = req.body.sub_index;
-    const ids = req.body.ids;
-    const address = req.body.address; // 추가된 부분
+  server.post("/api/payment", async (req, res) => {
+    try {
+      const token = req.body.token;
+      const price = req.body.price;
+      const subsIndex = req.body.sub_index;
+      const ids = req.body.ids;
+      const address = req.body.address;
+      const userIndex = req.body.user_Index; // 사용자의 user_Index
+      const orderName = req.body.order_name; // 주문자 이름
+      const orderPhone = req.body.order_phone; // 주문자 전화번호
+      const zipCode = req.body.zip_code; // 우편번호
 
-    // 토큰 해독
-    const decodedToken = jwt.verify(token, secretKey);
-    const userIndex = decodedToken.User_Index;
+      // 토큰 해독
+      const decodedToken = jwt.verify(token, secretKey);
 
       // 데이터베이스 연결
       const connection = await pool.getConnection();
 
-    try {
-      // 사용자의 캐시 확인
-      const checkCashQuery = `SELECT cash FROM users WHERE user_Index = ?`;
-      const [cashResult] = await connection.query(checkCashQuery, [userIndex]);
-      const userCash = cashResult[0].cash;
+      try {
+        // 사용자의 캐시 확인
+        const checkCashQuery = `SELECT cash FROM users WHERE user_Index = ?`;
+        const [cashResult] = await connection.query(checkCashQuery, [
+          userIndex,
+        ]);
+        const userCash = cashResult[0].cash;
 
-      // 캐시 부족한 경우 에러 응답
-      if (userCash < price) {
-        res.status(400).json({ error: '캐시가 부족합니다.' });
-        return;
-      }
+        // 캐시 부족한 경우 에러 응답
+        if (userCash < price) {
+          res.status(400).json({ error: "캐시가 부족합니다." });
+          return;
+        }
 
-      // 트랜잭션 시작
-      await connection.beginTransaction();
+        // 트랜잭션 시작
+        await connection.beginTransaction();
 
         // 사용자의 캐시 차감
         const updateCashQuery = `UPDATE users SET cash = cash - ? WHERE user_Index = ?`;
         const updateCashValues = [price, userIndex];
         await connection.query(updateCashQuery, updateCashValues);
 
-      // 주문 정보 추가
-      const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
-      const [weekResult] = await connection.query(weekQuery, [subsIndex]);
+        // 주문 정보 추가
+        const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
+        const [weekResult] = await connection.query(weekQuery, [subsIndex]);
 
-      const week = weekResult[0].Week;
+        const week = weekResult[0].Week;
 
-      // 추가된 부분: 사용자의 user_Index 값으로 주문 정보를 추가
-      const orderQuery = `
-        INSERT INTO Orderdetails (subs_index, user_Index, Subs_Start, Subs_End, address) 
-        VALUES (?, ?, ?, ?, ?)
-      `;
+        // 사용자의 user_Index 값으로 주문 정보를 추가
+        const orderQuery = `
+      INSERT INTO Orderdetails (subs_index, user_Index, Subs_Start, Subs_End, address, order_name, order_phone, zip_code) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
         const orderValues = [
           subsIndex,
           userIndex,
-          price,
           new Date(),
           new Date(Date.now() + week * 7 * 24 * 60 * 60 * 1000),
+          address,
+          orderName, // 사용자로부터 받은 주문자 이름
+          orderPhone, // 사용자로부터 받은 주문자 전화번호
+          zipCode,
         ];
 
         const [orderResult] = await connection.query(orderQuery, orderValues);
@@ -768,7 +870,7 @@ server.post('/api/payment', async (req, res) => {
         // ids를 배열로 변환
         const productIds = ids.split(",").map((id) => parseInt(id, 10));
 
-        //users 테이블 구독상탭 변경
+        // users 테이블 구독상탭 변경
         const updateUserOrderIndexQuery = `UPDATE users SET order_Index = ? WHERE user_Index = ?`;
         const updateUserOrderIndexValues = [orderId, userIndex];
         await connection.query(
@@ -927,7 +1029,7 @@ server.post('/api/payment', async (req, res) => {
     try {
       const connection = await pool.getConnection();
       const [rows, fields] = await connection.query(
-        "SELECT title, content, password FROM board"
+        "SELECT boardKey, email, userID, title, content, password FROM board"
       );
 
       // 데이터베이스에서 가져온 정보를 클라이언트에게 반환합니다.
@@ -1159,7 +1261,7 @@ server.post('/api/payment', async (req, res) => {
   server.post("/api/subs-product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { name, week, size, price } = req.body; // 변경된 부분
+        const { product_Index, name, price, week } = req.body; // 변경된 부분
 
         // 데이터베이스에서 subscription 정보 추가
         const [result] = await db.query(
@@ -1180,6 +1282,7 @@ server.post('/api/payment', async (req, res) => {
       }
     } catch (error) {
       console.error(error);
+      res.status(500).json({ error: "내부 서버 오류" });
       res.status(500).json({ error: "내부 서버 오류" });
     }
   });
@@ -1532,34 +1635,61 @@ server.post('/api/payment', async (req, res) => {
     }
   });
 
-server.post('/api/uploadImage', upload.single('image'), async (req, res) => {
-  try {
-    // 업로드 성공 시 클라이언트에 응답
-    res.status(200).json({ success: true, message: '이미지 업로드 성공' });
-  } catch (error) {
-    console.error('Error uploading image:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
-  }
-});
-
-
+  server.post("/api/uploadImage", upload.single("image"), async (req, res) => {
+    try {
+      // 업로드 성공 시 클라이언트에 응답
+      res.status(200).json({ success: true, message: "이미지 업로드 성공" });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      res.status(500).json({ success: false, error: "Internal Server Error" });
+    }
+  });
 
   server.post("/customer/writingPage/create-post", async (req, res) => {
-    const { title, content, password } = req.body;
-    const currentDate = new Date().toISOString().slice(0, 19).replace("T", " ");
+    const formData = req.body;
+    console.log(formData);
 
     try {
-      const conn = await pool.getConnection();
-      await conn.query(
-        `INSERT INTO board (title, content, date, password)
-      VALUES (?, ?, ?, ?)`,
-        [title, content, currentDate, password]
+      // users 테이블에서 해당 User_Index 값이 존재하는지 확인
+      const [userResult] = await db.query(
+        "SELECT * FROM users WHERE user_Index = ?",
+        [formData.user_Index]
       );
-      conn.release();
-      res.status(201).send("board create successfully");
-    } catch (err) {
-      console.error("Error creating board:", err);
-      res.status(500).send("Error creating board");
+      console.log(formData.user_Index);
+      // User_Index 값이 존재하는 경우에만 게시글을 삽입
+      if (userResult.length === 1) {
+        // 데이터베이스에 데이터 삽입
+        const [result] = await db.query(
+          "INSERT INTO board (user_Index, userID, email, title, content, date, password) VALUES (?, ?, ?, ?, ?, NOW(), ?)",
+          [
+            formData.user_Index,
+            formData.userID,
+            formData.email,
+            formData.title,
+            formData.content,
+            formData.password,
+          ]
+        );
+
+        // 삽입 성공 시 클라이언트에 응답
+        if (result.affectedRows === 1) {
+          console.log("Board created successfully!");
+          res.status(200).json({ message: "Board created successfully!" });
+        } else {
+          console.error("Failed to create board");
+          res.status(500).json({ error: "Failed to create board" });
+        }
+      } else {
+        // User_Index 값이 존재하지 않는 경우 클라이언트에 오류 응답
+        console.error(
+          "User not found for given User_Index:",
+          formData.user_Index
+        );
+        res.status(404).json({ error: "User not found for given User_Index" });
+      }
+    } catch (error) {
+      console.error("Error creating board:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   });
 

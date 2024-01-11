@@ -6,6 +6,11 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import styles from "@/styles/order.module.scss";
 import { useRouter, useSearchParams } from "next/navigation";
+import OrderInfoInput from "../../../components/subscription/OrderInfoInput";
+import PaymentButton from "../../../components/subscription/PaymentButton";
+import OrderedProductsList from "../../../components/subscription/OrderedProductsList";
+import UserInfoDisplay from "../../../components/subscription/UserInfoDisplay";
+import OrderReceipt from "../../../components/subscription/OrderReceipt";
 
 interface OrderClientSideProps {
   Subs_Index: number;
@@ -45,6 +50,9 @@ export default function OrderClientSide() {
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
   const [productData, setProductData] = useState<ProductClientSideProps[]>([]);
   const [addressInput, setAddressInput] = useState("");
+  const [orderNameInput, setOrderNameInput] = useState("");
+  const [orderPhoneInput, setOrderPhoneInput] = useState("");
+  const [zipCodeInput, setZipCodeInput] = useState("");
 
   const setsToken = (token: string) => {
     localStorage.setItem("token", token);
@@ -167,7 +175,11 @@ export default function OrderClientSide() {
           sub_index: subs_index,
           price: Price,
           ids: selectedProducts,
-          address: addressInput, // 주소 정보 추가
+          address: addressInput,
+          user_Index: userInfo?.User_Index,
+          order_name: orderNameInput, // 주문자 이름 추가
+          order_phone: orderPhoneInput, // 주문자 전화번호 추가
+          zip_code: zipCodeInput, // 우편번호 추가
         }),
       });
 
@@ -185,7 +197,7 @@ export default function OrderClientSide() {
         // 400 에러가 발생하면 수동으로 페이지 이동하거나 에러 처리를 할 수 있습니다.
         if (response.status === 400) {
           // 수동으로 페이지 이동
-          router.push('/400-error-page');
+          router.push("/400-error-page");
         } else {
           // 다른 에러 상태 코드의 경우에 대한 처리
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -234,48 +246,37 @@ export default function OrderClientSide() {
 
   return (
     <div>
-      {data.map((item, index) => (
-        <div key={index} className={styles.receipt}>
-          <p>Name: {item.Name}</p>
-          <p>Price: {item.Price}</p>
-          <p>Week: {item.Week}</p>
-        </div>
-      ))}
+      <OrderReceipt data={data} />
 
-      {productData.map((product, productIndex) => (
-        <div key={productIndex}>
-          <p>Product Name: {product.name}</p>
-          {/* 필요한 상품 정보 추가 */}
-        </div>
-      ))}
+      <OrderedProductsList products={productData} />
 
-      <Link href={`/payment`}>
-        <button onClick={handlePayment}>결제하기</button>
-      </Link>
+      <UserInfoDisplay userInfo={userInfo} />
 
-      <div className="myinfo">
-        {/* 사용자 정보를 표시하는 부분 */}
-        {userInfo && (
-          <div>
-            <div>
-              <p>이름: {userInfo.name}</p>
-              <p>전화번호: {userInfo.phoneNumber}</p>
-              <p>이메일: {userInfo.email}</p>
-              <p>주소: {userInfo.address}</p>
-            </div>
-            <div>
-              <p>나의 캐쉬:{userInfo.cash}</p>
-            </div>
-            <label htmlFor="addressInput">주소 입력:</label>
-            <input
-              type="text"
-              id="addressInput"
-              value={addressInput}
-              onChange={handleAddressChange}
-            />
-          </div>
-        )}
-      </div>
+      <h2> 배송지 정보 입력 </h2>
+      <OrderInfoInput
+        label="수령자 이름"
+        value={orderNameInput}
+        onChange={setOrderNameInput}
+      />
+
+      <OrderInfoInput
+        label="수령자 전화번호"
+        value={orderPhoneInput}
+        onChange={setOrderPhoneInput}
+      />
+
+      <OrderInfoInput
+        label="주소"
+        value={addressInput}
+        onChange={setAddressInput}
+      />
+
+      <OrderInfoInput
+        label="우편번호"
+        value={zipCodeInput}
+        onChange={setZipCodeInput}
+      />
+      <PaymentButton onClick={handlePayment} />
     </div>
   );
 }

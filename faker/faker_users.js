@@ -1,6 +1,6 @@
 //! Users 테이블 가데이터 만드는 faker입니다.
 //! README의 Users 쿼리문으로 테이블 만들고
-//! 터미널에 faker.js 실행 후 localhost:3001 접속하면 됩니다.
+//! 터미널에 faker_users.js 실행 후 localhost:3001 접속하면 됩니다.
 
 const express = require('express');
 const mysql = require('mysql2');
@@ -15,7 +15,7 @@ const db_config = {
   user: 'root',
   password: '0000',
   database: 'erp',
-  port: 3307
+  port: 3306
 };
 
 // MariaDB 연결
