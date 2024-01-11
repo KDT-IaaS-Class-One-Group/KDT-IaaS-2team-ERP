@@ -9,7 +9,6 @@ const links = [
   { name: '정보관리', href: '/mypage/myinfo' },
   { name: '캐쉬관리', href: '/mypage/mycash' },
   { name: '구독관리', href: '/mypage/subscription' },
-  { name: '회원탈퇴', href: '/mypage/withdrawal' }
 ];
 
 export default function NavLinks() {

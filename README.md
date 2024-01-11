@@ -16,11 +16,14 @@ CREATE TABLE Users (
     birthdate DATETIME NOT NULL,
     phoneNumber VARCHAR(16) NOT NULL,
     email VARCHAR(50) NOT NULL,
+    postcode VACHAR(15) NOT NULL,
     address VARCHAR(300) NOT NULL,
+    detailaddress VARCHAR(300) NOT NULL,
     gender VARCHAR(1) NOT NULL,
     cash INT(11) NOT NULL,
     joinDate DATETIME NOT NULL,
-    isWithdrawn TINYINT(1) NOT NULL
+    isWithdrawn TINYINT(1) NOT NULL , (탈퇴여부 (삭제?))
+    order_Index TINYINT(4) NULL DEFAULT NULL, (구독여부 (추후변경할수도?))
 );
 
 ### Subscription (구독 서비스 제어) 구독 고유번호가 유저고유번호와 연결, 상품고유번호와도 연결되어 어떤 상품들을 선택했는지 확인 가능, 상품 개수만큼 행이 추가됨
@@ -107,14 +110,12 @@ DELIMITER ;
 ### Product 상품 정보 (원두 종류가 들어갑니다.)
 CREATE TABLE Product (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
-    category_id INT NOT NULL,
     product_name VARCHAR(255) NOT NULL,
     price INT NOT NULL,
     sale INT NULL,
     stock_quantity INT NOT NULL,
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    img1 VARCHAR(500) NULL,
-    img2 VARCHAR(500) NULL,
+    img VARCHAR(500) NULL,
     delete_status TINYINT(1) NULL DEFAULT 0,
     display_status TINYINT(1) NULL DEFAULT 0
 );

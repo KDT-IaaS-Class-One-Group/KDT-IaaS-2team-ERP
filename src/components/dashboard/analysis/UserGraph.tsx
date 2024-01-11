@@ -44,8 +44,8 @@ const UserGraph = () => {
         value={selectedXAxis}
         onChange={handleXAxisChange}
       >
-        <option value="timestamp">가입일자</option>
-        <option value="birth">출생년도</option>
+        <option value="joindate">가입일자</option>
+        <option value="birthdate">출생년도</option>
         <option value="gender">성별</option>
       </select>
 

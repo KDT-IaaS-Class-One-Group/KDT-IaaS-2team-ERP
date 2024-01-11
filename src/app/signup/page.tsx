@@ -19,8 +19,8 @@ interface SignUpProps {
     phoneNumber?: string;
     email?: string;
     postcode?: string;
-    adress?: string;
-    detailadress?: string;
+    address?: string;
+    detailaddress?: string;
     gender?: string;
   };
 }
@@ -32,18 +32,18 @@ interface FormData {
   phoneNumber: string;
   email: string;
   postcode: string;
-  adress: string;
-  detailadress: string;
+  address: string;
+  detailaddress: string;
   gender: string;
 }
 
 const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedAdress, setSelectedadress] = useState<string | null>(null);
+  const [selectedaddress, setSelectedaddress] = useState<string | null>(null);
   const [selectedZonecode, setSelectedZonecode] = useState<string | null>(null);
-  const [detailadress, setDetailadress] = useState<string>("");
-  const [adress, setadress] = useState<string>('');
+  const [detailaddress, setDetailaddress] = useState<string>("");
+  const [address, setaddress] = useState<string>('');
   const [postcode, setPostcode] = useState<string>('');
 
   const [isPasswordValid, setIsPasswordValid] = useState<boolean | null>(null);
@@ -59,8 +59,8 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     phoneNumber: string;
     email: string;
     postcode: string;
-    adress: string;
-    detailadress: string;
+    address: string;
+    detailaddress: string;
     gender: string;
   }>({
     userId: signup.userId || '',
@@ -70,8 +70,8 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     phoneNumber: signup.phoneNumber || '',
     email: signup.email || '',
     postcode: signup.postcode || '',
-    adress: signup.adress || '',
-    detailadress: signup.detailadress || '',
+    address: signup.address || '',
+    detailaddress: signup.detailaddress || '',
     gender: signup.gender || '',
   });
   const [isUserIdValid, setIsUserIdValid] = useState<'unknown' | boolean | null>(null);
@@ -85,28 +85,28 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     setIsModalOpen(false);
   };
 
-  const getadress = (data : any) => {
+  const getaddress = (data : any) => {
     console.log(data)
-    const  adress1 = data;
+    const  address1 = data;
     // 필요한 주소 정보를 조합하여 주소 문자열 반환
-    return adress1
+    return address1
   };
 
   // 모달에서 주소를 선택했을 때 호출되는 함수
-  const handleSelectadress = (data: any) => {
-    const adress = getadress(data);
-    setSelectedadress(adress);
-    setadress(adress);
+  const handleSelectaddress = (data: any) => {
+    const address = getaddress(data);
+    setSelectedaddress(address);
+    setaddress(address);
     setIsModalOpen(false);
     setFormData((prevFormData) => ({
       ...prevFormData,
-      adress: adress
+      address: address
     }));
     
   };
 
   const handleSelectZonecode = (data: any) => {
-    const postcodeData = getadress(data);
+    const postcodeData = getaddress(data);
     setSelectedZonecode(postcodeData);
     setPostcode(postcodeData);
     setFormData((prevFormData) => ({
@@ -155,7 +155,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
         setPasswordConfirm(confirmPassword);}
       
       // 주소 관련 필드의 경우 분리해서 업데이트( 이거 손좀 봐야함)
-      if (target.name === 'postcode' || target.name === 'adress' || target.name === 'detailadress') {
+      if (target.name === 'postcode' || target.name === 'address' || target.name === 'detailaddress') {
         setFormData({
           ...formData,
           [target.name]: target.value,
@@ -251,7 +251,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
   // 예를 들어, address 변경 시
   const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    handleInputChange('adress', value);
+    handleInputChange('address', value);
   };
 
 
@@ -342,7 +342,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
         <label className={styles.formLabel}>
           주소:
       <div className={styles.jusoContainer}>
-      <div className={styles.AdressWrapper}>
+      <div className={styles.addressWrapper}>
       <div className={styles.PostCodeAndButton}>
         {/* 이 부분은 주소 검색 결과가 선택되면 자동으로 업데이트되므로 readOnly로 유지 */}
         <Input
@@ -360,7 +360,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
         <Search
           open={isModalOpen}
           onClose={handleCloseModal}
-          onSelectAdress={handleSelectadress}
+          onSelectAddress={handleSelectaddress}
           onSelectZonecode={handleSelectZonecode}
         >
           모달 내용
@@ -371,20 +371,20 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
         m="3px"
         size="md"
         type="text"
-        name="adress"
+        name="address"
         placeholder="주소"
-        value={adress}
+        value={address}
         onChange={handleAddressChange}
         readOnly
       />
       <Input
         m="3px"
         size="md"
-        name="detailadress"
+        name="detailaddress"
         type="text"
         placeholder="상세주소"
-        value={detailadress}
-        onChange={(e) => {setDetailadress(e.target.value); handleChange(e);
+        value={detailaddress}
+        onChange={(e) => {setDetailaddress(e.target.value); handleChange(e);
         }}
       />
     </div>

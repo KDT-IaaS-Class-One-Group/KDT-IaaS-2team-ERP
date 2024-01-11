@@ -10,8 +10,8 @@ interface UserInfo {
   phoneNumber: string;
   email: string;
   postcode: string;
-  adress: string;
-  detailadress: string;
+  address: string;
+  detailaddress: string;
   gender: string;
 }
 
@@ -38,7 +38,7 @@ export default function MyPageinfo() {
       const decodedToken = jwt.decode(token) as JwtPayload;
 
       if (decodedToken) {
-        const { userId, name, birthdate, phoneNumber, email, postcode , adress, detailadress, gender } = decodedToken;
+        const { userId, name, birthdate, phoneNumber, email, postcode , address, detailaddress, gender } = decodedToken;
 
         const birthdateDate = new Date(birthdate);
 
@@ -52,8 +52,8 @@ export default function MyPageinfo() {
           phoneNumber,
           email,
           postcode,
-          adress,
-          detailadress,
+          address,
+          detailaddress,
           gender,
         };
 
@@ -96,7 +96,7 @@ export default function MyPageinfo() {
           birthdate: userInfo.birthdate,
           phoneNumber: userInfo.phoneNumber,
           email: userInfo.email,           
-          adress: userInfo.adress,        
+          address: userInfo.address,        
           gender: userInfo.gender,           
         }),
       });
@@ -136,6 +136,29 @@ export default function MyPageinfo() {
     }
   };
 
+  const handleWithdrawal = async () => {
+    try {
+      const response = await fetch('/api/withdraw', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+      });
+
+      if (response.ok) {
+        localStorage.removeItem('token');
+        setToken(null);
+        router.push('/login');
+      } else {
+        console.error('회원 탈퇴 실패:', response.statusText);
+      }
+    } catch (error) {
+      console.error('서버 에러:', error);
+    }
+  };
+
+
 
   return (
     <main>
@@ -157,7 +180,7 @@ export default function MyPageinfo() {
                     value={userInfo.name}
                     onChange={(e) =>
                       setUserInfo((prevInfo) => 
-                        prevInfo ? { ...prevInfo, name: e.target.value } : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', adress: '', detailadress:'' ,gender: '' }
+                        prevInfo ? { ...prevInfo, name: e.target.value } : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
                       )
                     }
                   />
@@ -169,7 +192,7 @@ export default function MyPageinfo() {
                     value={userInfo.birthdate}
                     onChange={(e) =>
                       setUserInfo((prevInfo) => 
-                        prevInfo ? { ...prevInfo, birthdate: e.target.value } : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', adress: '', detailadress:'' ,gender: '' }
+                        prevInfo ? { ...prevInfo, birthdate: e.target.value } : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
                       )
                     }
                   />
@@ -183,7 +206,7 @@ export default function MyPageinfo() {
       setUserInfo((prevInfo) =>
         prevInfo
           ? { ...prevInfo, phoneNumber: e.target.value }
-          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', adress: '', detailadress:'' ,gender: '' }
+          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
       )
     }
   />
@@ -197,7 +220,7 @@ export default function MyPageinfo() {
       setUserInfo((prevInfo) =>
         prevInfo
           ? { ...prevInfo, email: e.target.value }
-          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', adress: '', detailadress:'' ,gender: '' }
+          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
       )
     }
   />
@@ -206,12 +229,12 @@ export default function MyPageinfo() {
   주소:
   <input
     type='text'
-    value={userInfo.adress}
+    value={userInfo.address}
     onChange={(e) =>
       setUserInfo((prevInfo) =>
         prevInfo
           ? { ...prevInfo, address: e.target.value }
-          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', adress: '', detailadress:'' ,gender: '' }
+          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
       )
     }
   />
@@ -225,7 +248,7 @@ export default function MyPageinfo() {
       setUserInfo((prevInfo) =>
         prevInfo
           ? { ...prevInfo, gender: e.target.value }
-          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', adress: '', detailadress:'' ,gender: '' }
+          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
       )
     }
   />
@@ -243,14 +266,21 @@ export default function MyPageinfo() {
                 <p>전화번호: {userInfo.phoneNumber}</p>
                 <p>이메일: {userInfo.email}</p>
                 <p>우편번호:{userInfo.postcode}</p>
-                <p>주소: {userInfo.adress}</p>
-                <p>상세주소:{userInfo.detailadress}</p>
+                <p>주소: {userInfo.address}</p>
+                <p>상세주소:{userInfo.detailaddress}</p>
                 <p>성별: {userInfo.gender}</p>
                 <button onClick={handleEditModeToggle}>수정</button>
               </div>
             )}
           </div>
         )}
+      </div>
+
+      <h1 className={`mb-4 text-xl md:text-2xl`}>
+        회원탈퇴
+      </h1>
+      <div className="withdrawn">
+        <button onClick={handleWithdrawal}>회원 탈퇴</button>
       </div>
     </main>
   );

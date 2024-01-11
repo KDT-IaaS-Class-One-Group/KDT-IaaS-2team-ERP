@@ -19,7 +19,7 @@ const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "0000",
+  password: "723546",
   database: "erp",
   connectionLimit: 5,
 });
@@ -37,7 +37,6 @@ pool
 app.prepare().then(() => {
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, "public/uploads"); // 업로드된 파일이 저장될 경로 (public/uploads 폴더를 사용)
       cb(null, "public/uploads"); // 업로드된 파일이 저장될 경로 (public/uploads 폴더를 사용)
     },
     filename: (req, file, cb) => {
@@ -149,7 +148,7 @@ app.prepare().then(() => {
 
       // 데이터베이스에서 user_Index를 기반으로 name 조회
       const [rows] = await pool.query(
-        "SELECT name FROM users WHERE User_Index = ?",
+        "SELECT name FROM users WHERE user_Index = ?",
         [userIndex]
       );
 
@@ -277,10 +276,7 @@ app.prepare().then(() => {
   });
 
   server.get("/api/userGraph", async (req, res) => {
-  server.get("/api/userGraph", async (req, res) => {
     const { xAxis } = req.query;
-
-
     try {
       let query;
       switch (xAxis) {
@@ -308,10 +304,10 @@ app.prepare().then(() => {
               ORDER BY label;
             `;
           break;
-          break;
+          
         default:
           res.status(400).send("Invalid xAxis parameter");
-          res.status(400).send("Invalid xAxis parameter");
+      
           return;
       }
 
@@ -329,8 +325,56 @@ app.prepare().then(() => {
   });
 
   server.get("/api/admin/users", async (req, res) => {
-      console.error("Error executing query:", error);
-      res.status(500).send("Internal Server Error");
+    try {
+      const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
+      const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
+      const searchTerm = req.query.searchTerm || "";
+      const searchOption = req.query.searchOption || "userId";
+
+      let query = "SELECT * FROM users";
+      let queryParams = [];
+
+      if (searchTerm) {
+        if (searchOption === "userId") {
+          query += " WHERE userId LIKE ?";
+        } else if (searchOption === "name") {
+          query += " WHERE name LIKE ?";
+        }
+
+        queryParams = [`%${searchTerm}%`];
+      }
+
+      query += " LIMIT ?, ?";
+      queryParams.push((page - 1) * pageSize, pageSize);
+
+      const [users] = await db.query(query, queryParams);
+
+      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM users";
+      if (searchTerm) {
+        if (searchOption === "userId") {
+          totalCountQuery += " WHERE userId LIKE ?";
+        } else if (searchOption === "name") {
+          totalCountQuery += " WHERE name LIKE ?";
+        }
+      }
+
+      const [totalCount] = await db.query(
+        totalCountQuery,
+        queryParams.slice(0, 2)
+      );
+      const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
+
+      res.json({
+        users,
+        pageInfo: {
+          currentPage: page,
+          pageSize,
+          totalPages,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   });
 
@@ -1063,8 +1107,8 @@ app.prepare().then(() => {
           phoneNumber,
           email,
           postcode,
-          adress,
-          detailadress,
+          address,
+          detailaddress,
           gender,
         } = req.body;
 
@@ -1073,7 +1117,7 @@ app.prepare().then(() => {
         const isWithdrawn = false;
 
         const [rows, fields] = await db.query(
-          `INSERT INTO users (userId, password, name, birthdate, phoneNumber, email, postcode, adress, detailadress, gender, cash, joinDate, isWithdrawn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)`,
+          `INSERT INTO users (userId, password, name, birthdate, phoneNumber, email, postcode, address, detailaddress, gender, cash, joinDate, isWithdrawn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)`,
           [
             userId,
             password,
@@ -1082,8 +1126,8 @@ app.prepare().then(() => {
             phoneNumber,
             email,
             postcode,
-            adress,
-            detailadress,
+            address,
+            detailaddress,
             gender,
             cash,
             joinDate,
@@ -1143,8 +1187,8 @@ app.prepare().then(() => {
               phoneNumber: user.phoneNumber,
               email: user.email,
               postcode: user.postcode,
-              adress: user.adress,
-              detailadress: user.detailadress,
+              address: user.address,
+              detailaddress: user.detailaddress,
               gender: user.gender,
               cash: user.cash,
               order_Index:user.order_Index,
@@ -1513,12 +1557,15 @@ app.prepare().then(() => {
       // 현재 토큰의 정보를 기반으로 새로운 토큰을 발급
       const newToken = jwt.sign(
         {
+          user_Index: decodedToken.user_Index,
           userId: decodedToken.userId,
           name: decodedToken.name,
           birthdate: decodedToken.birthdate,
           phoneNumber: decodedToken.phoneNumber,
           email: decodedToken.email,
+          postcode: decodedToken.postcode,
           address: decodedToken.address,
+          detailaddress: decodedToken.detailaddress,
           gender: decodedToken.gender,
           cash: decodedToken.cash,
         },
@@ -1558,7 +1605,9 @@ app.prepare().then(() => {
           birthdate: decodedRefreshToken.birthdate,
           phoneNumber: decodedRefreshToken.phoneNumber,
           email: decodedRefreshToken.email,
+          postcode: decodedRefreshToken.postcode,
           address: decodedRefreshToken.address,
+          detailaddress: decodedRefreshToken.detailaddress,
           gender: decodedRefreshToken.gender,
           cash: decodedRefreshToken.cash,
           order_Index: decodedRefreshToken.order_Index,
