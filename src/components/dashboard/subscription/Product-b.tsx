@@ -5,30 +5,26 @@ import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links
 
 interface ProductInfo {
   product_id: string;
-  category_id: string;
   product_name: string;
-  price: string;
-  sale: string;
   stock_quantity: string;
   timestamp: string;
   img1: string;
-  img2: string;
-  delete_status: string;
-  display_status: string;
+  display_status: number;
   info: string;
-
 }
 
-const pageSize = 13; // 페이지당 표시할 항목 수
+const pageSize = 10; // 페이지당 표시할 항목 수
 
 export default function Product() {
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [editingProductIndex, setEditingProductIndex] = useState<string | null>(null);
+  const [editingProductIndex, setEditingProductIndex] = useState<string | null>(
+    null
+  );
   const [products, setProducts] = useState<ProductInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 13,
+    pageSize: 10,
     totalPages: 1,
   });
 
@@ -36,6 +32,19 @@ export default function Product() {
     setPageInfo({
       ...pageInfo,
       currentPage: newPage,
+    });
+  };
+
+
+  const resetForm = () => {
+    setProductInfo({
+      product_id: "",
+      product_name: "",
+      stock_quantity: "",
+      timestamp: "",
+      img1: "",
+      display_status: 0,
+      info: "",
     });
   };
 
@@ -63,17 +72,12 @@ export default function Product() {
 
   const [productInfo, setProductInfo] = useState<ProductInfo>({
     product_id: "",
-    category_id: "",
     product_name: "",
-    price: "",
-    sale: "",
     stock_quantity: "",
     timestamp: "",
     img1: "",
-    img2: "",
-    delete_status: "",
-    display_status: "",
-    info: ""
+    display_status: 0,
+    info: "",
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -97,28 +101,15 @@ export default function Product() {
       if (response.ok) {
         fetchData(pageInfo.currentPage);
         alert("등록 완료");
+        resetForm()
+      setShowForm(false); // 폼 닫기
       } else {
         // 오류 응답 처리
         console.error(`Error adding subscription: ${response.status}`);
         alert("등록 실패");
       }
 
-      // 입력 폼 초기화
-      setProductInfo({
-        product_id: "",
-        category_id: "",
-        product_name: "",
-        price: "",
-        sale: "",
-        stock_quantity: "",
-        timestamp: "",
-        img1: "",
-        img2: "",
-        delete_status: "",
-        display_status: "",
-        info: ""
-      });
-      setShowForm(false); // 폼 닫기
+      resetForm()
     } catch (error) {
       // 네트워크 오류 및 기타 예외 처리
       console.error("Error adding subscription:", error);
@@ -146,10 +137,15 @@ export default function Product() {
     }
   };
 
+  const handleAdd = () => {
+    setShowEditForm(false); // 수정 폼 숨기기
+    setShowForm(true); // 추가 폼 표시
+    resetForm();
+  };
+
   const handleCorrection = (product_id: string) => {
-    // 수정 중인 열의 인덱스 설정
+    setShowForm(false); // 추가 폼 숨기기
     setEditingProductIndex(product_id);
-    // 수정 중인 열의 정보를 입력 폼에 표시
     const editingProduct = products.find((product) => product.product_id === product_id);
     if (editingProduct) {
       setProductInfo(editingProduct);
@@ -172,12 +168,12 @@ export default function Product() {
         fetchData(pageInfo.currentPage);
         setEditingProductIndex(null);
         setShowEditForm(false); // 폼 닫기
+        resetForm();
       } else {
         // 오류 응답 처리
         console.error(`Error updating product: ${response.status}`);
         alert("수정 실패");
       }
-
     } catch (error) {
       console.error("Error updating product:", error);
     }
@@ -197,7 +193,7 @@ export default function Product() {
       <div className={styles.main}>
         <h1 className={styles.title}>상품 관리</h1>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={handleAdd}
           className={styles.addButton}
         >
           추가
@@ -205,7 +201,7 @@ export default function Product() {
         {showForm && (
           <div className={styles.addSubscription}>
             <label className={styles.addLabel}>
-              Name:
+              상품명:
               <input
                 type="text"
                 name="product_name"
@@ -215,27 +211,7 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            price:
-              <input
-                type="text"
-                name="price"
-                value={productInfo.price}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            sale:
-              <input
-                type="text"
-                name="sale"
-                value={productInfo.sale}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            stock:
+              재고:
               <input
                 type="text"
                 name="stock_quantity"
@@ -245,7 +221,7 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            img1:
+              이미지:
               <input
                 type="text"
                 name="img1"
@@ -254,38 +230,19 @@ export default function Product() {
                 className={styles.addInput}
               />
             </label>
+            전시여부:
+            <select
+              type="text"
+              name="display_status"
+              value={productInfo.display_status}
+              onChange={handleChange}
+              className={styles.addInput}
+            >
+              <option value={1}>전시</option>
+              <option value={0}>미전시</option>
+            </select>
             <label className={styles.addLabel}>
-            img2:
-              <input
-                type="text"
-                name="img2"
-                value={productInfo.img2}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            delete:
-              <input
-                type="text"
-                name="delete_status"
-                value={productInfo.delete_status}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            display:
-              <input
-                type="text"
-                name="display_status"
-                value={productInfo.display_status}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            info:
+              상세정보:
               <input
                 type="text"
                 name="info"
@@ -302,7 +259,7 @@ export default function Product() {
         {showEditForm && (
           <div className={styles.addSubscription}>
             <label className={styles.addLabel}>
-              Name:
+              상품명:
               <input
                 type="text"
                 name="product_name"
@@ -312,27 +269,7 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            price:
-              <input
-                type="text"
-                name="price"
-                value={productInfo.price}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            sale:
-              <input
-                type="text"
-                name="sale"
-                value={productInfo.sale}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            stock:
+              재고:
               <input
                 type="text"
                 name="stock_quantity"
@@ -342,7 +279,7 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            img1:
+              이미지:
               <input
                 type="text"
                 name="img1"
@@ -352,37 +289,19 @@ export default function Product() {
               />
             </label>
             <label className={styles.addLabel}>
-            img2:
-              <input
-                type="text"
-                name="img2"
-                value={productInfo.img2}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            delete:
-              <input
-                type="text"
-                name="delete_status"
-                value={productInfo.delete_status}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
-            </label>
-            <label className={styles.addLabel}>
-            display:
-              <input
-                type="text"
+              전시여부:
+              <select
                 name="display_status"
                 value={productInfo.display_status}
                 onChange={handleChange}
                 className={styles.addInput}
-              />
+              >
+                <option value={1}>전시</option>
+                <option value={0}>미전시</option>
+              </select>
             </label>
             <label className={styles.addLabel}>
-            info:
+              상세정보:
               <input
                 type="text"
                 name="info"
@@ -391,27 +310,25 @@ export default function Product() {
                 className={styles.addInput}
               />
             </label>
-            <button onClick={() => handleUpdate(productInfo.product_id)} className={styles.delButton}>
+            <button
+              onClick={() => handleUpdate(productInfo.product_id)}
+              className={styles.delButton}
+            >
               수정
             </button>
           </div>
         )}
         <div className={styles.orderContent}>
           <table className={styles.orderTable}>
-            <thead>  
+            <thead>
               <tr>
-                <th>product_id</th>
-                <th>category_id</th>
-                <th>product_name</th>
-                <th>price</th>
-                <th>sale</th>
-                <th>stock</th>
-                <th>timestamp</th>
-                <th>img1</th>
-                <th>img2</th>
-                <th>delete</th>
-                <th>display</th>
-                <th>info</th>
+                <th>상품번호</th>
+                <th>상품명</th>
+                <th>재고</th>
+                <th>이미지</th>
+                <th>전시여부</th>
+                <th>상세설명</th>
+                <th>등록일</th>
                 <th></th>
               </tr>
             </thead>
@@ -420,33 +337,30 @@ export default function Product() {
                 <tr
                   key={product.product_id}
                   className={`${styles.correction} ${
-                    editingProductIndex === product.product_id ? styles.editingRow : ""
+                    editingProductIndex === product.product_id && showEditForm
+                      ? styles.editingRow
+                      : ""
                   }`}
                 >
                   <td>{product.product_id}</td>
-                  <td>{product.category_id}</td>
                   <td>{product.product_name}</td>
-                  <td>{product.price}</td>
-                  <td>{product.sale}</td>
                   <td>{product.stock_quantity}</td>
-                  <td>{formatdate(product.timestamp)}</td>
                   <td>{product.img1}</td>
-                  <td>{product.img2}</td>
-                  <td>{product.delete_status}</td>
-                  <td>{product.display_status}</td>
+                  <td>{product.display_status === 1 ? "전시" : "미전시"}</td>
                   <td>{product.info}</td>
+                  <td>{formatdate(product.timestamp)}</td>
                   <td>
-                    <button
-                      className={styles.delButton}
-                      onClick={() => handleDelete(product.product_id)}
-                    >
-                      삭제
-                    </button>
                     <button
                       className={styles.delButton}
                       onClick={() => handleCorrection(product.product_id)}
                     >
                       수정
+                    </button>
+                    <button
+                      className={styles.delButton}
+                      onClick={() => handleDelete(product.product_id)}
+                    >
+                      삭제
                     </button>
                   </td>
                 </tr>
