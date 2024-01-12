@@ -45,25 +45,29 @@
   border: 2px solid #f4f4f4;
 }
 
+.qnaTable tr:hover {
+  cursor: pointer;
+  background-color: #E8E8E8;
+}
+
 .qnaTable th,
 .qnaTable td {
   padding: 8px;
   border: 1px solid #f4f4f4;
   text-align: center;
-  max-width: 400px;
-  height: 50px;
-  overflow: hidden;
+  height: 40px;
+}
+
+.qnaTable td {
   white-space: nowrap;
+  overflow: hidden;
+  max-width: 40px;
   text-overflow: ellipsis;
 }
 
 .qnaTable th {
   background-color: #f4f4f4;
   font-size: 1.2rem;
-}
-
-.pagination {
-  display: flex;
 }
 
 .paginationButton {
@@ -88,119 +92,7 @@
   }
 }
 
-.modal {
-  display: none;
-  position: fixed;
-  top: 40%;
-  left: 38%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.5);
-  width: 50vw;
-  height: 70vh;
-  padding: 20px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  border-radius: 8px;
-
-  &.show {
-    display: block;
-  }
-}
-
-.modalContent {
-  height: 66vh;
-  width: 48vw;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-}
-
-.info {
-  display: flex;
-  border: 1px solid #495464;
-  margin: 30px 0 20px 0;
-}
-
-.id,
-.email {
-  border: 1px solid #495464;
-  text-align: center;
-  line-height: 50px;
-  height: 50px;
-
-}
-
-.id {
-  width: 200px;
-}
-
-.email {
-  width: 350px;
-}
-
-.modalTitle {
-  width: 800px;
-  height: 50px;
-  border: 2px solid #495464;
-  overflow: auto;
-  margin-bottom: 1px;
-  line-height: 50px;
-  overflow: auto;
-  white-space: wrap;
-  word-break: break-all;
-  padding: 5px;
-}
-
-.content {
-  width: 800px;
-  height: 200px;
-  border: 2px solid #495464;
-  margin-bottom: 10px;
-  overflow: auto;
-  white-space: wrap;
-  word-break: break-all;
-  padding: 5px;
-}
-
-.reply {
-  width: 800px;
-  height: 150px;
-  border: 2px solid #495464;
-  overflow: auto;
-  white-space: wrap;
-  word-break: break-all;
-  margin-bottom: 10px;
-  padding: 5px;
-
-
-}
-
-.replyInput {
-  width: 740px;
-  height: 150px;
-  border: 2px solid #495464;
-  overflow: auto;
-  margin-right: 20px;
-  overflow: auto;
-  white-space: wrap;
-  word-break: break-all;
-}
-
-.close {
-  position: absolute;
-  top: 10px;
-  right: 25px;
-  font-size: 30px;
-  cursor: pointer;
-}
-
-.replyButton {
+.replyButton{
   color: white;
   text-align: center;
   text-decoration: none;
@@ -212,5 +104,89 @@
   background-color: #495464;
   line-height: 20px;
   border-radius: 2px;
-  margin-right: 5px;
+  position: relative;
+  left : 25vw;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 41%;
+  left: 39%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 55vw;
+  height: 74vh;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  border-radius: 8px;
+
+  &.show {
+    display: block;
+  }
+}
+
+.modalContent {
+  height: 68vh;
+  width: 52vw;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  position: relative;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.infoTable {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  overflow: auto;
+  max-width: 1000px;
+}
+
+.infoTable th,
+.infoTable td {
+  border: 1px solid #ddd;
+  padding: 5px;
+  text-align: left;
+  overflow: auto;
+}
+
+.infoTable th {
+  text-align: center;
+  font-weight: bold;
+  width: 100px;
+  background-color: #f2f2f2;
+  height: 30px; /* 고정된 높이 */
+}
+
+.close {
+  position: absolute;
+  top: -9px;
+  right: 8px;
+  font-size: 40px;
+  cursor: pointer;
+}
+
+.infoTable tr:nth-child(1) td:nth-child(1),
+.infoTable tr:nth-child(1) td:nth-child(3) {
+  background-color: #f2f2f2;
+  height: 40px;
+  width: 140px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.infoTable tr:nth-child(3) td {
+  height: 40px;
+  text-align: center;
+}
+
+.replyInput{
+  border:0;
+  width: 100%;
+  height: 85%;
 }
