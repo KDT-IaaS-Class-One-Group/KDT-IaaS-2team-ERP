@@ -1,7 +1,7 @@
 import NavLinks from "@/components/dashboard/analysis/Data-nav-links-b";
 import styles from "@/styles/adminuser.module.scss";
 import ProductData from "@/components/dashboard/analysis/Product-data-b";
-import ProductGraph from "@/components/admin/ProductGraph";
+import ProductGraph from "@/components/dashboard/analysis/ProductGraph";
 
 export default async function Page() {
   return (

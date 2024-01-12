@@ -19,7 +19,7 @@ const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "723546",
+  password: "0000",
   database: "erp",
   connectionLimit: 5,
 });
@@ -124,7 +124,27 @@ app.prepare().then(() => {
     });
   };
 
+    // API 엔드포인트: 라디오 선택 상자 옵션
+    server.get("/api/radio-options", async (req, res) => {
+      try {
+        // product 테이블에서 product_name과 img1을 가져옴
+        const [rows, fields] = await pool.query(
+          "SELECT product_name, img1 FROM product"
+        );
   
+        // 데이터 형식을 클라이언트에 맞게 가공
+        const options = rows.map((row) => ({
+          id: row.product_name, // 예시로 product_name을 id로 사용
+          label: row.product_name,
+          img: row.img1,
+        }));
+  
+        res.json(options);
+      } catch (error) {
+        console.error("데이터를 불러오는 도중 오류 발생:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    });
 
   server.get("/api/orderindex", async (req, res) => {
     try {
@@ -190,13 +210,14 @@ app.prepare().then(() => {
       // 토큰에서 user_Index 추출
       const token = req.headers.authorization.split(" ")[1];
       const decodedToken = jwt.verify(token, secretKey);
+      console.log("decodedToken: ", decodedToken); // 디버그용 로그
 
-      if (!decodedToken || !decodedToken.User_Index) {
+      if (!decodedToken || !decodedToken.user_Index) {
         console.error("Invalid token or user index not found");
         return res.status(401).json({ error: "Unauthorized" });
       }
-
-      const userIndex = decodedToken.User_Index;
+      
+      const userIndex = decodedToken.user_Index;
       console.log("userIndex: ", userIndex);
 
       // 사용자의 주문 정보 가져오기
@@ -292,9 +313,9 @@ app.prepare().then(() => {
     try {
       let query;
       switch (xAxis) {
-        case "joinDate":
+        case "joindate":
           query = `
-            SELECT DATE_FORMAT(joinDate, '%Y-%m') as label, COUNT(DISTINCT id) as userCount
+            SELECT DATE_FORMAT(joinDate, '%Y-%m') as label, COUNT(DISTINCT User_Index) as userCount
             FROM Users
             GROUP BY label
             ORDER BY label;
@@ -302,7 +323,7 @@ app.prepare().then(() => {
           break;
         case "birthdate":
           query = `
-            SELECT YEAR(birthdate) as label, COUNT(DISTINCT id) as userCount
+            SELECT YEAR(birthdate) as label, COUNT(DISTINCT User_Index) as userCount
             FROM Users
             GROUP BY label
             ORDER BY label;
@@ -310,7 +331,7 @@ app.prepare().then(() => {
           break;
         case "gender":
           query = `
-              SELECT gender as label, COUNT(DISTINCT id) as userCount
+              SELECT gender as label, COUNT(DISTINCT User_Index) as userCount
               FROM Users
               GROUP BY label
               ORDER BY label;
@@ -821,44 +842,7 @@ app.prepare().then(() => {
       console.error("쿼리 실행 중 오류 발생:", error);
       res.status(500).send("데이터베이스 오류");
     }
-  });
-
-  /**
-   * ? /Order 엔드포인트
-   */
-
-  server.post("/api/order", async (req, res) => {
-    try {
-      // 클라이언트로부터 받은 상품 이름
-      const { product } = req.body;
-
-      // 클라이언트에서 전송된 토큰
-      const token = req.headers.authorization;
-
-      // 토큰이 존재하는지 확인
-      if (!token) {
-        res.status(401).send("인증되지 않은 사용자입니다.");
-        return;
-      }
-
-      // 데이터베이스에 삽입할 쿼리문
-      const insertQuery = `INSERT INTO cart (Product_Index) VALUES (?)`;
-
-      // 쿼리 실행
-      db.query(insertQuery, [product], (error, results) => {
-        if (error) {
-          console.error("쿼리 실행 오류:", error);
-          res.status(500).send("주문 생성 중 오류가 발생했습니다.");
-        } else {
-          console.log("주문이 성공적으로 생성되었습니다.");
-          res.status(200).send("주문이 성공적으로 생성되었습니다.");
-        }
-      });
-    } catch (error) {
-      console.error("주문 생성 중 오류:", error);
-      res.status(500).send("주문 생성 중 오류가 발생했습니다.");
-    }
-  });
+  }); 
 
   server.post("/api/payment", async (req, res) => {
     try {
@@ -870,8 +854,8 @@ app.prepare().then(() => {
       const userIndex = req.body.User_Index; // 사용자의 user_Index
       const orderName = req.body.order_name; // 주문자 이름
       const orderPhone = req.body.order_phone; // 주문자 전화번호
-      const zipCode = req.body.zip_code; // 우편번호
-
+      const zipCode = req.body.postcode; // 우편번호
+      console.log('address : ', address)
       // 토큰 해독
       const decodedToken = jwt.verify(token, secretKey);
       console.log(decodedToken)

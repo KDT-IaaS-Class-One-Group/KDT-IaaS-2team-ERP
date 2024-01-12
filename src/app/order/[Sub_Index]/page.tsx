@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import styles from "@/styles/order.module.scss";
+import styles from "../../../styles/order.module.scss";
 import { useRouter, useSearchParams } from "next/navigation";
 import OrderInfoInput from "../../../components/subscription/OrderInfoInput";
 import PaymentButton from "../../../components/subscription/PaymentButton";
@@ -20,7 +20,7 @@ interface OrderClientSideProps {
 }
 
 interface UserInfo {
-  User_Index: number;
+  user_Index: number;
   userId: string;
   name: string;
   phoneNumber: string;
@@ -28,6 +28,7 @@ interface UserInfo {
   address: string;
   cash: number;
   order_Index: number;
+  postcode: number;
 }
 
 interface ProductClientSideProps {
@@ -46,13 +47,13 @@ export default function OrderClientSide() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedProducts = searchParams.get("selectedProducts");
-  console.log(selectedProducts);
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
   const [productData, setProductData] = useState<ProductClientSideProps[]>([]);
   const [addressInput, setAddressInput] = useState("");
   const [orderNameInput, setOrderNameInput] = useState("");
   const [orderPhoneInput, setOrderPhoneInput] = useState("");
   const [zipCodeInput, setZipCodeInput] = useState("");
+  const [selectedAddressType, setSelectedAddressType] = useState(1);
 
   const setsToken = (token: string) => {
     localStorage.setItem("token", token);
@@ -66,7 +67,6 @@ export default function OrderClientSide() {
   useEffect(() => {
     if (selectedProducts) {
       const ids = selectedProducts.split(",").map((id) => parseInt(id, 10));
-      console.log(`ids = ${ids}`);
       setSelectedProductIds(ids);
 
       // 서버로 선택한 상품 정보 요청
@@ -88,7 +88,6 @@ export default function OrderClientSide() {
         const response = await fetch(`/api/subscription/${subs_index}`);
         const dataFromServer = await response.json();
         setData(dataFromServer);
-        console.log(dataFromServer);
 
         if (dataFromServer) {
           setPrice(dataFromServer[0].price);
@@ -122,7 +121,7 @@ export default function OrderClientSide() {
 
       if (decodedToken) {
         const {
-          User_Index,
+          user_Index,
           userId,
           name,
           phoneNumber,
@@ -130,10 +129,11 @@ export default function OrderClientSide() {
           address,
           cash,
           order_Index,
+          postcode,
         } = decodedToken;
 
         const userInformation: UserInfo = {
-          User_Index,
+          user_Index,
           userId,
           name,
           phoneNumber,
@@ -141,6 +141,7 @@ export default function OrderClientSide() {
           address,
           cash,
           order_Index,
+          postcode,
         };
 
         setUserInfo(userInformation);
@@ -175,23 +176,13 @@ export default function OrderClientSide() {
           sub_index: subs_index,
           price: price,
           ids: selectedProducts,
-          address: addressInput,
-          User_Index: userInfo?.User_Index,
-          order_name: orderNameInput, // 주문자 이름 추가
-          order_phone: orderPhoneInput, // 주문자 전화번호 추가
-          zip_code: zipCodeInput, // 우편번호 추가
+          address: selectedAddressType === 1 ? userInfo?.address : addressInput,
+          user_index: userInfo?.user_Index,
+          order_name: selectedAddressType === 1 ? userInfo?.name : orderNameInput,
+          order_phone: selectedAddressType === 1 ? userInfo?.phoneNumber : orderPhoneInput,
+          zip_code: selectedAddressType === 1 ? userInfo?.postcode : zipCodeInput,
         }),
       });
-
-      console.log(
-        "Request Data:",
-        JSON.stringify({
-          token: localStorage.token,
-          sub_index: subs_index,
-          price: price,
-          ids: selectedProducts,
-        })
-      );
 
       if (!response.ok) {
         // 400 에러가 발생하면 수동으로 페이지 이동하거나 에러 처리를 할 수 있습니다.
@@ -206,13 +197,13 @@ export default function OrderClientSide() {
       }
 
       const responseData = await response.json();
-      console.log(responseData); // 서버로부터의 응답 처리
 
       const updatedToken = await fetchUpdatedToken();
 
       if (updatedToken) {
         // 토큰 업데이트 및 로컬 스토리지에 저장
         setToken(updatedToken);
+        localStorage.setItem("token", updatedToken);
       }
     } catch (error) {
       console.error(error);
@@ -236,7 +227,6 @@ export default function OrderClientSide() {
       }
 
       const { newToken } = await response.json();
-      console.log(`newtoken:${newToken}`);
       return newToken;
     } catch (error) {
       console.error("토큰 갱신 중 오류 발생:", error);
@@ -246,36 +236,97 @@ export default function OrderClientSide() {
 
   return (
     <div>
+      <h2> 상품 정보 </h2>
+
       <OrderReceipt data={data} />
 
       <OrderedProductsList products={productData} />
 
+      <h2> 주문자 정보 </h2>
+
       <UserInfoDisplay userInfo={userInfo} />
 
-      <h2> 배송지 정보 입력 </h2>
-      <OrderInfoInput
-        label="수령자 이름"
-        value={orderNameInput}
-        onChange={setOrderNameInput}
-      />
+      <h2 className={styles.deliveryInfoTitle}>배송지 정보 입력</h2>
 
-      <OrderInfoInput
-        label="수령자 전화번호"
-        value={orderPhoneInput}
-        onChange={setOrderPhoneInput}
-      />
+      <div>
+        <input
+          type="radio"
+          id="addressType1"
+          name="addressType"
+          value={1}
+          checked={selectedAddressType === 1}
+          onChange={() => setSelectedAddressType(1)}
+        />
+        <label htmlFor="addressType1">주문자 동일</label>
 
-      <OrderInfoInput
-        label="주소"
-        value={addressInput}
-        onChange={setAddressInput}
-      />
+        <input
+          type="radio"
+          id="addressType2"
+          name="addressType"
+          value={2}
+          checked={selectedAddressType === 2}
+          onChange={() => setSelectedAddressType(2)}
+        />
+        <label htmlFor="addressType2">새로 입력</label>
+      </div>
 
-      <OrderInfoInput
-        label="우편번호"
-        value={zipCodeInput}
-        onChange={setZipCodeInput}
-      />
+      {/* 조건부로 배송지 정보 입력 표시 */}
+      {selectedAddressType === 1 && (
+        <>
+          <OrderInfoInput
+            label="수령자 이름"
+            value={orderNameInput || userInfo?.name || ""}
+            onChange={setOrderNameInput}
+          />
+
+          <OrderInfoInput
+            label="수령자 전화번호"
+            value={orderPhoneInput || userInfo?.phoneNumber || ""}
+            onChange={setOrderPhoneInput}
+          />
+
+          <OrderInfoInput
+            label="주소"
+            value={addressInput || userInfo?.address || ""}
+            onChange={setAddressInput}
+          />
+
+          <OrderInfoInput
+            label="우편번호"
+            value={zipCodeInput || userInfo?.postcode || ""}
+            onChange={setZipCodeInput}
+          />
+        </>
+      )}
+
+      {selectedAddressType === 2 && (
+        <>
+          <OrderInfoInput
+            label="수령자 이름"
+            value={orderNameInput}
+            onChange={setOrderNameInput}
+          />
+
+          <OrderInfoInput
+            label="수령자 전화번호"
+            value={orderPhoneInput}
+            onChange={setOrderPhoneInput}
+          />
+
+          <OrderInfoInput
+            label="주소"
+            value={addressInput}
+            onChange={setAddressInput}
+          />
+
+          <OrderInfoInput
+            label="우편번호"
+            value={zipCodeInput}
+            onChange={setZipCodeInput}
+          />
+        </>
+      )}
+
       <PaymentButton onClick={handlePayment} />
     </div>
   );
