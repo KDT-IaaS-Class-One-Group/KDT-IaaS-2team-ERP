@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import NavLinks from "@/components/dashboard/user/User-nav-links-b";
 import styles from "@/styles/adminuser.module.scss";
+import { useRadioGroup } from "@chakra-ui/react";
 
 interface UserInfo {
   userId: string;
@@ -27,6 +28,7 @@ export default function UserinfoPage() {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOption, setSearchOption] = useState("userId"); // 기본값은 userId로 설정
+  const [selectedBoard, setSelectedBoard] = useState<UserInfo | null>(null);
 
   const fetchData = useCallback(
     async (page: number) => {
@@ -66,6 +68,14 @@ export default function UserinfoPage() {
     const birthdateDate = new Date(birthdate);
     const birthdateLocalString = birthdateDate.toLocaleDateString();
     return birthdateLocalString;
+  };
+
+  const handleModalClose = () => {
+    setSelectedBoard(null);
+  };
+
+  const handleRowClick = (user: UserInfo) => {
+    setSelectedBoard(user);
   };
 
   useEffect(() => {
@@ -113,19 +123,19 @@ export default function UserinfoPage() {
                 <th>성별</th>
                 <th>잔여캐쉬</th>
                 <th>가입일</th>
-                <th>가입상태</th>
+                <th>가입여부</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.userId}>
+                <tr key={user.userId} onClick={() => handleRowClick(user)}>
                   <td>{user.userId}</td>
                   <td>{user.name}</td>
                   <td>{formatBirthdate(user.birthdate)}</td>
                   <td>{user.phoneNumber}</td>
                   <td>{user.email}</td>
                   <td>{user.address}</td>
-                  <td>{user.gender  === "M" ? "여" : "남"}</td>
+                  <td>{user.gender === "M" ? "여" : "남"}</td>
                   <td>{user.cash}</td>
                   <td>{formatBirthdate(user.joinDate)}</td>
                   <td>{user.isWithdrawn === 1 ? "탈퇴" : "가입"}</td>
@@ -133,6 +143,63 @@ export default function UserinfoPage() {
               ))}
             </tbody>
           </table>
+          {selectedBoard !== null && (
+            <div className={`${styles.modal} ${styles.show}`}>
+              <div>
+                <div className={styles.modalContent}>
+                  <span className={styles.close} onClick={handleModalClose}>
+                    &times;
+                  </span>
+                  <table className={styles.infoTable}>
+                    <tbody>
+                      <tr>
+                        <td>아이디</td>
+                        <td>{selectedBoard.userId}</td>
+                      </tr>
+                      <tr>
+                        <td>이름</td>
+                        <td>{selectedBoard.name}</td>
+                      </tr>
+                      <tr>
+                        <td>생년월일</td>
+                        <td>{formatBirthdate(selectedBoard.birthdate)}</td>
+                      </tr>
+                      <tr>
+                        <td>핸드폰</td>
+                        <td>{selectedBoard.phoneNumber}</td>
+                      </tr>
+                      <tr>
+                        <td>이메일</td>
+                        <td>{selectedBoard.email}</td>
+                      </tr>
+                      <tr>
+                        <td>주소</td>
+                        <td>{selectedBoard.address}</td>
+                      </tr>
+                      <tr>
+                        <td>성별</td>
+                        <td>{selectedBoard.gender === "M" ? "여" : "남"}</td>
+                      </tr>
+                      <tr>
+                        <td>잔여캐쉬</td>
+                        <td>{selectedBoard.cash}</td>
+                      </tr>
+                      <tr>
+                        <td>가입일</td>
+                        <td>{formatBirthdate(selectedBoard.joinDate)}</td>
+                      </tr>
+                      <tr>
+                        <td>가입여부</td>
+                        <td>
+                          {selectedBoard.isWithdrawn === 1 ? "탈퇴" : "가입"}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
           <div>
             {Array.from(
               { length: pageInfo.totalPages },
