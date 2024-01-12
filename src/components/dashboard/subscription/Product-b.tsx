@@ -2,8 +2,8 @@
 import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
 import styles from "@/styles/adminorder.module.scss";
 import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links-b";
-import ImageUploadp
- from "@/components/test/ImageUploadp";
+import ImageUploadp from "@/components/test/ImageUploadp";
+
 interface ProductInfo {
   product_id: string;
   product_name: string;
@@ -14,9 +14,9 @@ interface ProductInfo {
   info: string;
 }
 
-const pageSize = 10; // 페이지당 표시할 항목 수
+const pageSize = 10;
 
-export default function Product() : React.ReactNode {
+export default function Product(): React.ReactNode {
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingProductIndex, setEditingProductIndex] = useState<string | null>(
@@ -49,7 +49,6 @@ export default function Product() : React.ReactNode {
     });
   };
 
-
   useEffect(() => {
     fetchData(pageInfo.currentPage);
   }, [pageInfo.currentPage]);
@@ -79,7 +78,7 @@ export default function Product() : React.ReactNode {
     timestamp: "",
     imageurl: "",
     display_status: 0,
-    info: ""
+    info: "",
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -97,7 +96,6 @@ export default function Product() : React.ReactNode {
         imageUrl: imageurl, // 이미지 URL 추가
       };
 
-
       const response = await fetch("/api/admin/product", {
         method: "POST",
         headers: {
@@ -109,8 +107,8 @@ export default function Product() : React.ReactNode {
       if (response.ok) {
         fetchData(pageInfo.currentPage);
         alert("등록 완료");
-        resetForm()
-      setShowForm(false); // 폼 닫기
+        resetForm();
+        setShowForm(false); // 폼 닫기
       } else {
         // 오류 응답 처리
         console.error(`Error adding subscription: ${response.status}`);
@@ -125,7 +123,7 @@ export default function Product() : React.ReactNode {
         timestamp: "",
         imageurl: "",
         display_status: 0,
-        info: ""
+        info: "",
       });
       setShowForm(false); // 폼 닫기
     } catch (error) {
@@ -164,7 +162,9 @@ export default function Product() : React.ReactNode {
   const handleCorrection = (product_id: string) => {
     setShowForm(false); // 추가 폼 숨기기
     setEditingProductIndex(product_id);
-    const editingProduct = products.find((product) => product.product_id === product_id);
+    const editingProduct = products.find(
+      (product) => product.product_id === product_id
+    );
     if (editingProduct) {
       setProductInfo(editingProduct);
       setShowEditForm(true); // 수정 폼 표시
@@ -203,7 +203,6 @@ export default function Product() : React.ReactNode {
     return dateLocalString;
   };
 
-
   const handleImageUpload = (imageUrl: string) => {
     // 이미지 업로드 성공 시, 이미지 URL을 state에 업데이트
     setImageurl(imageUrl);
@@ -217,10 +216,7 @@ export default function Product() : React.ReactNode {
       </div>
       <div className={styles.main}>
         <h1 className={styles.title}>상품 관리</h1>
-        <button
-          onClick={handleAdd}
-          className={styles.addButton}
-        >
+        <button onClick={handleAdd} className={styles.addButton}>
           추가
         </button>
         {showForm && (
@@ -229,12 +225,12 @@ export default function Product() : React.ReactNode {
               <div>
                 <ImageUploadp onImageUpload={handleImageUpload} />
               </div>
-             </label>
+            </label>
             <label className={styles.addLabel}>
               <div>
                 <ImageUploadp onImageUpload={handleImageUpload} />
               </div>
-             </label>
+            </label>
             <label className={styles.addLabel}>
               상품명:
               <input
@@ -382,7 +378,7 @@ export default function Product() : React.ReactNode {
                   <td>{product.stock_quantity}</td>
                   <td>{product.imageurl}</td>
                   <td>{product.display_status === 1 ? "전시" : "미전시"}</td>
-                  <td className={styles.truncate} >{product.info}</td>
+                  <td className={styles.truncate}>{product.info}</td>
                   <td>{formatdate(product.timestamp)}</td>
 
                   <td>
