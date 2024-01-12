@@ -31,7 +31,7 @@
 .orderContent {
   display: flex;
   flex-direction: column;
-  width: 75vw;
+  width: 74vw;
   position: relative;
   right: 7vw;
   margin-top: 20px;
@@ -43,26 +43,29 @@
   border: 2px solid #f4f4f4;
 }
 
+.orderTable tr:hover {
+  cursor: pointer;
+  background-color: #E8E8E8;
+}
+
 .orderTable th,
 .orderTable td {
   padding: 8px;
-  text-align: left;
   border: 1px solid #f4f4f4;
   text-align: center;
   height: 40px;
 }
 
 .orderTable td {
-  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 40px;
+  text-overflow: ellipsis;
 }
 
 .orderTable th {
   background-color: #f4f4f4;
-  font-size: 1.1rem;
-}
-
-.pagination {
-  display: flex;
+  font-size: 1.2rem;
 }
 
 .paginationButton {
@@ -87,7 +90,7 @@
   }
 }
 
-.addSubscription{
+.addSubscription {
   width: 65vw;
   position: relative;
   bottom: 2vh;
@@ -97,7 +100,7 @@
   justify-content: center;
 }
 
-.addButton{
+.addButton {
   width: 80px;
   height: 40px;
   background-color: #BBBFCA;
@@ -111,7 +114,7 @@
   font-size: large;
 }
 
-.delButton{
+.delButton {
   color: white;
   text-align: center;
   text-decoration: none;
@@ -137,12 +140,72 @@
 }
 
 .truncate {
-  max-width: 150px; // 원하는 최대 너비로 조정
+  max-width: 150px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.filter{
-margin-left: 5px;
+.filter {
+  margin-left: 5px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 48%;
+  left: 46%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 55vw;
+  height: 74vh;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  border-radius: 8px;
+
+  &.show {
+    display: block;
+  }
+}
+
+.modalContent {
+  height: 68vh;
+  width: 52vw;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  position: relative;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.infoTable {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  overflow: auto;
+}
+
+.infoTable td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+  max-height: 50px;
+}
+
+.infoTable td:first-child {
+  text-align: center;
+  font-weight: bold;
+  width: 100px;
+  background-color: #f2f2f2;
+}
+
+.close {
+  position: absolute;
+  top: -9px;
+  right: 8px;
+  font-size: 40px;
+  cursor: pointer;
 }
