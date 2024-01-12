@@ -6,7 +6,10 @@ import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links
 interface OrderInfo {
   Order_Index: string;
   Subs_Index: string;
-  user_Index: string;
+  product1: string;
+  product2: string;
+  product3: string;
+  User_Index: string;
   Subs_Start: string;
   Subs_End: string;
   order_name: string;
@@ -17,7 +20,7 @@ interface OrderInfo {
   staus: number;
 }
 
-const pageSize = 10; // 페이지당 표시할 항목 수
+const pageSize = 10;
 
 export default function OrderInfoPage() {
   const [orders, setOrders] = useState<OrderInfo[]>([]);
@@ -27,18 +30,20 @@ export default function OrderInfoPage() {
     totalPages: 1,
   });
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchOption, setSearchOption] = useState("user_Index"); // 기본값은 userId로 설정
+  const [searchOption, setSearchOption] = useState("User_Index"); // 기본값은 userId로 설정
 
   const [filterStatus, setFilterStatus] = useState("all"); // 모두 보기
   const [filterRenew, setFilterRenew] = useState("all"); // 모두 보기
+
+  const [selectedBoard, setSelectedBoard] = useState<OrderInfo | null>(null);
 
   const fetchData = useCallback(
     async (page: number) => {
       try {
         let apiUrl = "/api/admin/order?page=" + page + "&pageSize=" + pageSize;
 
-        if (searchOption === "user_Index") {
-          apiUrl += "&searchOption=user_Index&searchTerm=" + searchTerm;
+        if (searchOption === "User_Index") {
+          apiUrl += "&searchOption=User_Index&searchTerm=" + searchTerm;
         } else if (searchOption === "order_name") {
           apiUrl += "&searchOption=order_name&searchTerm=" + searchTerm;
         }
@@ -79,14 +84,21 @@ export default function OrderInfoPage() {
       return false;
     }
 
-    
     const statusCondition =
       filterStatus === "all" || order.staus.toString() === filterStatus;
     const renewCondition =
       filterRenew === "all" || order.auto_renew.toString() === filterRenew;
-  
+
     return statusCondition && renewCondition;
   });
+
+  const handleModalClose = () => {
+    setSelectedBoard(null);
+  };
+
+  const handleRowClick = (order: OrderInfo) => {
+    setSelectedBoard(order);
+  };
 
   useEffect(() => {
     fetchData(pageInfo.currentPage);
@@ -110,13 +122,13 @@ export default function OrderInfoPage() {
           onChange={(e) => setSearchOption(e.target.value)}
           className={styles.select}
         >
-          <option value="user_Index">ID</option>
-          <option value="order_Name">구독 서비스</option>
+          <option value="User_Index">ID</option>
+          <option value="order_name">구독 서비스</option>
         </select>
         <input
           type="text"
           placeholder={`${
-            searchOption === "user_Index" ? "주문자 ID" : "구독 서비스명으"
+            searchOption === "User_Index" ? "주문자 ID" : "구독 서비스명으"
           }로 검색`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -127,7 +139,7 @@ export default function OrderInfoPage() {
             <thead>
               <tr>
                 <th>주문번호</th>
-                <th>구독 인덱스</th>
+                <th>구독번호</th>
                 <th>주문상품1</th>
                 <th>주문상품2</th>
                 <th>주문상품3</th>
@@ -143,12 +155,12 @@ export default function OrderInfoPage() {
                   <select
                     id="filterRenew"
                     value={filterRenew}
-                    onChange={(e) => setFilterStatus(e.target.value)}
+                    onChange={(e) => setFilterRenew(e.target.value)}
                     className={styles.filter}
                   >
                     <option value="all">모두</option>
-                    <option value="1">갱신</option>
-                    <option value="0">미갱신</option>
+                    <option value="1">미갱신</option>
+                    <option value="0">갱신</option>
                   </select>
                 </th>
                 <th>
@@ -156,25 +168,28 @@ export default function OrderInfoPage() {
                   <select
                     id="filterStatus"
                     value={filterStatus}
-                    onChange={(e) => setFilterRenew(e.target.value)}
+                    onChange={(e) => setFilterStatus(e.target.value)}
                     className={styles.filter}
                   >
                     <option value="all">모두</option>
-                    <option value="1">구독</option>
-                    <option value="0">해지</option>
+                    <option value="1">해지</option>
+                    <option value="0">구독</option>
                   </select>
                 </th>
               </tr>
             </thead>
             <tbody>
               {filteredOrders.map((order) => (
-                <tr key={order.Order_Index}>
+                <tr
+                  key={order.Order_Index}
+                  onClick={() => handleRowClick(order)}
+                >
                   <td>{order.Order_Index}</td>
                   <td>{order.Subs_Index}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>{order.user_Index}</td>
+                  <td>{order.product1}</td>
+                  <td>{order.product2}</td>
+                  <td>{order.product3}</td>
+                  <td>{order.User_Index}</td>
                   <td>{formatdate(order.Subs_Start)}</td>
                   <td>{formatdate(order.Subs_End)}</td>
                   <td>{order.order_name}</td>
@@ -187,7 +202,79 @@ export default function OrderInfoPage() {
               ))}
             </tbody>
           </table>
-          <div className="pagination">
+          {selectedBoard !== null && (
+            <div className={`${styles.modal} ${styles.show}`}>
+              <div>
+                <div className={styles.modalContent}>
+                  <span className={styles.close} onClick={handleModalClose}>
+                    &times;
+                  </span>
+                  <table className={styles.infoTable}>
+                    <tbody>
+                      <tr>
+                        <td>주문번호</td>
+                        <td>{selectedBoard.Order_Index}</td>
+                      </tr>
+                      <tr>
+                        <td>구독번호</td>
+                        <td>{selectedBoard.Subs_Index}</td>
+                      </tr>
+                      <tr>
+                        <td>주문상품1</td>
+                        <td>{selectedBoard.product1}</td>
+                      </tr>
+                      <tr>
+                        <td>주문상품2</td>
+                        <td>{selectedBoard.product2}</td>
+                      </tr>
+                      <tr>
+                        <td>주문상품3</td>
+                        <td>{selectedBoard.product3}</td>
+                      </tr>
+                      <tr>
+                        <td>주문자ID</td>
+                        <td>{selectedBoard.User_Index}</td>
+                      </tr>
+                      <tr>
+                        <td>구독 시작일</td>
+                        <td>{formatdate(selectedBoard.Subs_Start)}</td>
+                      </tr>                      <tr>
+                        <td>구독 만료일</td>
+                        <td>{formatdate(selectedBoard.Subs_End)}</td>
+                      </tr>
+                      <tr>
+                        <td>구독 서비스</td>
+                        <td>{selectedBoard.order_name}</td>
+                      </tr>
+                      <tr>
+                        <td>번호</td>
+                        <td>{selectedBoard.order_phone}</td>
+                      </tr>
+                      <tr>
+                        <td>주소</td>
+                        <td>{selectedBoard.address}</td>
+                      </tr>
+                      <tr>
+                        <td>우편번호</td>
+                        <td>{selectedBoard.zip_code}</td>
+                      </tr>
+                      <tr>
+                        <td>갱신여부</td>
+                        <td>{selectedBoard.auto_renew === 1 ? "미갱신" : "갱신"}</td>
+                      </tr>
+                      <tr>
+                        <td>구독여부</td>
+                        <td>
+                          {selectedBoard.staus === 1 ? "해지" : "구독"}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+          <div>
             {Array.from(
               { length: pageInfo.totalPages },
               (_, index) => index + 1
