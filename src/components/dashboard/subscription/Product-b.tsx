@@ -8,22 +8,24 @@ interface ProductInfo {
   product_id: string;
   product_name: string;
   stock_quantity: number;
-  registration_date: string;
+  timestamp: string;
   imageurl: string;
-  display_status: string;
+  display_status: number;
   info: string;
 }
 
-const pageSize = 13; // 페이지당 표시할 항목 수
+const pageSize = 10; // 페이지당 표시할 항목 수
 
 export default function Product() : React.ReactNode {
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [editingProductIndex, setEditingProductIndex] = useState<string | null>(null);
+  const [editingProductIndex, setEditingProductIndex] = useState<string | null>(
+    null
+  );
   const [products, setProducts] = useState<ProductInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 13,
+    pageSize: 10,
     totalPages: 1,
   });
   const [imageurl, setImageurl] = useState<string | null>(null);
@@ -34,6 +36,19 @@ export default function Product() : React.ReactNode {
       currentPage: newPage,
     });
   };
+
+  const resetForm = () => {
+    setProductInfo({
+      product_id: "",
+      product_name: "",
+      stock_quantity: 0,
+      timestamp: "",
+      imageurl: "",
+      display_status: 0,
+      info: "",
+    });
+  };
+
 
   useEffect(() => {
     fetchData(pageInfo.currentPage);
@@ -61,9 +76,9 @@ export default function Product() : React.ReactNode {
     product_id: "",
     product_name: "",
     stock_quantity: 0,
-    registration_date: "",
+    timestamp: "",
     imageurl: "",
-    display_status: "",
+    display_status: 0,
     info: ""
   });
 
@@ -94,6 +109,8 @@ export default function Product() : React.ReactNode {
       if (response.ok) {
         fetchData(pageInfo.currentPage);
         alert("등록 완료");
+        resetForm()
+      setShowForm(false); // 폼 닫기
       } else {
         // 오류 응답 처리
         console.error(`Error adding subscription: ${response.status}`);
@@ -105,9 +122,9 @@ export default function Product() : React.ReactNode {
         product_id: "",
         product_name: "",
         stock_quantity: 0,
-        registration_date: "",
+        timestamp: "",
         imageurl: "",
-        display_status: "",
+        display_status: 0,
         info: ""
       });
       setShowForm(false); // 폼 닫기
@@ -138,10 +155,15 @@ export default function Product() : React.ReactNode {
     }
   };
 
+  const handleAdd = () => {
+    setShowEditForm(false); // 수정 폼 숨기기
+    setShowForm(true); // 추가 폼 표시
+    resetForm();
+  };
+
   const handleCorrection = (product_id: string) => {
-    // 수정 중인 열의 인덱스 설정
+    setShowForm(false); // 추가 폼 숨기기
     setEditingProductIndex(product_id);
-    // 수정 중인 열의 정보를 입력 폼에 표시
     const editingProduct = products.find((product) => product.product_id === product_id);
     if (editingProduct) {
       setProductInfo(editingProduct);
@@ -164,12 +186,12 @@ export default function Product() : React.ReactNode {
         fetchData(pageInfo.currentPage);
         setEditingProductIndex(null);
         setShowEditForm(false); // 폼 닫기
+        resetForm();
       } else {
         // 오류 응답 처리
         console.error(`Error updating product: ${response.status}`);
         alert("수정 실패");
       }
-
     } catch (error) {
       console.error("Error updating product:", error);
     }
@@ -196,7 +218,7 @@ export default function Product() : React.ReactNode {
       <div className={styles.main}>
         <h1 className={styles.title}>상품 관리</h1>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={handleAdd}
           className={styles.addButton}
         >
           추가
@@ -209,7 +231,12 @@ export default function Product() : React.ReactNode {
               </div>
              </label>
             <label className={styles.addLabel}>
-              Name:
+              <div>
+                <ImageUploadp onImageUpload={handleImageUpload} />
+              </div>
+             </label>
+            <label className={styles.addLabel}>
+              상품명:
               <input
                 type="text"
                 name="product_name"
@@ -219,7 +246,7 @@ export default function Product() : React.ReactNode {
               />
             </label>
             <label className={styles.addLabel}>
-            stock:
+              재고:
               <input
                 type="text"
                 name="stock_quantity"
@@ -229,17 +256,28 @@ export default function Product() : React.ReactNode {
               />
             </label>
             <label className={styles.addLabel}>
-            display:
+              이미지:
               <input
                 type="text"
-                name="display_status"
-                value={productInfo.display_status}
+                name="imageurl"
+                value={productInfo.imageurl}
                 onChange={handleChange}
                 className={styles.addInput}
               />
             </label>
+            전시여부:
+            <select
+              type="text"
+              name="display_status"
+              value={productInfo.display_status}
+              onChange={handleChange}
+              className={styles.addInput}
+            >
+              <option value={1}>전시</option>
+              <option value={0}>미전시</option>
+            </select>
             <label className={styles.addLabel}>
-            info:
+              상세정보:
               <input
                 type="text"
                 name="info"
@@ -256,7 +294,7 @@ export default function Product() : React.ReactNode {
         {showEditForm && (
           <div className={styles.addSubscription}>
             <label className={styles.addLabel}>
-              Name:
+              상품명:
               <input
                 type="text"
                 name="product_name"
@@ -266,7 +304,7 @@ export default function Product() : React.ReactNode {
               />
             </label>
             <label className={styles.addLabel}>
-            stock:
+              재고:
               <input
                 type="text"
                 name="stock_quantity"
@@ -275,19 +313,30 @@ export default function Product() : React.ReactNode {
                 className={styles.addInput}
               />
             </label>
-
             <label className={styles.addLabel}>
-            display:
+              이미지:
               <input
                 type="text"
-                name="display_status"
-                value={productInfo.display_status}
+                name="imageUrl"
+                value={productInfo.imageurl}
                 onChange={handleChange}
                 className={styles.addInput}
               />
             </label>
             <label className={styles.addLabel}>
-            info:
+              전시여부:
+              <select
+                name="display_status"
+                value={productInfo.display_status}
+                onChange={handleChange}
+                className={styles.addInput}
+              >
+                <option value={1}>전시</option>
+                <option value={0}>미전시</option>
+              </select>
+            </label>
+            <label className={styles.addLabel}>
+              상세정보:
               <input
                 type="text"
                 name="info"
@@ -296,22 +345,26 @@ export default function Product() : React.ReactNode {
                 className={styles.addInput}
               />
             </label>
-            <button onClick={() => handleUpdate(productInfo.product_id)} className={styles.delButton}>
+            <button
+              onClick={() => handleUpdate(productInfo.product_id)}
+              className={styles.delButton}
+            >
               수정
             </button>
           </div>
         )}
         <div className={styles.orderContent}>
           <table className={styles.orderTable}>
-            <thead>  
+            <thead>
               <tr>
-                <th>product_id</th>
-                <th>product_name</th>
-                <th>stock</th>
-                <th>registration_date</th>
-                <th>imggeUrl</th>
-                <th>display</th>
-                <th>info</th>
+                <th>상품번호</th>
+                <th>상품명</th>
+                <th>재고</th>
+                <th>이미지</th>
+                <th>전시여부</th>
+                <th>상세설명</th>
+                <th>등록일</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -319,28 +372,31 @@ export default function Product() : React.ReactNode {
                 <tr
                   key={product.product_id}
                   className={`${styles.correction} ${
-                    editingProductIndex === product.product_id ? styles.editingRow : ""
+                    editingProductIndex === product.product_id && showEditForm
+                      ? styles.editingRow
+                      : ""
                   }`}
                 >
                   <td>{product.product_id}</td>
                   <td>{product.product_name}</td>
                   <td>{product.stock_quantity}</td>
-                  <td>{formatdate(product.registration_date)}</td>
                   <td>{product.imageurl}</td>
-                  <td>{product.display_status}</td>
+                  <td>{product.display_status === 1 ? "전시" : "미전시"}</td>
                   <td className={styles.truncate} >{product.info}</td>
+                  <td>{formatdate(product.timestamp)}</td>
+
                   <td>
-                    <button
-                      className={styles.delButton}
-                      onClick={() => handleDelete(product.product_id)}
-                    >
-                      삭제
-                    </button>
                     <button
                       className={styles.delButton}
                       onClick={() => handleCorrection(product.product_id)}
                     >
                       수정
+                    </button>
+                    <button
+                      className={styles.delButton}
+                      onClick={() => handleDelete(product.product_id)}
+                    >
+                      삭제
                     </button>
                   </td>
                 </tr>

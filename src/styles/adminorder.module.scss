@@ -1,45 +1,39 @@
-.sidemenu {
-  width: 20vw;
-  height: 85vh;
-  display: flex;
-}
-
 .sidelink {
   font-size: 2vw;
   width: 20vw;
-  height: 85vh;
+  height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   position: relative;
-  right: 14vw;
+  right: 12vw;
   text-align: center;
 }
 
 .title {
   position: relative;
-  left: 20vw;
+  left: 25vw;
 }
 
 .search {
   position: relative;
-  left: 19vw;
+  left: 24vw;
   margin-left: 10px;
   height: 25px;
 }
 
 .select {
   position: relative;
-  left: 19vw;
+  left: 24vw;
   height: 30px;
 }
 
 .orderContent {
   display: flex;
   flex-direction: column;
-  width: 70vw;
+  width: 75vw;
   position: relative;
-  right: 10vw;
+  right: 7vw;
   margin-top: 20px;
 }
 
@@ -55,6 +49,7 @@
   text-align: left;
   border: 1px solid #f4f4f4;
   text-align: center;
+  height: 40px;
 }
 
 .orderTable td {
@@ -63,7 +58,7 @@
 
 .orderTable th {
   background-color: #f4f4f4;
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 .pagination {
@@ -84,7 +79,7 @@
   line-height: 20px;
   border-radius: 2px;
   position: relative;
-  left: 33vw;
+  left: 34vw;
   margin-top: 20px;
 
   &.active {
@@ -96,7 +91,7 @@
   width: 65vw;
   position: relative;
   bottom: 2vh;
-  right: 10vw;
+  right: 4vw;
   display: flex;
   flex-wrap: nowrap;
   justify-content: center;
@@ -112,7 +107,7 @@
   border-radius: 5px;
   font-weight: bold;
   position: relative;
-  left: 55vw;
+  left: 63vw;
   font-size: large;
 }
 
@@ -132,7 +127,8 @@
 }
 
 .addInput {
-  margin-right: 2px;
+  margin-right: 4px;
+  margin-left: 2px;
   width: 100px;
 }
 
@@ -145,4 +141,8 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.filter{
+margin-left: 5px;
 }

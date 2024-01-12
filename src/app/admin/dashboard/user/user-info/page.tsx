@@ -12,16 +12,17 @@ interface UserInfo {
   address: string;
   gender: string;
   cash: string;
+  joinDate: string;
   isWithdrawn: number;
 }
 
-const pageSize = 15; // 페이지당 표시할 항목 수
+const pageSize = 10; // 페이지당 표시할 항목 수
 
 export default function UserinfoPage() {
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 15,
+    pageSize: 10,
     totalPages: 1,
   });
   const [searchTerm, setSearchTerm] = useState("");
@@ -59,22 +60,6 @@ export default function UserinfoPage() {
       ...pageInfo,
       currentPage: newPage,
     });
-  };
-
-  const handleApproval = async (userId: string) => {
-    try {
-      // API 호출하여 승인 처리
-      await fetch(`/api/approveUser/${userId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      // 승인 후 데이터 다시 불러오기
-      fetchData(pageInfo.currentPage);
-    } catch (error) {
-      console.error("Error approving user:", error);
-    }
   };
 
   const formatBirthdate = (birthdate: string) => {
@@ -126,9 +111,9 @@ export default function UserinfoPage() {
                 <th>이메일</th>
                 <th>주소</th>
                 <th>성별</th>
-                <th>캐쉬</th>
-                <th>탈퇴신청</th>
-                <th>탈퇴승인</th>
+                <th>잔여캐쉬</th>
+                <th>가입일</th>
+                <th>가입상태</th>
               </tr>
             </thead>
             <tbody>
@@ -140,21 +125,15 @@ export default function UserinfoPage() {
                   <td>{user.phoneNumber}</td>
                   <td>{user.email}</td>
                   <td>{user.address}</td>
-                  <td>{user.gender}</td>
+                  <td>{user.gender  === "M" ? "여" : "남"}</td>
                   <td>{user.cash}</td>
-                  <td>{user.isWithdrawn === 1 ? "신청" : "미신청"}</td>
-                  <td>
-                    {user.isWithdrawn === 1 && (
-                      <button className={styles.approveButton} onClick={() => handleApproval(user.userId)}>
-                        승인
-                      </button>
-                    )}
-                  </td>
+                  <td>{formatBirthdate(user.joinDate)}</td>
+                  <td>{user.isWithdrawn === 1 ? "탈퇴" : "가입"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <div className="pagination">
+          <div>
             {Array.from(
               { length: pageInfo.totalPages },
               (_, index) => index + 1
