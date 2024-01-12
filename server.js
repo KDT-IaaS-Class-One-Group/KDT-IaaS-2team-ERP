@@ -19,7 +19,7 @@ const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "0000",
+  password: "723546",
   database: "erp",
   connectionLimit: 5,
 });
@@ -129,14 +129,14 @@ app.prepare().then(() => {
       try {
         // product 테이블에서 product_name과 img1을 가져옴
         const [rows, fields] = await pool.query(
-          "SELECT product_name, img1 FROM product"
+          "SELECT product_name, imageUrl FROM product"
         );
   
         // 데이터 형식을 클라이언트에 맞게 가공
         const options = rows.map((row) => ({
           id: row.product_name, // 예시로 product_name을 id로 사용
           label: row.product_name,
-          img: row.img1,
+          imagerUrl: row.imageUrl,
         }));
   
         res.json(options);
@@ -787,13 +787,14 @@ app.prepare().then(() => {
   server.get("/api/products", async (req, res) => {
     try {
       const [rows] = await db.execute(
-        "SELECT product_id , product_name, stock_quantity , info FROM product"
+        "SELECT product_id , product_name, stock_quantity , imageUrl,info FROM product"
       );
       const dataFromDB = rows.map((row) => ({
         id: row.product_id,
         name: row.product_name,
         stock: row.stock_quantity,
         info: row.info,
+        imageUrl: row.imagUrl,
       }));
       res.json(dataFromDB);
     } catch (error) {
@@ -959,16 +960,17 @@ app.prepare().then(() => {
 
     try {
       const [rows] = await db.execute(
-        "SELECT Subs_Index, Name, price, Week, size FROM subscription WHERE Subs_Index = ?",
+        "SELECT Subs_Index, Name, price, week, size, imageUrl FROM subscription WHERE Subs_Index = ?",
         [Subs_Index]
       );
 
       const dataFromDB = rows.map((row) => ({
         Subs_Index: row.Subs_Index,
         Name: row.Name,
-        price: row.price,
-        Week: row.Week,
+        Price: row.price,
+        Week: row.week,
         size: row.size,
+        imageUrl:row.imageUrl
       }));
       res.json(dataFromDB);
     } catch (error) {

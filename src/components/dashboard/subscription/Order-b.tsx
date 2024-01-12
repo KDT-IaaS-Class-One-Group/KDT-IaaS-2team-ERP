@@ -27,7 +27,7 @@ export default function OrderInfoPage() {
     totalPages: 1,
   });
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchOption, setSearchOption] = useState("user_Index"); // 기본값은 userId로 설정
+  const [searchOption, setSearchOption] = useState("User_Index"); // 기본값은 userId로 설정
 
   const [filterStatus, setFilterStatus] = useState("all"); // 모두 보기
   const [filterRenew, setFilterRenew] = useState("all"); // 모두 보기
@@ -37,16 +37,17 @@ export default function OrderInfoPage() {
       try {
         let apiUrl = "/api/admin/order?page=" + page + "&pageSize=" + pageSize;
 
-        if (searchOption === "user_Index") {
-          apiUrl += "&searchOption=user_Index&searchTerm=" + searchTerm;
+        if (searchOption === "User_Index") {
+          apiUrl += "&searchOption=User_Index&searchTerm=" + searchTerm;
         } else if (searchOption === "order_name") {
           apiUrl += "&searchOption=order_name&searchTerm=" + searchTerm;
         }
-
+        console.log(searchTerm)
         const response = await fetch(apiUrl);
         const data = await response.json();
-
+        console.log("zz",data)
         setOrders(data.orders);
+        console.log("학인", data.orders)
         setPageInfo({
           currentPage: data.pageInfo.currentPage,
           pageSize: data.pageInfo.pageSize,
@@ -110,13 +111,13 @@ export default function OrderInfoPage() {
           onChange={(e) => setSearchOption(e.target.value)}
           className={styles.select}
         >
-          <option value="user_Index">ID</option>
-          <option value="order_Name">구독 서비스</option>
+          <option value="User_Index">ID</option>
+          <option value="order_name">구독 서비스</option>
         </select>
         <input
           type="text"
           placeholder={`${
-            searchOption === "user_Index" ? "주문자 ID" : "구독 서비스명으"
+            searchOption === "User_Index" ? "주문자 ID" : "구독 서비스명으"
           }로 검색`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -143,7 +144,7 @@ export default function OrderInfoPage() {
                   <select
                     id="filterRenew"
                     value={filterRenew}
-                    onChange={(e) => setFilterStatus(e.target.value)}
+                    onChange={(e) => setFilterRenew(e.target.value)}
                     className={styles.filter}
                   >
                     <option value="all">모두</option>
@@ -156,7 +157,7 @@ export default function OrderInfoPage() {
                   <select
                     id="filterStatus"
                     value={filterStatus}
-                    onChange={(e) => setFilterRenew(e.target.value)}
+                    onChange={(e) => setFilterStatus(e.target.value)}
                     className={styles.filter}
                   >
                     <option value="all">모두</option>
@@ -181,8 +182,8 @@ export default function OrderInfoPage() {
                   <td>{order.order_phone}</td>
                   <td>{order.address}</td>
                   <td>{order.zip_code}</td>
-                  <td>{order.auto_renew === 1 ? "미갱신" : "갱신"}</td>
-                  <td>{order.staus === 1 ? "해지" : "구독"}</td>
+                  <td>{order.auto_renew === 1 ? "갱신" : "미갱신"}</td>
+                  <td>{order.staus === 1 ? "구독" : "해지"}</td>
                 </tr>
               ))}
             </tbody>

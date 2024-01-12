@@ -33,7 +33,6 @@ interface UserInfo {
 
 interface ProductClientSideProps {
   id: number;
-  category: number;
   name: string;
 }
 
