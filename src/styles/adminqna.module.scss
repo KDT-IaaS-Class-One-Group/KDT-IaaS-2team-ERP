@@ -92,7 +92,7 @@
   }
 }
 
-.qnaButton{
+.qnaButton {
   color: white;
   text-align: center;
   text-decoration: none;
@@ -142,6 +142,8 @@
   border-collapse: collapse;
   overflow: auto;
   max-width: 1000px;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .infoTable th,
@@ -157,7 +159,8 @@
   font-weight: bold;
   width: 100px;
   background-color: #f2f2f2;
-  height: 30px; /* 고정된 높이 */
+  height: 30px;
+  /* 고정된 높이 */
 }
 
 .close {
@@ -172,14 +175,13 @@
 .infoTable tr:nth-child(1) td:nth-child(3) {
   background-color: #f2f2f2;
   height: 40px;
-  // width: 140px;
   font-weight: bold;
   text-align: center;
 }
 
 .infoTable tr:nth-child(1) td:nth-child(1),
 .infoTable tr:nth-child(1) td:nth-child(2) {
-width: 230px;
+  width: 230px;
 }
 
 .infoTable tr:nth-child(3) td {
@@ -187,13 +189,21 @@ width: 230px;
   text-align: center;
 }
 
-.replyInput{
-  border:0;
-  width: 100%;
+.replyInput {
+  margin-top: 10px 10px 0 10px;
+  width: 90%;
   height: 85%;
+  word-wrap: break-word;
+  word-break: break-all;
+  resize: none;
+  border: 0;
+
+  &:focus {
+    outline: none;
+  }
 }
 
-.replyButton{
+.replyButton {
   color: white;
   text-align: center;
   text-decoration: none;
@@ -206,5 +216,5 @@ width: 230px;
   line-height: 20px;
   border-radius: 2px;
   position: relative;
-  left : 25vw;
+  right: 22vw;
 }

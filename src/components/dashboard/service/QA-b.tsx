@@ -220,25 +220,25 @@ export default function QA() {
                       </tr>
                       <tr>
                         <td colSpan="4">
-                            <input
-                              type="text"
-                              value={editedReply[selectedBoard.userId] || ""}
-                              onChange={(e) =>
-                                setEditedReply((prev) => ({
-                                  ...prev,
-                                  [selectedBoard.userId]: e.target.value,
-                                }))
-                              }
-                              className={styles.replyInput}
-                            />
-                            <button
-                              onClick={() =>
-                                handleReplyEdit(selectedBoard.userId)
-                              }
-                              className={styles.replyButton}
-                            >
-                              등록
-                            </button>
+                          <textarea
+                            onChange={(e) =>
+                              setEditedReply((prev) => ({
+                                ...prev,
+                                [selectedBoard.userId]: e.target.value,
+                              }))
+                            }
+                            className={styles.replyInput}
+                          >
+                            {editedReply[selectedBoard.userId] || ""}
+                          </textarea>
+                          <button
+                            onClick={() =>
+                              handleReplyEdit(selectedBoard.userId)
+                            }
+                            className={styles.replyButton}
+                          >
+                            등록
+                          </button>
                         </td>
                       </tr>
                     </tbody>
