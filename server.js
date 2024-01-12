@@ -18,8 +18,8 @@ const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
-  user: "root",
-  password: "0000",
+  user: "yuan",
+  password: "1234",
   database: "erp",
   connectionLimit: 5,
 });
@@ -180,7 +180,7 @@ app.prepare().then(() => {
 
       // 데이터베이스에서 user_Index를 기반으로 name 조회
       const [rows] = await pool.query(
-        "SELECT name FROM users WHERE User_index = ?",
+        "SELECT name FROM users WHERE User_Index = ?",
         [userIndex]
       );
 
@@ -559,44 +559,45 @@ app.prepare().then(() => {
 
   server.get("/api/admin/order", async (req, res) => {
     try {
-      const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
-      const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
+      const page = parseInt(req.query.page) || 1;
+      const pageSize = parseInt(req.query.pageSize) || 10;
       const searchTerm = req.query.searchTerm || "";
       const searchOption = req.query.searchOption || "User_Index";
-
+  
       let query = "SELECT * FROM orderdetails";
       let queryParams = [];
-
+  
       if (searchTerm) {
         if (searchOption === "User_Index") {
           query += " WHERE User_Index LIKE ?";
         } else if (searchOption === "order_name") {
           query += " WHERE order_name LIKE ?";
         }
-
-        queryParams = [`%${searchTerm}%`];
+  
+        queryParams.push(`%${searchTerm}%`);
       }
-
+  
       query += " LIMIT ?, ?";
       queryParams.push((page - 1) * pageSize, pageSize);
-
+  
       const [orders] = await db.query(query, queryParams);
-
+  
       let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM orderdetails";
+      let totalCountParams = [];
+  
       if (searchTerm) {
         if (searchOption === "User_Index") {
           totalCountQuery += " WHERE User_Index LIKE ?";
         } else if (searchOption === "order_name") {
           totalCountQuery += " WHERE order_name LIKE ?";
         }
+  
+        totalCountParams.push(`%${searchTerm}%`);
       }
-
-      const [totalCount] = await db.query(
-        totalCountQuery,
-        queryParams.slice(0, 2)
-      );
+  
+      const [totalCount] = await db.query(totalCountQuery, totalCountParams);
       const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
-
+  
       res.json({
         orders,
         pageInfo: {
@@ -610,6 +611,7 @@ app.prepare().then(() => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
+  
 
   server.get("/api/admin/service", async (req, res) => {
     try {
