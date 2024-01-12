@@ -12,34 +12,34 @@
   flex-direction: column;
   justify-content: space-around;
   position: relative;
-  right: 14vw;
+  right: 13vw;
   text-align: center;
 }
 
 .title {
   position: relative;
-  left: 20vw;
+  left: 21vw;
 }
 
 .search {
   position: relative;
-  left: 19vw;
+  left: 20vw;
   margin-left: 10px;
   height: 25px;
 }
 
 .select {
   position: relative;
-  left: 19vw;
+  left: 20vw;
   height: 30px;
 }
 
 .userContent {
   display: flex;
   flex-direction: column;
-  width: 70vw;
+  width: 73vw;
   position: relative;
-  right: 10vw;
+  right: 8vw;
   margin-top: 20px;
 }
 
@@ -52,14 +52,21 @@
 .userTable th,
 .userTable td {
   padding: 8px;
-  text-align: left;
   border: 1px solid #f4f4f4;
   text-align: center;
   height: 40px;
 }
 
+.userTable tr:hover {
+  cursor: pointer;
+  background-color: #E8E8E8;
+}
+
 .userTable td {
-  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 40px;
+  text-overflow: ellipsis;
 }
 
 .userTable th {
@@ -74,7 +81,6 @@
 .paginationButton {
   color: white;
   text-align: center;
-  text-decoration: none;
   font-size: 13px;
   cursor: pointer;
   border: none;
@@ -85,7 +91,7 @@
   line-height: 20px;
   border-radius: 2px;
   position: relative;
-  left: 33vw;
+  left: 34vw;
   margin-top: 20px;
 
   &.active {
@@ -110,4 +116,63 @@
   background-color: #495464;
   line-height: 20px;
   border-radius: 2px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 48%;
+  left: 46%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 55vw;
+  height: 74vh;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  border-radius: 8px;
+
+  &.show {
+    display: block;
+  }
+}
+
+.modalContent {
+  height: 68vh;
+  width: 52vw;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  position: relative;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.infoTable {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  overflow: auto;
+}
+
+.infoTable td {
+  border: 1px solid #ddd;
+  padding: 13px;
+  text-align: left;
+}
+
+.infoTable td:first-child {
+  text-align: center;
+  font-weight: bold;
+  width: 80px;
+  background-color: #f2f2f2;
+}
+
+.close {
+  position: absolute;
+  top: -9px;
+  right: 8px;
+  font-size: 40px;
+  cursor: pointer;
 }
