@@ -171,7 +171,7 @@ export default function QA() {
                   <td>
                     <button
                       onClick={() => handleRowClick(board)}
-                      className={styles.replyButton}
+                      className={styles.qnaButton}
                     >
                       보기
                     </button>
