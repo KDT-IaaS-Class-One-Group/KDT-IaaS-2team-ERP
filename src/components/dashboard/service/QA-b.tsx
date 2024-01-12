@@ -169,7 +169,12 @@ export default function QA() {
                   <td>{board.reply}</td>
                   <td>{formatDateTime(board.date)}</td>
                   <td>
-                    <button onClick={() => handleRowClick(board)} className={styles.replyButton}>답변</button>
+                    <button
+                      onClick={() => handleRowClick(board)}
+                      className={styles.replyButton}
+                    >
+                      보기
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -178,33 +183,66 @@ export default function QA() {
           {selectedBoard !== null && (
             <div className={`${styles.modal} ${styles.show}`}>
               <div>
-                <div  className={styles.modalContent}>
-                <span className={styles.close} onClick={handleModalClose}>
-                  &times;
-                </span>
-                <div className={styles.info}>
-                <div className={styles.id}>ID : {selectedBoard.userId}</div>
-                <div className={styles.email}>email : {selectedBoard.email} </div>
-                </div>
-                <div className={styles.modalTitle}>제목 : {selectedBoard.title}</div>
-                <div className={styles.content}>내용 : {selectedBoard.content}</div>
-                <div className={styles.reply}>답변 : {selectedBoard.reply}</div>
-                <div>
-                  <input
-                    type="text"
-                    value={editedReply[selectedBoard.userId] || ""}
-                    onChange={(e) =>
-                      setEditedReply((prev) => ({
-                        ...prev,
-                        [selectedBoard.userId]: e.target.value,
-                      }))
-                    }
-                    className={styles.replyInput}
-                  />
-                  <button onClick={() => handleReplyEdit(selectedBoard.userId)} className={styles.replyButton}>
-                    등록
-                  </button>
-                  </div>
+                <div className={styles.modalContent}>
+                  <span className={styles.close} onClick={handleModalClose}>
+                    &times;
+                  </span>
+                  <table className={styles.infoTable}>
+                    <tbody>
+                      <tr>
+                        <td>작성자 아이디</td>
+                        <td>{selectedBoard.userId}</td>
+
+                        <td>작성자 이메일</td>
+                        <td>{selectedBoard.email}</td>
+                      </tr>
+
+                      <tr>
+                        <th colSpan="4">제목</th>
+                      </tr>
+                      <tr>
+                        <td colSpan="4">{selectedBoard.title}</td>
+                      </tr>
+                      <tr>
+                        <th colSpan="4">내용</th>
+                      </tr>
+                      <tr>
+                        <td colSpan="4">{selectedBoard.content}</td>
+                      </tr>
+                      <tr>
+                        <th colSpan="4">답변</th>
+                      </tr>
+                      <tr>
+                        <td colSpan="4">{selectedBoard.reply}</td>
+                      </tr>
+                      <tr>
+                        <th colSpan="4">답변 달기</th>
+                      </tr>
+                      <tr>
+                        <td colSpan="4">
+                            <input
+                              type="text"
+                              value={editedReply[selectedBoard.userId] || ""}
+                              onChange={(e) =>
+                                setEditedReply((prev) => ({
+                                  ...prev,
+                                  [selectedBoard.userId]: e.target.value,
+                                }))
+                              }
+                              className={styles.replyInput}
+                            />
+                            <button
+                              onClick={() =>
+                                handleReplyEdit(selectedBoard.userId)
+                              }
+                              className={styles.replyButton}
+                            >
+                              등록
+                            </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
