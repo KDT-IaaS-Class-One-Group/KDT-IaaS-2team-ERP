@@ -12,6 +12,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import axios from "axios";
+import NavLinks from "@/components/dashboard/analysis/Data-nav-links-b";
+import styles from "@/styles/admindata.module.scss";
 
 const UserGraph = () => {
   const [dynamicGraphData, setDynamicGraphData] = useState([]);
@@ -36,33 +38,40 @@ const UserGraph = () => {
   };
 
   return (
-    <div>
-      <label htmlFor="selectElement"> 구분 </label>
-      <select
-        id="selectElement"
-        name="selectElement"
-        value={selectedXAxis}
-        onChange={handleXAxisChange}
-      >
-        <option value="joindate">가입일자</option>
-        <option value="birthdate">출생년도</option>
-        <option value="gender">성별</option>
-      </select>
-
-      <ResponsiveContainer width="150%" height={400}>
-        <BarChart
-          data={dynamicGraphData}
-          margin={{ top: 20, right: 30, left: 20, bottom: 50 }}
+    <>
+      <div className={styles.sidelink}>
+        <NavLinks />
+      </div>
+      <div className={styles.main}>
+        <label htmlFor="selectElement"></label>
+        <select
+          id="selectElement"
+          name="selectElement"
+          value={selectedXAxis}
+          onChange={handleXAxisChange}
+          className={styles.select}
         >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="label" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="userCount" fill="#8884d8" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+          <option value="joindate">가입일자</option>
+          <option value="birthdate">출생년도</option>
+          <option value="gender">성별</option>
+        </select>
+        <div className={styles.graph}>
+          <ResponsiveContainer width="101%" height={700}>
+            <BarChart
+              data={dynamicGraphData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 50 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="label" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="userCount" fill="#8884d8" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </>
   );
 };
 

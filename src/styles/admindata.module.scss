@@ -1,0 +1,44 @@
+.sidemenu {
+  width: 20vw;
+  height: 85vh;
+  display: flex;
+}
+
+.sidelink {
+  font-size: 2vw;
+  width: 12vw;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  position: relative;
+  right: 14vw;
+  text-align: center;
+}
+
+.title {
+  position: relative;
+  left: 23vw;
+}
+
+.select {
+  position: relative;
+  left: 25vw;
+  width: 120px;
+  height: 70px;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  font-size: 1.1rem;
+  font-weight: bold;
+  line-height: 70px;
+  margin: 50px 0 50px 0;
+  border: 2px solid #aaa;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.graph {
+  position: relative;
+  right: 9vw;
+}
