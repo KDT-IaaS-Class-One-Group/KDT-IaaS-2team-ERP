@@ -4,7 +4,7 @@ import styles from "@/styles/adminorder.module.scss";
 import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links-b";
 import ImageUpload from "@/components/test/ImageUpload";
 interface SubscriptionInfo {
-  subs_index: string;
+  Subs_Index: string;
   name: string;
   week: number;
   size: number;
@@ -57,7 +57,7 @@ export default function SubsProduct(): React.ReactNode {
   };
 
   const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfo>({
-    subs_index: "",
+    Subs_Index: "",
     name: "",
     week: 4,
     size: 1,
@@ -79,7 +79,7 @@ export default function SubsProduct(): React.ReactNode {
 
   const resetForm = () => {
     setSubscriptionInfo({
-      subs_index: "",
+      Subs_Index: "",
       name: "",
       week: 4,
       size: 1,
@@ -123,9 +123,9 @@ export default function SubsProduct(): React.ReactNode {
 
 
 
-  const handleDelete = async (subs_index: string) => {
+  const handleDelete = async (Subs_Index: string) => {
     try {
-      const response = await fetch(`/api/subs-product/${subs_index}`, {
+      const response = await fetch(`/api/subs-product/${Subs_Index}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -144,11 +144,11 @@ export default function SubsProduct(): React.ReactNode {
     }
   };
 
-  const handleCorrection = (subs_index: string) => {
-    setEditingSubsIndex(subs_index);
+  const handleCorrection = (Subs_Index: string) => {
+    setEditingSubsIndex(Subs_Index);
     setShowForm(false); // 추가 폼 숨기기
     
-    const editingSub = subs.find((sub) => sub.subs_index === subs_index);
+    const editingSub = subs.find((sub) => sub.Subs_Index === Subs_Index);
     if (editingSub) {
       setSubscriptionInfo(editingSub);
       setShowEditForm(true);
@@ -156,11 +156,11 @@ export default function SubsProduct(): React.ReactNode {
   };
 
 
-  const handleUpdate = async (subs_index: string) => {
+  const handleUpdate = async (Subs_Index: string) => {
     try {
       const { name, week, size, price } = subscriptionInfo;
       const updatedSubscription = { name, week, size, price };
-      const response = await fetch(`/api/subs-product/${subs_index}`, {
+      const response = await fetch(`/api/subs-product/${Subs_Index}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -334,7 +334,7 @@ export default function SubsProduct(): React.ReactNode {
               />
             </label>
             <button
-              onClick={() => handleUpdate(subscriptionInfo.subs_index)}
+              onClick={() => handleUpdate(subscriptionInfo.Subs_Index)}
               className={styles.delButton}
             >
               수정
@@ -357,14 +357,14 @@ export default function SubsProduct(): React.ReactNode {
             <tbody>
               {subs.map((sub) => (
                 <tr
-                  key={sub.subs_index}                                         
+                  key={sub.Subs_Index}                                         
                   className={`${styles.correction} ${
-                    editingSubsIndex === sub.subs_index && showEditForm
+                    editingSubsIndex === sub.Subs_Index && showEditForm
                       ? styles.editingRow
                       : ""
                   }`}
                 >
-                  <td>{sub.subs_index}</td>
+                  <td>{sub.Subs_Index}</td>
                   <td>{sub.name}</td>
                   <td>{sub.week}</td>
                   <td>{sub.size}</td>
@@ -373,13 +373,13 @@ export default function SubsProduct(): React.ReactNode {
                   <td>
                     <button
                       className={styles.delButton}
-                      onClick={() => handleCorrection(sub.subs_index)}
+                      onClick={() => handleCorrection(sub.Subs_Index)}
                     >
                       수정
                     </button>
                     <button
                       className={styles.delButton}
-                      onClick={() => handleDelete(sub.subs_index)}
+                      onClick={() => handleDelete(sub.Subs_Index)}
                     >
                       삭제
                     </button>

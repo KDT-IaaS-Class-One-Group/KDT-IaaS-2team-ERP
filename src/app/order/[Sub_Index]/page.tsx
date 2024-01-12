@@ -20,7 +20,7 @@ interface OrderClientSideProps {
 }
 
 interface UserInfo {
-  user_Index: number;
+  User_Index: number;
   userId: string;
   name: string;
   phoneNumber: string;
@@ -121,7 +121,7 @@ export default function OrderClientSide() {
 
       if (decodedToken) {
         const {
-          user_Index,
+          User_Index,
           userId,
           name,
           phoneNumber,
@@ -133,7 +133,7 @@ export default function OrderClientSide() {
         } = decodedToken;
 
         const userInformation: UserInfo = {
-          user_Index,
+          User_Index,
           userId,
           name,
           phoneNumber,
@@ -173,11 +173,11 @@ export default function OrderClientSide() {
         },
         body: JSON.stringify({
           token: localStorage.token,
-          sub_index: subs_index,
+          Subs_Index: Subs_Index,
           price: price,
           ids: selectedProducts,
           address: selectedAddressType === 1 ? userInfo?.address : addressInput,
-          user_index: userInfo?.user_Index,
+          User_Index: userInfo?.User_Index,
           order_name: selectedAddressType === 1 ? userInfo?.name : orderNameInput,
           order_phone: selectedAddressType === 1 ? userInfo?.phoneNumber : orderPhoneInput,
           zip_code: selectedAddressType === 1 ? userInfo?.postcode : zipCodeInput,

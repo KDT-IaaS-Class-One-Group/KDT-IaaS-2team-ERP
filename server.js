@@ -684,7 +684,7 @@ app.prepare().then(() => {
 
       // orderIndex를 사용하여 orderdetails 테이블에서 subs_index, Subs_Start, Subs_End를 가져오기
       const orderDetailsData = await db.query(
-        "SELECT subs_index, Subs_Start, Subs_End FROM orderdetails WHERE order_Index = ?",
+        "SELECT Subs_Index, Subs_Start, Subs_End FROM orderdetails WHERE order_Index = ?",
         [orderIndex]
       );
 
@@ -704,12 +704,12 @@ app.prepare().then(() => {
       );
 
       if (orderDetailsData.length > 0) {
-        const { subs_index, Subs_Start, Subs_End } = orderDetailsData[0][0];
+        const { Subs_Index, Subs_Start, Subs_End } = orderDetailsData[0][0];
 
-        // subs_index를 사용하여 subscription 테이블에서 데이터를 가져오기
+        // Subs_Index를 사용하여 subscription 테이블에서 데이터를 가져오기
         const subscriptionData = await db.query(
-          "SELECT * FROM subscription WHERE subs_index = ?",
-          [subs_index]
+          "SELECT * FROM subscription WHERE Subs_Index = ?",
+          [Subs_Index]
         );
         if (subscriptionData.length > 0) {
           // subscriptionData와 orderDetailsData의 Subs_Start, Subs_End 정보를 함께 전송
@@ -848,7 +848,7 @@ app.prepare().then(() => {
     try {
       const token = req.body.token;
       const price = req.body.price;
-      const subsIndex = req.body.sub_index;
+      const subsIndex = req.body.Subs_Index;
       const ids = req.body.ids;
       const address = req.body.address;
       const userIndex = req.body.User_Index; // 사용자의 user_Index
@@ -885,14 +885,14 @@ app.prepare().then(() => {
         await connection.query(updateCashQuery, updateCashValues);
 
         // 주문 정보 추가
-        const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
+        const weekQuery = `SELECT Week FROM subscription WHERE Subs_Index = ?`;
         const [weekResult] = await connection.query(weekQuery, [subsIndex]);
 
         const week = weekResult[0].Week;
 
         // 사용자의 user_Index 값으로 주문 정보를 추가
         const orderQuery = `
-      INSERT INTO Orderdetails (subs_index, User_Index, Subs_Start, Subs_End, address, order_name, order_phone, zip_code) 
+      INSERT INTO Orderdetails (Subs_Index, User_Index, Subs_Start, Subs_End, address, order_name, order_phone, zip_code) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
         const orderValues = [
@@ -954,13 +954,13 @@ app.prepare().then(() => {
    * ? 끝
    */
 
-  server.get("/api/subscription/:subs_index", async (req, res) => {
-    const { subs_index } = req.params;
+  server.get("/api/subscription/:Subs_Index", async (req, res) => {
+    const { Subs_Index } = req.params;
 
     try {
       const [rows] = await db.execute(
         "SELECT Subs_Index, Name, price, Week, size FROM subscription WHERE Subs_Index = ?",
-        [subs_index]
+        [Subs_Index]
       );
 
       const dataFromDB = rows.map((row) => ({
@@ -1304,13 +1304,13 @@ app.prepare().then(() => {
   });
 
 
-  server.delete("/api/subs-product/:subs_index", async (req, res) => {
-    const { subs_index } = req.params;
+  server.delete("/api/subs-product/:Subs_Index", async (req, res) => {
+    const { Subs_Index } = req.params;
     try {
       if (req.method === "DELETE") {
         const [result] = await db.query(
-          "DELETE FROM subscription WHERE subs_index = ?",
-          [subs_index]
+          "DELETE FROM subscription WHERE Subs_Index = ?",
+          [Subs_Index]
         );
 
         if (result.affectedRows === 1) {
@@ -1329,16 +1329,16 @@ app.prepare().then(() => {
     }
   });
 
-  server.put("/api/subs-product/:subs_index", async (req, res) => {
-    const { subs_index } = req.params;
+  server.put("/api/subs-product/:Subs_Index", async (req, res) => {
+    const { Subs_Index } = req.params;
     try {
       if (req.method === "PUT") {
         const { name, week, size, price } = req.body;
 
         // 데이터베이스에서 구독 정보 업데이트
         const [result] = await db.query(
-          "UPDATE subscription SET name = ?, week = ?, size = ?, price = ? WHERE subs_index = ?",
-          [name, week, size, price, subs_index]
+          "UPDATE subscription SET name = ?, week = ?, size = ?, price = ? WHERE Subs_Index = ?",
+          [name, week, size, price, Subs_Index]
         );
 
         if (result.affectedRows === 1) {
@@ -1346,7 +1346,7 @@ app.prepare().then(() => {
           res.status(200).json({ message: "subscription 수정 성공" });
         } else {
           // 삭제 실패 시
-          res.status(404).json({ error: "subs_index를 찾을 수 없습니다." });
+          res.status(404).json({ error: "Subs_Index를 찾을 수 없습니다." });
         }
       } else {
         // 허용되지 않은 메서드

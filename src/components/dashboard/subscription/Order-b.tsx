@@ -5,7 +5,7 @@ import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links
 
 interface OrderInfo {
   Order_Index: string;
-  subs_index: string;
+  Subs_Index: string;
   user_Index: string;
   Subs_Start: string;
   Subs_End: string;
@@ -170,7 +170,7 @@ export default function OrderInfoPage() {
               {filteredOrders.map((order) => (
                 <tr key={order.Order_Index}>
                   <td>{order.Order_Index}</td>
-                  <td>{order.subs_index}</td>
+                  <td>{order.Subs_Index}</td>
                   <td></td>
                   <td></td>
                   <td></td>
