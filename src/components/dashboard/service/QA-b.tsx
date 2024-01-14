@@ -5,7 +5,7 @@ import styles from "@/styles/adminqna.module.scss";
 import NavLinks from "@/components/dashboard/service/Service-nav-links-b";
 
 interface BoardInfo {
-  boardKey: string;
+  Board_Index: string;
   userId: string;
   title: string;
   content: string;
@@ -150,8 +150,9 @@ export default function QA() {
           <table className={styles.qnaTable}>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>email</th>
+                <th>글 번호</th>
+                <th>작성자 아이디</th>
+                <th>작성자 이메일</th>
                 <th>제목</th>
                 <th>내용</th>
                 <th>답변</th>
@@ -161,7 +162,8 @@ export default function QA() {
             </thead>
             <tbody>
               {boards.map((board) => (
-                <tr key={board.boardKey}>
+                <tr key={board.Board_Index}>
+                  <td>{board.Board_Index}</td>
                   <td>{board.userId}</td>
                   <td>{board.email}</td>
                   <td>{board.title}</td>
@@ -189,6 +191,13 @@ export default function QA() {
                   </span>
                   <table className={styles.infoTable}>
                     <tbody>
+                      <tr>
+                        <td>글 번호</td>
+                        <td>{selectedBoard.Board_Index}</td>
+                        
+                        <td>작성일자</td>
+                        <td>{formatDateTime(selectedBoard.date)}</td>
+                      </tr>
                       <tr>
                         <td>작성자 아이디</td>
                         <td>{selectedBoard.userId}</td>
