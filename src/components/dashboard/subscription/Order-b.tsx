@@ -5,11 +5,12 @@ import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links
 
 interface OrderInfo {
   Order_Index: string;
-  Subs_Index: string;
+  subs_index: string;
   product1: string;
   product2: string;
   product3: string;
   User_Index: string;
+  userId: string;
   Subs_Start: string;
   Subs_End: string;
   order_name: string;
@@ -185,11 +186,11 @@ export default function OrderInfoPage() {
                   onClick={() => handleRowClick(order)}
                 >
                   <td>{order.Order_Index}</td>
-                  <td>{order.Subs_Index}</td>
+                  <td>{order.subs_index}</td>
                   <td>{order.product1}</td>
                   <td>{order.product2}</td>
                   <td>{order.product3}</td>
-                  <td>{order.User_Index}</td>
+                  <td>{order.userId}</td>
                   <td>{formatdate(order.Subs_Start)}</td>
                   <td>{formatdate(order.Subs_End)}</td>
                   <td>{order.order_name}</td>
@@ -217,7 +218,7 @@ export default function OrderInfoPage() {
                       </tr>
                       <tr>
                         <td>구독번호</td>
-                        <td>{selectedBoard.Subs_Index}</td>
+                        <td>{selectedBoard.subs_index}</td>
                       </tr>
                       <tr>
                         <td>주문상품1</td>
@@ -233,7 +234,7 @@ export default function OrderInfoPage() {
                       </tr>
                       <tr>
                         <td>주문자ID</td>
-                        <td>{selectedBoard.User_Index}</td>
+                        <td>{selectedBoard.userId}</td>
                       </tr>
                       <tr>
                         <td>구독 시작일</td>
