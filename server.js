@@ -564,7 +564,12 @@ app.prepare().then(() => {
       const searchTerm = req.query.searchTerm || "";
       const searchOption = req.query.searchOption || "User_Index";
   
-      let query = "SELECT * FROM orderdetails";
+      let query = `
+      SELECT orderdetails.*, users.userId AS userId
+      FROM orderdetails
+      LEFT JOIN users ON orderdetails.User_Index = users.User_Index
+    `;
+
       let queryParams = [];
   
       if (searchTerm) {
@@ -614,61 +619,67 @@ app.prepare().then(() => {
   
 
   server.get("/api/admin/service", async (req, res) => {
-    try {
-      const page = parseInt(req.query.page) || 1;
-      const pageSize = parseInt(req.query.pageSize) || 20;
-      const searchTerm = req.query.searchTerm || "";
-      const searchOption = req.query.searchOption || "userId";
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const searchTerm = req.query.searchTerm || "";
+    const searchOption = req.query.searchOption || "userId";
 
-      let query = "SELECT * FROM Board";
-      let queryParams = [];
+    let query = "SELECT Board.*, Users.userId, Users.email FROM Board LEFT JOIN Users ON Board.User_Index = Users.User_Index";
 
-      if (searchTerm) {
-        if (searchOption === "userId") {
-          query += " WHERE userId LIKE ?";
-        } else if (searchOption === "title") {
-          query += " WHERE title LIKE ?";
-        }
+    let queryParams = [];
 
-        queryParams = [`%${searchTerm}%`];
+    if (searchTerm) {
+      if (searchOption === "userId") {
+        query += " WHERE userId LIKE ?";
+      } else if (searchOption === "title") {
+        query += " WHERE title LIKE ?";
       }
 
-      query += " LIMIT ?, ?";
-      queryParams.push((page - 1) * pageSize, pageSize);
-
-      const [reverseBoards] = await db.query(query, queryParams);
-
-      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM Board";
-      if (searchTerm) {
-        if (searchOption === "userId") {
-          totalCountQuery += " WHERE userId LIKE ?";
-        } else if (searchOption === "title") {
-          totalCountQuery += " WHERE title LIKE ?";
-        }
-      }
-
-      const [totalCount] = await db.query(
-        totalCountQuery,
-        queryParams.slice(0, 1)
-      );
-      const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
-
-      const boards = reverseBoards.reverse();
-      
-      res.json({
-        boards,
-        pageInfo: {
-          currentPage: page,
-          pageSize,
-          totalPages,
-        },
-      });
-    } catch (error) {
-      console.error("Error fetching boards:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+      queryParams.push(`%${searchTerm}%`);
     }
-  });
 
+    query += " ORDER BY Board.date DESC"; // 시간 역순으로 정렬
+
+    const [reverseBoards] = await db.query(query, queryParams);
+
+    let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM Board";
+
+    if (searchTerm) {
+      if (searchOption === "userId") {
+        totalCountQuery += " WHERE userId LIKE ?";
+      } else if (searchOption === "title") {
+        totalCountQuery += " WHERE title LIKE ?";
+      }
+
+      queryParams.push(`%${searchTerm}%`);
+    }
+
+    const [totalCount] = await db.query(totalCountQuery, queryParams);
+    const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
+
+    // Apply LIMIT for pagination
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
+
+    const boards = reverseBoards.slice(startIndex, endIndex);
+
+    res.json({
+      boards,
+      pageInfo: {
+        currentPage: page,
+        pageSize,
+        totalPages,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching boards:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+  
+  
   server.get("/api/mysubscription", async (req, res) => {
     try {
       const token = req.headers.authorization?.replace("Bearer ", "");
