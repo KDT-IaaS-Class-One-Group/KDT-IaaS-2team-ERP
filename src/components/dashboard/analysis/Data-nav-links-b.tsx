@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import clsx from "clsx";
 import styles from "@/styles/adminnavlink.module.scss";
 
 const links = [
@@ -11,7 +9,6 @@ const links = [
 ];
 
 export default function NavLinks() {
-  const pathname = usePathname();
 
   return (
     <>

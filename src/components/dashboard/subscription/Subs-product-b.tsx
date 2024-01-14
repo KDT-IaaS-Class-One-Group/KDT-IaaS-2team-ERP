@@ -3,13 +3,14 @@ import React, { useState, useEffect, ChangeEvent } from "react";
 import styles from "@/styles/adminorder.module.scss";
 import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links-b";
 import ImageUpload from "@/components/test/ImageUpload";
+
 interface SubscriptionInfo {
-  Subs_Index: string;
+  subs_index: string;
   name: string;
   week: number;
   size: number;
   price: string;
-  imageUrl?: string; 
+  imageUrl?: string;
   timestamp: string;
 }
 
@@ -57,12 +58,12 @@ export default function SubsProduct(): React.ReactNode {
   };
 
   const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfo>({
-    Subs_Index: "",
+    subs_index: "",
     name: "",
     week: 4,
     size: 1,
     price: "",
-    imageUrl:"",
+    imageUrl: "",
     timestamp: "",
   });
 
@@ -70,7 +71,7 @@ export default function SubsProduct(): React.ReactNode {
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    console.log(e.target)
+    console.log(e.target);
     setSubscriptionInfo((prevInfo) => ({
       ...prevInfo,
       [name]: value,
@@ -79,12 +80,12 @@ export default function SubsProduct(): React.ReactNode {
 
   const resetForm = () => {
     setSubscriptionInfo({
-      Subs_Index: "",
+      subs_index: "",
       name: "",
       week: 4,
       size: 1,
       price: "",
-      imageUrl:"",
+      imageUrl: "",
       timestamp: "",
     });
   };
@@ -103,29 +104,27 @@ export default function SubsProduct(): React.ReactNode {
         },
         body: JSON.stringify(updatedSubscriptionInfo),
       });
-  
+
       if (response.ok) {
         fetchData(pageInfo.currentPage);
         alert("등록 완료");
-      setShowForm(false); // 폼 닫기
+        setShowForm(false); // 폼 닫기
       } else {
         console.error(`Error adding subscription: ${response.status}`);
         alert("등록 실패");
       }
-  
+
       // 입력 폼 초기화
-      resetForm()
+      resetForm();
       setShowForm(false); // 폼 닫기
     } catch (error) {
       console.error("Error adding subscription:", error);
     }
   };
 
-
-
-  const handleDelete = async (Subs_Index: string) => {
+  const handleDelete = async (subs_index: string) => {
     try {
-      const response = await fetch(`/api/subs-product/${Subs_Index}`, {
+      const response = await fetch(`/api/subs-product/${subs_index}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -144,23 +143,22 @@ export default function SubsProduct(): React.ReactNode {
     }
   };
 
-  const handleCorrection = (Subs_Index: string) => {
-    setEditingSubsIndex(Subs_Index);
+  const handleCorrection = (subs_index: string) => {
     setShowForm(false); // 추가 폼 숨기기
-    
-    const editingSub = subs.find((sub) => sub.Subs_Index === Subs_Index);
+    setEditingSubsIndex(subs_index);
+
+    const editingSub = subs.find((sub) => sub.subs_index === subs_index);
     if (editingSub) {
       setSubscriptionInfo(editingSub);
       setShowEditForm(true);
     }
   };
 
-
-  const handleUpdate = async (Subs_Index: string) => {
+  const handleUpdate = async (subs_index: string) => {
     try {
       const { name, week, size, price } = subscriptionInfo;
       const updatedSubscription = { name, week, size, price };
-      const response = await fetch(`/api/subs-product/${Subs_Index}`, {
+      const response = await fetch(`/api/subs-product/${subs_index}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -173,7 +171,7 @@ export default function SubsProduct(): React.ReactNode {
         fetchData(pageInfo.currentPage);
         setEditingSubsIndex(null);
         setShowEditForm(false);
-        resetForm()
+        resetForm();
       } else {
         console.error(`Error updating subscription: ${response.status}`);
         alert("수정 실패");
@@ -182,13 +180,12 @@ export default function SubsProduct(): React.ReactNode {
       console.error("Error updating subscription:", error);
     }
   };
- 
+
   const handleImageUpload = (imageUrl: string) => {
     // 이미지 업로드 성공 시, 이미지 URL을 state에 업데이트
     setImageurl(imageUrl);
     console.log("이미지 업로드 성공:", imageUrl);
   };
-  
 
   const handleAdd = () => {
     setShowEditForm(false); // 수정 폼 숨기기
@@ -209,10 +206,7 @@ export default function SubsProduct(): React.ReactNode {
       </div>
       <div className={styles.main}>
         <h1 className={styles.title}>구독 서비스 관리</h1>
-        <button
-          onClick={handleAdd}
-          className={styles.addButton}
-        >
+        <button onClick={handleAdd} className={styles.addButton}>
           추가
         </button>
         {showForm && (
@@ -221,7 +215,7 @@ export default function SubsProduct(): React.ReactNode {
               <div>
                 <ImageUpload onImageUpload={handleImageUpload} />
               </div>
-             </label>
+            </label>
             <label className={styles.addLabel}>
               구독 서비스명 :
               <input
@@ -334,7 +328,7 @@ export default function SubsProduct(): React.ReactNode {
               />
             </label>
             <button
-              onClick={() => handleUpdate(subscriptionInfo.Subs_Index)}
+              onClick={() => handleUpdate(subscriptionInfo.subs_index)}
               className={styles.delButton}
             >
               수정
@@ -345,7 +339,7 @@ export default function SubsProduct(): React.ReactNode {
           <table className={styles.orderTable}>
             <thead>
               <tr>
-                <th>구독 서비스</th>
+                <th>구독번호</th>
                 <th>구독 서비스명</th>
                 <th>기간 (주)</th>
                 <th>상품 수량 (주)</th>
@@ -357,14 +351,14 @@ export default function SubsProduct(): React.ReactNode {
             <tbody>
               {subs.map((sub) => (
                 <tr
-                  key={sub.Subs_Index}                                         
+                  key={sub.subs_index}
                   className={`${styles.correction} ${
-                    editingSubsIndex === sub.Subs_Index && showEditForm
+                    editingSubsIndex === sub.subs_index && showEditForm
                       ? styles.editingRow
                       : ""
                   }`}
                 >
-                  <td>{sub.Subs_Index}</td>
+                  <td>{sub.subs_index}</td>
                   <td>{sub.name}</td>
                   <td>{sub.week}</td>
                   <td>{sub.size}</td>
@@ -373,13 +367,13 @@ export default function SubsProduct(): React.ReactNode {
                   <td>
                     <button
                       className={styles.delButton}
-                      onClick={() => handleCorrection(sub.Subs_Index)}
+                      onClick={() => handleCorrection(sub.subs_index)}
                     >
                       수정
                     </button>
                     <button
                       className={styles.delButton}
-                      onClick={() => handleDelete(sub.Subs_Index)}
+                      onClick={() => handleDelete(sub.subs_index)}
                     >
                       삭제
                     </button>

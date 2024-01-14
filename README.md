@@ -7,24 +7,25 @@ npm install react-query
 
 ## 데이터베이스 쿼리문 / 그냥 기본 틀이니까 열 추가나 삭제 필요하면 하면서 해주세요!
 
-### User (사용자 정보)  order_Index 외래키로 Orderdetails 테이블에서 구독내용 확인 (자동연장시 갱신x추가해야함)      
-CREATE TABLE Users (
-    User_Index INT AUTO_INCREMENT PRIMARY KEY,
-    userId VARCHAR(50) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    name VARCHAR(16) NOT NULL,
-    birthdate DATETIME NOT NULL,
-    phoneNumber VARCHAR(16) NOT NULL,
-    email VARCHAR(50) NOT NULL,
-    postcode VACHAR(15) NOT NULL,
-    address VARCHAR(300) NOT NULL,
-    detailaddress VARCHAR(300) NOT NULL,
-    gender VARCHAR(1) NOT NULL,
-    cash INT(11) NOT NULL,
-    joinDate DATETIME NOT NULL,
-    isWithdrawn TINYINT(1) NOT NULL , (탈퇴여부 (삭제?))
-    order_Index TINYINT(4) NULL DEFAULT NULL, (구독여부 (추후변경할수도?))
-);
+### Users (사용자 정보)  order_Index 외래키로 Orderdetails 테이블에서 구독내용 확인 (자동연장시 갱신x추가해야함)      
+| Users | CREATE TABLE `Users` (
+  `User_Index` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `name` varchar(16) NOT NULL,
+  `birthdate` datetime NOT NULL,
+  `phoneNumber` varchar(16) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `postcode` varchar(15) NOT NULL,
+  `address` varchar(300) NOT NULL,
+  `detailaddress` varchar(300) NOT NULL,
+  `gender` varchar(2) NOT NULL,
+  `cash` int(11) NOT NULL,
+  `joinDate` datetime NOT NULL,
+  `isWithdrawn` tinyint(1) NOT NULL,
+  `order_Index` tinyint(4) DEFAULT NULL,
+  PRIMARY KEY (`User_Index`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci |
 
 ### Subscription (구독 서비스 제어) 구독 고유번호가 유저고유번호와 연결, 상품고유번호와도 연결되어 어떤 상품들을 선택했는지 확인 가능, 상품 개수만큼 행이 추가됨
 CREATE TABLE Subscription (
@@ -78,20 +79,20 @@ CREATE TABLE Order (
     FOREIGN KEY (product_id) REFERENCES product(product_id)
 
 ### Board (고객센터 관련)
-CREATE TABLE Board (
-    boardKey INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    userId VARCHAR(50) NOT NULL,
-    password VARCHAR(50) NOT NULL,
-    email VARCHAR(50) NOT NULL,
-    title VARCHAR(100) NOT NULL,
-    content VARCHAR(500) NOT NULL,
-    reply VARCHAR(500) NULL,
-    replyStatus TINYINT(1) NOT NULL,
-    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    image VARCHAR(500),
-    FOREIGN KEY (userId) REFERENCES Users(userId),
-    FOREIGN KEY (email) REFERENCES Users(email)
-);
+| Board | CREATE TABLE `Board` (
+  `Board_Index` int(11) NOT NULL AUTO_INCREMENT,
+  `User_Index` int(11) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `content` varchar(500) NOT NULL,
+  `reply` varchar(500) DEFAULT NULL,
+  `replyStatus` tinyint(1) NOT NULL CHECK (`replyStatus` in (0,1)),
+  `date` timestamp NULL DEFAULT current_timestamp(),
+  `image` varchar(500) DEFAULT NULL,
+  PRIMARY KEY (`Board_Index`),
+  KEY `User_Index` (`User_Index`),
+  CONSTRAINT `board_ibfk_1` FOREIGN KEY (`User_Index`) REFERENCES `Users` (`User_Index`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci |
 
 <!-- Board Table reply 값이 있으면 replyStatus 1, 없으면 replyStatus 0 -->
 DELIMITER //

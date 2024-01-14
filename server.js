@@ -180,7 +180,7 @@ app.prepare().then(() => {
 
       // 데이터베이스에서 user_Index를 기반으로 name 조회
       const [rows] = await pool.query(
-        "SELECT name FROM users WHERE User_index = ?",
+        "SELECT name FROM users WHERE User_Index = ?",
         [userIndex]
       );
 
@@ -559,44 +559,50 @@ app.prepare().then(() => {
 
   server.get("/api/admin/order", async (req, res) => {
     try {
-      const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
-      const pageSize = parseInt(req.query.pageSize) || 10; // 페이지당 항목 수 (기본값: 10)
+      const page = parseInt(req.query.page) || 1;
+      const pageSize = parseInt(req.query.pageSize) || 10;
       const searchTerm = req.query.searchTerm || "";
       const searchOption = req.query.searchOption || "User_Index";
+  
+      let query = `
+      SELECT orderdetails.*, users.userId AS userId
+      FROM orderdetails
+      LEFT JOIN users ON orderdetails.User_Index = users.User_Index
+    `;
 
-      let query = "SELECT * FROM orderdetails";
       let queryParams = [];
-
+  
       if (searchTerm) {
         if (searchOption === "User_Index") {
           query += " WHERE User_Index LIKE ?";
         } else if (searchOption === "order_name") {
           query += " WHERE order_name LIKE ?";
         }
-
-        queryParams = [`%${searchTerm}%`];
+  
+        queryParams.push(`%${searchTerm}%`);
       }
-
+  
       query += " LIMIT ?, ?";
       queryParams.push((page - 1) * pageSize, pageSize);
-
+  
       const [orders] = await db.query(query, queryParams);
-
+  
       let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM orderdetails";
+      let totalCountParams = [];
+  
       if (searchTerm) {
         if (searchOption === "User_Index") {
           totalCountQuery += " WHERE User_Index LIKE ?";
         } else if (searchOption === "order_name") {
           totalCountQuery += " WHERE order_name LIKE ?";
         }
+  
+        totalCountParams.push(`%${searchTerm}%`);
       }
-
-      const [totalCount] = await db.query(
-        totalCountQuery,
-        queryParams.slice(0, 2)
-      );
+  
+      const [totalCount] = await db.query(totalCountQuery, totalCountParams);
       const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
-
+  
       res.json({
         orders,
         pageInfo: {
@@ -610,63 +616,70 @@ app.prepare().then(() => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
+  
 
   server.get("/api/admin/service", async (req, res) => {
-    try {
-      const page = parseInt(req.query.page) || 1;
-      const pageSize = parseInt(req.query.pageSize) || 20;
-      const searchTerm = req.query.searchTerm || "";
-      const searchOption = req.query.searchOption || "userId";
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const searchTerm = req.query.searchTerm || "";
+    const searchOption = req.query.searchOption || "userId";
 
-      let query = "SELECT * FROM Board";
-      let queryParams = [];
+    let query = "SELECT Board.*, Users.userId, Users.email FROM Board LEFT JOIN Users ON Board.User_Index = Users.User_Index";
 
-      if (searchTerm) {
-        if (searchOption === "userId") {
-          query += " WHERE userId LIKE ?";
-        } else if (searchOption === "title") {
-          query += " WHERE title LIKE ?";
-        }
+    let queryParams = [];
 
-        queryParams = [`%${searchTerm}%`];
+    if (searchTerm) {
+      if (searchOption === "userId") {
+        query += " WHERE userId LIKE ?";
+      } else if (searchOption === "title") {
+        query += " WHERE title LIKE ?";
       }
 
-      query += " LIMIT ?, ?";
-      queryParams.push((page - 1) * pageSize, pageSize);
-
-      const [reverseBoards] = await db.query(query, queryParams);
-
-      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM Board";
-      if (searchTerm) {
-        if (searchOption === "userId") {
-          totalCountQuery += " WHERE userId LIKE ?";
-        } else if (searchOption === "title") {
-          totalCountQuery += " WHERE title LIKE ?";
-        }
-      }
-
-      const [totalCount] = await db.query(
-        totalCountQuery,
-        queryParams.slice(0, 1)
-      );
-      const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
-
-      const boards = reverseBoards.reverse();
-      
-      res.json({
-        boards,
-        pageInfo: {
-          currentPage: page,
-          pageSize,
-          totalPages,
-        },
-      });
-    } catch (error) {
-      console.error("Error fetching boards:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+      queryParams.push(`%${searchTerm}%`);
     }
-  });
 
+    query += " ORDER BY Board.date DESC"; // 시간 역순으로 정렬
+
+    const [reverseBoards] = await db.query(query, queryParams);
+
+    let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM Board";
+
+    if (searchTerm) {
+      if (searchOption === "userId") {
+        totalCountQuery += " WHERE userId LIKE ?";
+      } else if (searchOption === "title") {
+        totalCountQuery += " WHERE title LIKE ?";
+      }
+
+      queryParams.push(`%${searchTerm}%`);
+    }
+
+    const [totalCount] = await db.query(totalCountQuery, queryParams);
+    const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
+
+    // Apply LIMIT for pagination
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
+
+    const boards = reverseBoards.slice(startIndex, endIndex);
+
+    res.json({
+      boards,
+      pageInfo: {
+        currentPage: page,
+        pageSize,
+        totalPages,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching boards:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+  
+  
   server.get("/api/mysubscription", async (req, res) => {
     try {
       const token = req.headers.authorization?.replace("Bearer ", "");
@@ -1431,6 +1444,34 @@ app.prepare().then(() => {
         } else {
           // 삭제 실패 시
           res.status(404).json({ error: "product_id 찾을 수 없습니다." });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "내부 서버 오류" });
+    }
+  });
+
+  server.put("/api/updateReply/:userId", async (req, res) => {
+    try {
+      if (req.method === "PUT") {
+        const { userId } = req.params;
+        const { reply } = req.body;
+        // 데이터베이스에서 게시판 정보 수정
+        const [result] = await db.query(
+          "UPDATE board SET reply = ? WHERE userId = ?",
+          [reply, userId]
+        );
+
+        if (result.affectedRows === 1) {
+          // 성공적으로 수정된 경우
+          res.status(200).json({ message: "Q&A 답변 등록 성공" });
+        } else {
+          // 삭제 실패 시
+          res.status(404).json({ error: "사용자를 찾을 수 없습니다." });
         }
       } else {
         // 허용되지 않은 메서드

@@ -5,7 +5,7 @@ import styles from "@/styles/adminqna.module.scss";
 import NavLinks from "@/components/dashboard/service/Service-nav-links-b";
 
 interface BoardInfo {
-  boardKey: string;
+  Board_Index: string;
   userId: string;
   title: string;
   content: string;
@@ -150,8 +150,9 @@ export default function QA() {
           <table className={styles.qnaTable}>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>email</th>
+                <th>글 번호</th>
+                <th>작성자 아이디</th>
+                <th>작성자 이메일</th>
                 <th>제목</th>
                 <th>내용</th>
                 <th>답변</th>
@@ -161,7 +162,8 @@ export default function QA() {
             </thead>
             <tbody>
               {boards.map((board) => (
-                <tr key={board.boardKey}>
+                <tr key={board.Board_Index}>
+                  <td>{board.Board_Index}</td>
                   <td>{board.userId}</td>
                   <td>{board.email}</td>
                   <td>{board.title}</td>
@@ -169,7 +171,12 @@ export default function QA() {
                   <td>{board.reply}</td>
                   <td>{formatDateTime(board.date)}</td>
                   <td>
-                    <button onClick={() => handleRowClick(board)} className={styles.replyButton}>답변</button>
+                    <button
+                      onClick={() => handleRowClick(board)}
+                      className={styles.qnaButton}
+                    >
+                      보기
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -178,33 +185,73 @@ export default function QA() {
           {selectedBoard !== null && (
             <div className={`${styles.modal} ${styles.show}`}>
               <div>
-                <div  className={styles.modalContent}>
-                <span className={styles.close} onClick={handleModalClose}>
-                  &times;
-                </span>
-                <div className={styles.info}>
-                <div className={styles.id}>ID : {selectedBoard.userId}</div>
-                <div className={styles.email}>email : {selectedBoard.email} </div>
-                </div>
-                <div className={styles.modalTitle}>제목 : {selectedBoard.title}</div>
-                <div className={styles.content}>내용 : {selectedBoard.content}</div>
-                <div className={styles.reply}>답변 : {selectedBoard.reply}</div>
-                <div>
-                  <input
-                    type="text"
-                    value={editedReply[selectedBoard.userId] || ""}
-                    onChange={(e) =>
-                      setEditedReply((prev) => ({
-                        ...prev,
-                        [selectedBoard.userId]: e.target.value,
-                      }))
-                    }
-                    className={styles.replyInput}
-                  />
-                  <button onClick={() => handleReplyEdit(selectedBoard.userId)} className={styles.replyButton}>
-                    등록
-                  </button>
-                  </div>
+                <div className={styles.modalContent}>
+                  <span className={styles.close} onClick={handleModalClose}>
+                    &times;
+                  </span>
+                  <table className={styles.infoTable}>
+                    <tbody>
+                      <tr>
+                        <td>글 번호</td>
+                        <td>{selectedBoard.Board_Index}</td>
+                        
+                        <td>작성일자</td>
+                        <td>{formatDateTime(selectedBoard.date)}</td>
+                      </tr>
+                      <tr>
+                        <td>작성자 아이디</td>
+                        <td>{selectedBoard.userId}</td>
+
+                        <td>작성자 이메일</td>
+                        <td>{selectedBoard.email}</td>
+                      </tr>
+
+                      <tr>
+                        <th colSpan="4">제목</th>
+                      </tr>
+                      <tr>
+                        <td colSpan="4">{selectedBoard.title}</td>
+                      </tr>
+                      <tr>
+                        <th colSpan="4">내용</th>
+                      </tr>
+                      <tr>
+                        <td colSpan="4">{selectedBoard.content}</td>
+                      </tr>
+                      <tr>
+                        <th colSpan="4">답변</th>
+                      </tr>
+                      <tr>
+                        <td colSpan="4">{selectedBoard.reply}</td>
+                      </tr>
+                      <tr>
+                        <th colSpan="4">답변 달기</th>
+                      </tr>
+                      <tr>
+                        <td colSpan="4">
+                          <textarea
+                            onChange={(e) =>
+                              setEditedReply((prev) => ({
+                                ...prev,
+                                [selectedBoard.userId]: e.target.value,
+                              }))
+                            }
+                            className={styles.replyInput}
+                          >
+                            {editedReply[selectedBoard.userId] || ""}
+                          </textarea>
+                          <button
+                            onClick={() =>
+                              handleReplyEdit(selectedBoard.userId)
+                            }
+                            className={styles.replyButton}
+                          >
+                            등록
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
