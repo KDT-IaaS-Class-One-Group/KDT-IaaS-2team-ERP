@@ -325,6 +325,9 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
           <DatePicker
             selected={formData.birthdate}
             onChange={(date: Date) => handleChange(date)}
+            peekNextMonth
+            showMonthDropdown
+            showYearDropdown
             dateFormat="yyyy-MM-dd"
           />
         </label>
