@@ -5,16 +5,20 @@ import styles from "@/styles/adminuser.module.scss";
 import { useRadioGroup } from "@chakra-ui/react";
 
 interface UserInfo {
+  User_Index: string;
   userId: string;
   name: string;
   birthdate: string;
   phoneNumber: string;
   email: string;
+  postcode: string;
   address: string;
+  detailaddress: string;
   gender: string;
   cash: string;
   joinDate: string;
   isWithdrawn: number;
+  order_Index: number;
 }
 
 const pageSize = 10; // 페이지당 표시할 항목 수
@@ -114,31 +118,39 @@ export default function UserinfoPage() {
           <table className={styles.userTable}>
             <thead>
               <tr>
+                <th>회원번호</th>
                 <th>아이디</th>
                 <th>이름</th>
                 <th>생년월일</th>
                 <th>핸드폰</th>
                 <th>이메일</th>
+                <th>우편번호</th>
                 <th>주소</th>
+                <th>상세주소</th>
                 <th>성별</th>
                 <th>잔여캐쉬</th>
                 <th>가입일</th>
                 <th>가입여부</th>
+                <th>주문번호</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
                 <tr key={user.userId} onClick={() => handleRowClick(user)}>
+                  <td>{user.User_Index}</td>
                   <td>{user.userId}</td>
                   <td>{user.name}</td>
                   <td>{formatBirthdate(user.birthdate)}</td>
                   <td>{user.phoneNumber}</td>
                   <td>{user.email}</td>
+                  <td>{user.postcode}</td>
                   <td>{user.address}</td>
-                  <td>{user.gender === "M" ? "여" : "남"}</td>
+                  <td>{user.detailaddress}</td>
+                  <td>{user.gender}</td>
                   <td>{user.cash}</td>
                   <td>{formatBirthdate(user.joinDate)}</td>
                   <td>{user.isWithdrawn === 1 ? "탈퇴" : "가입"}</td>
+                  <td>{user.order_Index}</td>
                 </tr>
               ))}
             </tbody>
@@ -152,6 +164,10 @@ export default function UserinfoPage() {
                   </span>
                   <table className={styles.infoTable}>
                     <tbody>
+                    <tr>
+                        <td>회원번호</td>
+                        <td>{selectedBoard.User_Index}</td>
+                      </tr>
                       <tr>
                         <td>아이디</td>
                         <td>{selectedBoard.userId}</td>
@@ -173,12 +189,20 @@ export default function UserinfoPage() {
                         <td>{selectedBoard.email}</td>
                       </tr>
                       <tr>
+                        <td>우편번호</td>
+                        <td>{selectedBoard.postcode}</td>
+                      </tr>
+                      <tr>
                         <td>주소</td>
                         <td>{selectedBoard.address}</td>
                       </tr>
                       <tr>
+                        <td>상세주소</td>
+                        <td>{selectedBoard.detailaddress}</td>
+                      </tr>
+                      <tr>
                         <td>성별</td>
-                        <td>{selectedBoard.gender === "M" ? "여" : "남"}</td>
+                        <td>{selectedBoard.gender}</td>
                       </tr>
                       <tr>
                         <td>잔여캐쉬</td>
@@ -192,6 +216,12 @@ export default function UserinfoPage() {
                         <td>가입여부</td>
                         <td>
                           {selectedBoard.isWithdrawn === 1 ? "탈퇴" : "가입"}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>주문번호</td>
+                        <td>
+                          {selectedBoard.order_Index}
                         </td>
                       </tr>
                     </tbody>
