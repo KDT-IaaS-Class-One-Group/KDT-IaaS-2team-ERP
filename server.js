@@ -193,7 +193,7 @@ app.prepare().then(() => {
     }
   });
 
-  cron.schedule("2 * * * *", () => {
+  cron.schedule("55 * * * *", () => {
     try {
       checkAndRenewSubscriptions(pool);
       console.log("checkAndRenewSubscriptions.js가 실행되었습니다.");

@@ -1,0 +1,40 @@
+.root{
+  width:100vw;
+  height:80vh;
+  display:flex;
+}
+.infobox{
+  width:50vw;
+  height:80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #5b2239;
+  .container{
+    width:40vw;
+    height:65vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .title{
+    width:20vw;
+    height:10vh;
+    color:white;
+    font-size: 2rem;
+  }
+  .info{
+    width:35vw;
+    height:45vh;
+    font-size: 1rem;
+  }
+  button{
+    width:10vw;
+    height:5vh;
+  }
+}
+.imagebox{
+  width:50vw;  
+  height:80vh;
+  background-color: brown;
+}
