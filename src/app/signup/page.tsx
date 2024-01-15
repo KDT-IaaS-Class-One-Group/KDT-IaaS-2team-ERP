@@ -344,9 +344,9 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
         <br />
         <label className={styles.formLabel}>
           주소:
-      <div className={styles.jusoContainer}>
-      <div className={styles.addressWrapper}>
-      <div className={styles.PostCodeAndButton}>
+          <div className={styles.jusoContainer}>
+          <div className={styles.addressWrapper}>
+          <div className={styles.PostCodeAndButton}>
         {/* 이 부분은 주소 검색 결과가 선택되면 자동으로 업데이트되므로 readOnly로 유지 */}
         <Input
           m="3px"

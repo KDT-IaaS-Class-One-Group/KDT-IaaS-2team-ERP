@@ -10,6 +10,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  color:white;
   background-color: #5b2239;
   .container{
     width:40vw;
@@ -37,4 +38,6 @@
   width:50vw;  
   height:80vh;
   background-color: brown;
+  display:flex;
+  position: relative;
 }

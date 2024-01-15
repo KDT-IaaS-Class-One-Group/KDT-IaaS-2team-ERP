@@ -7,7 +7,6 @@ export default function Footbar() {
 
   return (
     <div className={styles.footbar}>
-      <div className={styles.footdiv1}>NTS</div>
       <div className={styles.footdiv2}>
         <div className={styles.suvdiv1}>NTS</div>
         <div className={styles.suvdiv2}>
@@ -22,10 +21,11 @@ export default function Footbar() {
       </div>
       <div className={styles.footdiv3}>
         <div className={styles.suvdiv3}>
-        <p>카약은 통신판매중개자로서 입점 업체가 제공하는</p>
-        <p>상품/서비스에 대한 거래 정보 및 거래와 관련하여 일체 책임을 지지 않습니다.</p>
+          <p>Copyright © Dobra palarnia kawy. Powered by Shopify, made in korea</p>
         </div>
-        <div className={styles.suvdiv4}></div>
+        <div className={styles.suvdiv4}>
+          <p>인스타 , 페북, 유튜브 넣기</p>
+        </div>
       </div>
     </div>
   );

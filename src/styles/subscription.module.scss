@@ -7,12 +7,13 @@
   flex-wrap: wrap;
 }
 .topbar{
-  background-color:gray;
   width:100vw;
-  height:15vh;
+  height:12vh;
 }
 .content{
   width:100vw;
-  height:85vh;
-  background-color: bisque;
+  border-top: 2px solid brown;
+  height:87vh;
+  display:flex;
+  background-color: #f6f1eb;
  }

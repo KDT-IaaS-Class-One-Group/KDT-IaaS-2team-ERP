@@ -1,5 +1,6 @@
 import styles from "@/styles/infobox.module.scss"
 import Link from "next/link";
+import Image from 'next/image';
 
 export default function Aboutus() {
   return (
@@ -18,7 +19,7 @@ export default function Aboutus() {
         </div>
       </div>
       <div className={styles.imagebox}>
-
+        <Image fill={true} src={`/image/일단소개.jpg`} alt={'일단소개'} />
       </div>
     </div>
   )}

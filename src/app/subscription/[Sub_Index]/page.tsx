@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import styled from "styled-components";
-
+import Image from 'next/image';
+import styles from "@/styles/subpage.module.scss"
 // const RadioContainer = styled.div`
 //   margin-top: 20px;
 // `;
@@ -49,6 +50,7 @@ interface SubscriptionClientSideProps {
   Price: number;
   Week: number;
   size: number;
+  imageUrl:string;
 }
 
 interface Product {
@@ -179,26 +181,26 @@ export default function SubscriptionClientSide() {
 
 
   return (
-    <div>
+    <div className={styles.main}>
       {data.map((item, index) => (
-        <div key={index}>
+        <div className={styles.subinfo} key={index}>
+          <div className={styles.image}> 
+            <Image fill={true} className={styles.image} src={item.imageUrl} alt={`sub ${index + 1}`} />
+          </div>
           <p>Name: {item.Name}</p>
           <p>Price: {item.Price}</p>
-          <p>배송받는 기간!: {item.Week} 주</p>
+          <p>배송받는 기간: {item.Week} 주</p>
           <p>일주일에 받는 원두: {item.size} 개 </p>
           <p>구독 기간 종료일: {calculateEndDate(item.Week)}</p>
-          <Link href="#">
-            <button onClick={handleOrderButtonClick}>주문하기</button>
-          </Link>
         </div>
       ))}
-
+        <div className={styles.choicebox}>
         {Array.from({ length: Math.floor(data.reduce((acc, item) => acc + item.size, 0) )}).map((_, index) => (
           <select
             key={index}
             value={selectedProducts[index]}
             onChange={(e) => handleSelectChange(e, index)}
-            className="styles.input"
+            className={styles.input}
           >
             <option value="">상품을 선택하세요</option>
             {productList.map((product) => (
@@ -208,7 +210,11 @@ export default function SubscriptionClientSide() {
             ))}
           </select>
         ))}
-            </div>
+        <Link href="#">
+          <button onClick={handleOrderButtonClick}>주문하기</button>
+        </Link>
+        </div>
+    </div>
   );
 }
 
