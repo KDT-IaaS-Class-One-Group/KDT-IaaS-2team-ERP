@@ -199,7 +199,7 @@ export default function OrderInfoPage() {
                   <td>{order.user_phone}</td>
                   <td>{order.postcode}</td>
                   <td>{order.address}</td>
-                  <td>{order.zip_code}</td>
+        
                   <td>{order.auto_renew === 1 ? "갱신" : "미갱신"}</td>
                   <td>{order.staus === 1 ? "구독" : "해지"}</td>
                 </tr>
@@ -221,7 +221,7 @@ export default function OrderInfoPage() {
                       </tr>
                       <tr>
                         <td>구독번호</td>
-                        <td>{selectedBoard.subs_index}</td>
+                        <td>{selectedBoard.Subs_Index}</td>
                       </tr>
                       <tr>
                         <td>주문상품1</td>
@@ -260,7 +260,7 @@ export default function OrderInfoPage() {
                       </tr>
                       <tr>
                         <td>우편번호</td>
-                        <td>{selectedBoard.zip_code}</td>
+                        <td>{selectedBoard.postcode}</td>
                       </tr>
                       <tr>
                         <td>갱신여부</td>
