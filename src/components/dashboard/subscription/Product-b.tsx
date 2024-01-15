@@ -10,7 +10,6 @@ interface ProductInfo {
   stock_quantity: number;
   timestamp: string;
   imageurl: string;
-  display_status: number;
   info: string;
 }
 
@@ -44,7 +43,6 @@ export default function Product(): React.ReactNode {
       stock_quantity: 0,
       timestamp: "",
       imageurl: "",
-      display_status: 0,
       info: "",
     });
   };
@@ -77,8 +75,7 @@ export default function Product(): React.ReactNode {
     stock_quantity: 0,
     timestamp: "",
     imageurl: "",
-    display_status: 0,
-    info: "",
+    info: ""
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -122,8 +119,7 @@ export default function Product(): React.ReactNode {
         stock_quantity: 0,
         timestamp: "",
         imageurl: "",
-        display_status: 0,
-        info: "",
+        info: ""
       });
       setShowForm(false); // 폼 닫기
     } catch (error) {
@@ -261,17 +257,6 @@ export default function Product(): React.ReactNode {
                 className={styles.addInput}
               />
             </label>
-            전시여부:
-            <select
-              type="text"
-              name="display_status"
-              value={productInfo.display_status}
-              onChange={handleChange}
-              className={styles.addInput}
-            >
-              <option value={1}>전시</option>
-              <option value={0}>미전시</option>
-            </select>
             <label className={styles.addLabel}>
               상세정보:
               <input
@@ -320,18 +305,6 @@ export default function Product(): React.ReactNode {
               />
             </label>
             <label className={styles.addLabel}>
-              전시여부:
-              <select
-                name="display_status"
-                value={productInfo.display_status}
-                onChange={handleChange}
-                className={styles.addInput}
-              >
-                <option value={1}>전시</option>
-                <option value={0}>미전시</option>
-              </select>
-            </label>
-            <label className={styles.addLabel}>
               상세정보:
               <input
                 type="text"
@@ -357,7 +330,6 @@ export default function Product(): React.ReactNode {
                 <th>상품명</th>
                 <th>재고</th>
                 <th>이미지</th>
-                <th>전시여부</th>
                 <th>상세설명</th>
                 <th>등록일</th>
                 <th></th>
@@ -377,8 +349,7 @@ export default function Product(): React.ReactNode {
                   <td>{product.product_name}</td>
                   <td>{product.stock_quantity}</td>
                   <td>{product.imageurl}</td>
-                  <td>{product.display_status === 1 ? "전시" : "미전시"}</td>
-                  <td className={styles.truncate}>{product.info}</td>
+                  <td className={styles.truncate} >{product.info}</td>
                   <td>{formatdate(product.timestamp)}</td>
 
                   <td>
