@@ -18,8 +18,8 @@ const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
-  user: "root",
-  password: "0000",
+  user: "yuan",
+  password: "1234",
   database: "erp",
   connectionLimit: 5,
 });
@@ -570,8 +570,8 @@ app.prepare().then(() => {
       if (searchTerm) {
         if (searchOption === "User_Index") {
           query += " WHERE User_Index LIKE ?";
-        } else if (searchOption === "order_name") {
-          query += " WHERE order_name LIKE ?";
+        } else if (searchOption === "user_name") {
+          query += " WHERE user_name LIKE ?";
         }
 
         queryParams = [`%${searchTerm}%`];
