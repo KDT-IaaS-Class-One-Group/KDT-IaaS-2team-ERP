@@ -5,18 +5,18 @@ import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links
 
 interface OrderInfo {
   Order_Index: string;
-  subs_index: string;
-  product1: string;
-  product2: string;
-  product3: string;
+  Subs_Index: string;
+  Product_Index: string;
+  Product_Index2: string;
+  Product_Index3: string;
   User_Index: string;
-  userId: string;
   Subs_Start: string;
   Subs_End: string;
-  order_name: string;
-  order_phone: string;
+  user_name: string;
+  user_phone: string;
   address: string;
-  zip_code: string;
+  detailaddress: string;
+  postcode: string;
   auto_renew: number;
   staus: number;
 }
@@ -45,8 +45,8 @@ export default function OrderInfoPage() {
 
         if (searchOption === "User_Index") {
           apiUrl += "&searchOption=User_Index&searchTerm=" + searchTerm;
-        } else if (searchOption === "order_name") {
-          apiUrl += "&searchOption=order_name&searchTerm=" + searchTerm;
+        } else if (searchOption === "user_name") {
+          apiUrl += "&searchOption=user_name&searchTerm=" + searchTerm;
         }
         console.log(searchTerm)
         const response = await fetch(apiUrl);
@@ -124,13 +124,13 @@ export default function OrderInfoPage() {
           onChange={(e) => setSearchOption(e.target.value)}
           className={styles.select}
         >
-          <option value="User_Index">ID</option>
-          <option value="order_name">구독 서비스</option>
+          <option value="User_Index">아이디</option>
+          <option value="user_name">이름</option>
         </select>
         <input
           type="text"
           placeholder={`${
-            searchOption === "User_Index" ? "주문자 ID" : "구독 서비스명으"
+            searchOption === "User_Index" ? "주문자 ID" : "이름으"
           }로 검색`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -141,17 +141,18 @@ export default function OrderInfoPage() {
             <thead>
               <tr>
                 <th>주문번호</th>
-                <th>구독번호</th>
-                <th>주문상품1</th>
-                <th>주문상품2</th>
-                <th>주문상품3</th>
-                <th>주문자 ID</th>
+                <th>구독 서비스</th>
+                <th>상품1</th>
+                <th>상품2</th>
+                <th>상품3</th>
                 <th>구독 시작일</th>
                 <th>구독 만료일</th>
-                <th>구독 서비스</th>
-                <th>번호</th>
-                <th>주소</th>
+                <th>구독자 아이디</th>
+                <th>구독 이름</th>
+                <th>핸드폰</th>
                 <th>우편번호</th>
+                <th>주소</th>
+                <th>상세주소</th>
                 <th>
                   갱신여부
                   <select
@@ -187,15 +188,16 @@ export default function OrderInfoPage() {
                   onClick={() => handleRowClick(order)}
                 >
                   <td>{order.Order_Index}</td>
-                  <td>{order.subs_index}</td>
-                  <td>{order.product1}</td>
-                  <td>{order.product2}</td>
-                  <td>{order.product3}</td>
-                  <td>{order.userId}</td>
+                  <td>{order.Subs_Index}</td>
+                  <td>{order.Product_Index}</td>
+                  <td>{order.Product_Index2}</td>
+                  <td>{order.Product_Index3}</td>
                   <td>{formatdate(order.Subs_Start)}</td>
                   <td>{formatdate(order.Subs_End)}</td>
-                  <td>{order.order_name}</td>
-                  <td>{order.order_phone}</td>
+                  <td>{order.User_Index}</td>
+                  <td>{order.user_name}</td>
+                  <td>{order.user_phone}</td>
+                  <td>{order.postcode}</td>
                   <td>{order.address}</td>
                   <td>{order.zip_code}</td>
                   <td>{order.auto_renew === 1 ? "갱신" : "미갱신"}</td>

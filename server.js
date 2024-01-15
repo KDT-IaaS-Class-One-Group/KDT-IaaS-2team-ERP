@@ -575,8 +575,8 @@ app.prepare().then(() => {
       if (searchTerm) {
         if (searchOption === "User_Index") {
           query += " WHERE User_Index LIKE ?";
-        } else if (searchOption === "order_name") {
-          query += " WHERE order_name LIKE ?";
+        } else if (searchOption === "user_name") {
+          query += " WHERE user_name LIKE ?";
         }
   
         queryParams.push(`%${searchTerm}%`);
