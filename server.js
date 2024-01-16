@@ -35,14 +35,16 @@ pool
   });
 
 app.prepare().then(() => {
-
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, path.join(__dirname, "/public/image")); // 이미지 저장 폴더 경로
     },
     filename: function (req, file, cb) {
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
+      cb(
+        null,
+        file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+      );
     },
   });
   const upload = multer({ storage: storage });
@@ -53,12 +55,13 @@ app.prepare().then(() => {
     },
     filename: function (req, file, cb) {
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
+      cb(
+        null,
+        file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+      );
     },
   });
-  const uploadp= multer({ storage: storagep });
-
-  
+  const uploadp = multer({ storage: storagep });
 
   const server = express();
   server.use(bodyParser.json());
@@ -124,27 +127,27 @@ app.prepare().then(() => {
     });
   };
 
-    // API 엔드포인트: 라디오 선택 상자 옵션
-    server.get("/api/radio-options", async (req, res) => {
-      try {
-        // product 테이블에서 product_name과 img1을 가져옴
-        const [rows, fields] = await pool.query(
-          "SELECT product_name, img1 FROM product"
-        );
-  
-        // 데이터 형식을 클라이언트에 맞게 가공
-        const options = rows.map((row) => ({
-          id: row.product_name, // 예시로 product_name을 id로 사용
-          label: row.product_name,
-          img: row.img1,
-        }));
-  
-        res.json(options);
-      } catch (error) {
-        console.error("데이터를 불러오는 도중 오류 발생:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-      }
-    });
+  // API 엔드포인트: 라디오 선택 상자 옵션
+  server.get("/api/radio-options", async (req, res) => {
+    try {
+      // product 테이블에서 product_name과 img1을 가져옴
+      const [rows, fields] = await pool.query(
+        "SELECT product_name, img1 FROM product"
+      );
+
+      // 데이터 형식을 클라이언트에 맞게 가공
+      const options = rows.map((row) => ({
+        id: row.product_name, // 예시로 product_name을 id로 사용
+        label: row.product_name,
+        img: row.img1,
+      }));
+
+      res.json(options);
+    } catch (error) {
+      console.error("데이터를 불러오는 도중 오류 발생:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
 
   server.get("/api/orderindex", async (req, res) => {
     try {
@@ -216,7 +219,7 @@ app.prepare().then(() => {
         console.error("Invalid token or user index not found");
         return res.status(401).json({ error: "Unauthorized" });
       }
-      
+
       const userIndex = decodedToken.user_Index;
       console.log("userIndex: ", userIndex);
 
@@ -337,18 +340,16 @@ app.prepare().then(() => {
               ORDER BY label;
             `;
           break;
-          
+
         default:
           res.status(400).send("Invalid xAxis parameter");
-      
+
           return;
       }
-
 
       const connection = await pool.getConnection();
       const [results] = await connection.query(query);
       connection.release();
-
 
       res.json(results);
     } catch (error) {
@@ -425,13 +426,13 @@ app.prepare().then(() => {
           ORDER BY label;
           `;
           break;
-          case 'address':
-            query = `
+        case "address":
+          query = `
               SELECT SUBSTRING_INDEX(address, ' ', 1) as label, COUNT(DISTINCT Order_Index) as productCount
               FROM orderdetails
               GROUP BY label
               ORDER BY productCount DESC;`;
-            break;
+          break;
 
         default:
           res.status(400).send("Invalid xAxis parameter");
@@ -563,46 +564,57 @@ app.prepare().then(() => {
       const pageSize = parseInt(req.query.pageSize) || 10;
       const searchTerm = req.query.searchTerm || "";
       const searchOption = req.query.searchOption || "User_Index";
-  
+
       let query = `
-      SELECT orderdetails.*, users.userId AS userId
-      FROM orderdetails
-      LEFT JOIN users ON orderdetails.User_Index = users.User_Index
-    `;
+        SELECT 
+          orderdetails.*, 
+          Users.userId AS userId,
+          subscription.name AS subscriptionName,
+          p1.product_name AS productName1,
+          p2.product_name AS productName2,
+          p3.product_name AS productName3
+        FROM orderdetails
+        LEFT JOIN Users ON orderdetails.User_Index = Users.User_Index
+        LEFT JOIN subscription ON orderdetails.Subs_Index = subscription.Subs_Index
+        LEFT JOIN product AS p1 ON orderdetails.Product_Index = p1.product_id
+        LEFT JOIN product AS p2 ON orderdetails.Product_Index2 = p2.product_id
+        LEFT JOIN product AS p3 ON orderdetails.Product_Index3 = p3.product_id
+      `;
 
       let queryParams = [];
-  
+
       if (searchTerm) {
-        if (searchOption === "User_Index") {
-          query += " WHERE User_Index LIKE ?";
+        if (searchOption === "userId") {
+          query += " WHERE Users.userId LIKE ?";
         } else if (searchOption === "user_name") {
           query += " WHERE user_name LIKE ?";
         }
-  
+
         queryParams.push(`%${searchTerm}%`);
       }
-  
+
       query += " LIMIT ?, ?";
       queryParams.push((page - 1) * pageSize, pageSize);
-  
+
       const [orders] = await db.query(query, queryParams);
-  
+
       let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM orderdetails";
       let totalCountParams = [];
-  
+
       if (searchTerm) {
-        if (searchOption === "User_Index") {
-          totalCountQuery += " WHERE User_Index LIKE ?";
-        } else if (searchOption === "order_name") {
-          totalCountQuery += " WHERE order_name LIKE ?";
+        if (searchOption === "userId") {
+          totalCountQuery +=
+            " LEFT JOIN Users ON orderdetails.User_Index = Users.User_Index WHERE Users.userId LIKE ?";
+        } else if (searchOption === "user_name") {
+          totalCountQuery += " WHERE user_name LIKE ?";
         }
-  
+
         totalCountParams.push(`%${searchTerm}%`);
       }
-  
+
       const [totalCount] = await db.query(totalCountQuery, totalCountParams);
       const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
-  
+
       res.json({
         orders,
         pageInfo: {
@@ -616,70 +628,68 @@ app.prepare().then(() => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
-  
 
   server.get("/api/admin/service", async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
-    const searchTerm = req.query.searchTerm || "";
-    const searchOption = req.query.searchOption || "userId";
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const pageSize = parseInt(req.query.pageSize) || 10;
+      const searchTerm = req.query.searchTerm || "";
+      const searchOption = req.query.searchOption || "userId";
 
-    let query = "SELECT Board.*, Users.userId, Users.email FROM Board LEFT JOIN Users ON Board.User_Index = Users.User_Index";
+      let query =
+        "SELECT Board.*, Users.userId, Users.email FROM Board LEFT JOIN Users ON Board.User_Index = Users.User_Index";
 
-    let queryParams = [];
+      let queryParams = [];
 
-    if (searchTerm) {
-      if (searchOption === "userId") {
-        query += " WHERE userId LIKE ?";
-      } else if (searchOption === "title") {
-        query += " WHERE title LIKE ?";
+      if (searchTerm) {
+        if (searchOption === "userId") {
+          query += " WHERE userId LIKE ?";
+        } else if (searchOption === "title") {
+          query += " WHERE title LIKE ?";
+        }
+
+        queryParams.push(`%${searchTerm}%`);
       }
 
-      queryParams.push(`%${searchTerm}%`);
-    }
+      query += " ORDER BY Board.date DESC"; // 시간 역순으로 정렬
 
-    query += " ORDER BY Board.date DESC"; // 시간 역순으로 정렬
+      const [reverseBoards] = await db.query(query, queryParams);
 
-    const [reverseBoards] = await db.query(query, queryParams);
+      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM Board";
 
-    let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM Board";
+      if (searchTerm) {
+        if (searchOption === "userId") {
+          totalCountQuery += " WHERE userId LIKE ?";
+        } else if (searchOption === "title") {
+          totalCountQuery += " WHERE title LIKE ?";
+        }
 
-    if (searchTerm) {
-      if (searchOption === "userId") {
-        totalCountQuery += " WHERE userId LIKE ?";
-      } else if (searchOption === "title") {
-        totalCountQuery += " WHERE title LIKE ?";
+        queryParams.push(`%${searchTerm}%`);
       }
 
-      queryParams.push(`%${searchTerm}%`);
+      const [totalCount] = await db.query(totalCountQuery, queryParams);
+      const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
+
+      // Apply LIMIT for pagination
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = page * pageSize;
+
+      const boards = reverseBoards.slice(startIndex, endIndex);
+
+      res.json({
+        boards,
+        pageInfo: {
+          currentPage: page,
+          pageSize,
+          totalPages,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching boards:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
+  });
 
-    const [totalCount] = await db.query(totalCountQuery, queryParams);
-    const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
-
-    // Apply LIMIT for pagination
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = page * pageSize;
-
-    const boards = reverseBoards.slice(startIndex, endIndex);
-
-    res.json({
-      boards,
-      pageInfo: {
-        currentPage: page,
-        pageSize,
-        totalPages,
-      },
-    });
-  } catch (error) {
-    console.error("Error fetching boards:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-  
-  
   server.get("/api/mysubscription", async (req, res) => {
     try {
       const token = req.headers.authorization?.replace("Bearer ", "");
@@ -855,7 +865,7 @@ app.prepare().then(() => {
       console.error("쿼리 실행 중 오류 발생:", error);
       res.status(500).send("데이터베이스 오류");
     }
-  }); 
+  });
 
   server.post("/api/payment", async (req, res) => {
     try {
@@ -868,10 +878,10 @@ app.prepare().then(() => {
       const orderName = req.body.order_name; // 주문자 이름
       const orderPhone = req.body.order_phone; // 주문자 전화번호
       const zipCode = req.body.postcode; // 우편번호
-      console.log('address : ', address)
+      console.log("address : ", address);
       // 토큰 해독
       const decodedToken = jwt.verify(token, secretKey);
-      console.log(decodedToken)
+      console.log(decodedToken);
       // 데이터베이스 연결
       const connection = await pool.getConnection();
 
@@ -990,7 +1000,6 @@ app.prepare().then(() => {
     }
   });
 
-
   server.get("/api/cash", async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1; // 현재 페이지 번호 (기본값: 1)
@@ -1045,7 +1054,6 @@ app.prepare().then(() => {
           totalPages,
         },
       });
-      
     } catch (error) {
       console.error("Error fetching subs:", error);
       res.status(500).json({ error: "Internal Server Error" });
@@ -1184,29 +1192,29 @@ app.prepare().then(() => {
         if (rows.length === 1) {
           const user = rows[0];
 
-        if (user.isWithdrawn) {
-          // 회원이 탈퇴한 경우
-          res.status(401).json({ error: '이미 탈퇴한 회원입니다.' });
-        } else if (password === user.password) {
-          // 로그인 성공
-          const token = jwt.sign(
-            {
-              User_Index: user.User_Index,
-              userId: user.userId ,
-              name: user.name,
-              birthdate: user.birthdate,
-              phoneNumber: user.phoneNumber,
-              email: user.email,
-              postcode: user.postcode,
-              address: user.address,
-              detailaddress: user.detailaddress,
-              gender: user.gender,
-              cash: user.cash,
-              order_Index:user.order_Index,
-            },
-            secretKey,
-            { expiresIn: '1h' }
-          );
+          if (user.isWithdrawn) {
+            // 회원이 탈퇴한 경우
+            res.status(401).json({ error: "이미 탈퇴한 회원입니다." });
+          } else if (password === user.password) {
+            // 로그인 성공
+            const token = jwt.sign(
+              {
+                User_Index: user.User_Index,
+                userId: user.userId,
+                name: user.name,
+                birthdate: user.birthdate,
+                phoneNumber: user.phoneNumber,
+                email: user.email,
+                postcode: user.postcode,
+                address: user.address,
+                detailaddress: user.detailaddress,
+                gender: user.gender,
+                cash: user.cash,
+                order_Index: user.order_Index,
+              },
+              secretKey,
+              { expiresIn: "1h" }
+            );
 
             const verified = jwt.verify(token, secretKey);
 
@@ -1316,7 +1324,6 @@ app.prepare().then(() => {
     }
   });
 
-
   server.delete("/api/subs-product/:Subs_Index", async (req, res) => {
     const { Subs_Index } = req.params;
     try {
@@ -1346,12 +1353,12 @@ app.prepare().then(() => {
     const { Subs_Index } = req.params;
     try {
       if (req.method === "PUT") {
-        const { name, week, size, price } = req.body;
+        const { name, week, size, price, imageUrl } = req.body;
 
         // 데이터베이스에서 구독 정보 업데이트
         const [result] = await db.query(
-          "UPDATE subscription SET name = ?, week = ?, size = ?, price = ? WHERE Subs_Index = ?",
-          [name, week, size, price, Subs_Index]
+          "UPDATE subscription SET name = ?, week = ?, size = ?, price = ?, imageUrl = ? WHERE Subs_Index = ?",
+          [name, week, price, size, imageUrl, Subs_Index]
         );
 
         if (result.affectedRows === 1) {
@@ -1374,12 +1381,13 @@ app.prepare().then(() => {
   server.post("/api/admin/product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { product_name, stock_quantity, img1,display_status, info } = req.body; // 변경된 부분
+        const { product_name, stock_quantity, imageUrl, info } =
+          req.body; // 변경된 부분
 
         // 데이터베이스에서 subscription 정보 추가
         const [result] = await db.query(
-          "INSERT INTO product (product_name, stock_quantity, img1, display_status, info) VALUES (?, ?, ?, ?, ?)",
-          [product_name, stock_quantity, img1, display_status, info] // 변경된 부분
+          "INSERT INTO product (product_name, stock_quantity, imageUrl, info) VALUES (?, ?, ?, ?, ?)",
+          [product_name, stock_quantity, imageUrl, info] // 변경된 부분
         );
 
         if (result.affectedRows === 1) {
@@ -1428,12 +1436,13 @@ app.prepare().then(() => {
     const { product_id } = req.params;
     try {
       if (req.method === "PUT") {
-        const { product_name, stock_quantity, img1, display_status, info } = req.body;
+        const { product_name, stock_quantity, imageUrl, info } =
+          req.body;
 
         // 데이터베이스에서 구독 정보 업데이트
         const [result] = await db.query(
-          "UPDATE product SET product_name = ?, stock_quantity = ?, img1 = ?, display_status = ?,  info = ? WHERE product_id = ?",
-          [product_name, stock_quantity, img1, display_status, info, product_id]
+          "UPDATE product SET product_name = ?, stock_quantity = ?, imageUrl = ?, info = ? WHERE product_id = ?",
+          [product_name, stock_quantity, imageUrl, info, product_id]
         );
 
         if (result.affectedRows === 1) {
@@ -1502,8 +1511,16 @@ app.prepare().then(() => {
         const userId = decodedToken.userId;
 
         // 클라이언트에서 보낸 업데이트할 사용자 정보
-        const { name, birthdate, phoneNumber, email, postcode, address, detailaddress, gender } =
-          req.body;
+        const {
+          name,
+          birthdate,
+          phoneNumber,
+          email,
+          postcode,
+          address,
+          detailaddress,
+          gender,
+        } = req.body;
 
         // 데이터베이스에서 사용자 정보 업데이트
         const [result] = await db.query(
@@ -1674,14 +1691,12 @@ app.prepare().then(() => {
     }
   });
 
- 
-
   server.post("/api/uploadImage", upload.single("image"), (req, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ error: "이미지 파일이 없습니다." });
       }
-  
+
       const imageUrl = `/image/${req.file.filename}`;
       res.status(200).json({ imageUrl });
     } catch (error) {
@@ -1695,7 +1710,7 @@ app.prepare().then(() => {
       if (!req.file) {
         return res.status(400).json({ error: "이미지 파일이 없습니다." });
       }
-  
+
       const imageUrl = `/proudctimage/${req.file.filename}`;
       res.status(200).json({ imageUrl });
     } catch (error) {
@@ -1707,14 +1722,14 @@ app.prepare().then(() => {
   server.post("/api/subs-product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { name, price, size, week, imageUrl } = req.body;
-  
+        const { name, week, size, price, imageUrl } = req.body;
+
         // 데이터베이스에서 subscription 정보 추가
         const [result] = await db.query(
           "INSERT INTO subscription (name, week, size, price, imageUrl) VALUES (?, ?, ?, ?, ?)",
           [name, week, size, price, imageUrl]
         );
-  
+
         if (result.affectedRows === 1) {
           // 성공적으로 추가된 경우
           res.status(200).json({ message: "subscription 정보 추가 성공" });
@@ -1735,11 +1750,12 @@ app.prepare().then(() => {
   server.post("/api/admin/product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { product_name, stock_quantity, imageUrl, display_status, info } = req.body; // 변경된 부분
+        const { product_name, stock_quantity, imageUrl, info } =
+          req.body; // 변경된 부분
 
         const [result] = await db.query(
-          "INSERT INTO product (product_name, stock_quantity, imageUrl, display_status, info) VALUES (?, ?, ?, ?, ?)",
-          [product_name, stock_quantity, imageUrl,display_status, info] // 변경된 부분
+          "INSERT INTO product (product_name, stock_quantity, imageUrl, info) VALUES (?, ?, ?, ?)",
+          [product_name, stock_quantity, imageUrl, info] // 변경된 부분
         );
 
         if (result.affectedRows === 1) {
@@ -1758,7 +1774,6 @@ app.prepare().then(() => {
       res.status(500).json({ error: "내부 서버 오류" });
     }
   });
-
 
   server.post("/customer/writingPage/create-post", async (req, res) => {
     const formData = req.body;
@@ -1812,25 +1827,25 @@ app.prepare().then(() => {
     try {
       if (req.method === "POST") {
         const { userId, cashAmount } = req.body;
-  
+
         // 데이터베이스에서 사용자의 현재 캐쉬 가져오기
         const [getUserResult] = await db.query(
           "SELECT cash FROM users WHERE userId = ?",
           [userId]
         );
-  
+
         if (getUserResult.length === 1) {
           const currentCash = getUserResult[0].cash;
-  
+
           // 현재 캐쉬와 추가할 캐쉬를 합산하여 업데이트
           const updatedCash = currentCash + cashAmount;
-  
+
           // 데이터베이스에서 사용자의 캐쉬 업데이트
           const [updateResult] = await db.query(
             "UPDATE users SET cash = ? WHERE userId = ?",
             [updatedCash, userId]
           );
-  
+
           if (updateResult.affectedRows === 1) {
             // 업데이트 성공 시
             res.status(200).json({ message: "캐쉬 추가 성공" });
@@ -1851,7 +1866,6 @@ app.prepare().then(() => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
-
 
   const PORT = process.env.PORT || 3000;
 
