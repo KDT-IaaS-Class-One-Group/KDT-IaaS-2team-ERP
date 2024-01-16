@@ -1386,7 +1386,7 @@ app.prepare().then(() => {
 
         // 데이터베이스에서 subscription 정보 추가
         const [result] = await db.query(
-          "INSERT INTO product (product_name, stock_quantity, imageUrl, info) VALUES (?, ?, ?, ?, ?)",
+          "INSERT INTO product (product_name, stock_quantity, imageUrl, info) VALUES (?, ?, ?, ?)",
           [product_name, stock_quantity, imageUrl, info] // 변경된 부분
         );
 
