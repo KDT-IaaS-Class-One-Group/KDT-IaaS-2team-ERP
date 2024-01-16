@@ -194,7 +194,7 @@ export default function QA() {
                       <tr>
                         <td>글 번호</td>
                         <td>{selectedBoard.Board_Index}</td>
-                        
+
                         <td>작성일자</td>
                         <td>{formatDateTime(selectedBoard.date)}</td>
                       </tr>
