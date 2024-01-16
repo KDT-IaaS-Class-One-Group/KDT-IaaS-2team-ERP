@@ -659,7 +659,7 @@ app.prepare().then(() => {
 
       if (searchTerm) {
         if (searchOption === "userId") {
-          totalCountQuery += " WHERE userId LIKE ?";
+          totalCountQuery += " LEFT JOIN Users ON Board.User_Index = Users.User_Index WHERE Users.userId LIKE ?";
         } else if (searchOption === "title") {
           totalCountQuery += " WHERE title LIKE ?";
         }
