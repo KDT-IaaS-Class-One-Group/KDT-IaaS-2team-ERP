@@ -9,7 +9,7 @@ interface ProductInfo {
   product_name: string;
   stock_quantity: number;
   timestamp: string;
-  imageurl: string;
+  imageUrl?: string;
   info: string;
 }
 
@@ -42,7 +42,7 @@ export default function Product(): React.ReactNode {
       product_name: "",
       stock_quantity: 0,
       timestamp: "",
-      imageurl: "",
+      imageUrl: "",
       info: "",
     });
   };
@@ -74,8 +74,8 @@ export default function Product(): React.ReactNode {
     product_name: "",
     stock_quantity: 0,
     timestamp: "",
-    imageurl: "",
-    info: ""
+    imageUrl: "",
+    info: "",
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -118,8 +118,8 @@ export default function Product(): React.ReactNode {
         product_name: "",
         stock_quantity: 0,
         timestamp: "",
-        imageurl: "",
-        info: ""
+        imageUrl: "",
+        info: "",
       });
       setShowForm(false); // 폼 닫기
     } catch (error) {
@@ -218,16 +218,6 @@ export default function Product(): React.ReactNode {
         {showForm && (
           <div className={styles.addSubscription}>
             <label className={styles.addLabel}>
-              <div>
-                <ImageUploadp onImageUpload={handleImageUpload} />
-              </div>
-            </label>
-            <label className={styles.addLabel}>
-              <div>
-                <ImageUploadp onImageUpload={handleImageUpload} />
-              </div>
-            </label>
-            <label className={styles.addLabel}>
               상품명:
               <input
                 type="text"
@@ -248,14 +238,9 @@ export default function Product(): React.ReactNode {
               />
             </label>
             <label className={styles.addLabel}>
-              이미지:
-              <input
-                type="text"
-                name="imageurl"
-                value={productInfo.imageurl}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
+              <div>
+                <ImageUploadp onImageUpload={handleImageUpload} />
+              </div>
             </label>
             <label className={styles.addLabel}>
               상세정보:
@@ -295,14 +280,9 @@ export default function Product(): React.ReactNode {
               />
             </label>
             <label className={styles.addLabel}>
-              이미지:
-              <input
-                type="text"
-                name="imageUrl"
-                value={productInfo.imageurl}
-                onChange={handleChange}
-                className={styles.addInput}
-              />
+              <div>
+                <ImageUploadp onImageUpload={handleImageUpload} />
+              </div>
             </label>
             <label className={styles.addLabel}>
               상세정보:
@@ -348,8 +328,8 @@ export default function Product(): React.ReactNode {
                   <td>{product.product_id}</td>
                   <td>{product.product_name}</td>
                   <td>{product.stock_quantity}</td>
-                  <td>{product.imageurl}</td>
-                  <td className={styles.truncate} >{product.info}</td>
+                  <td>{product.imageUrl}</td>
+                  <td className={styles.truncate}>{product.info}</td>
                   <td>{formatdate(product.timestamp)}</td>
 
                   <td>
