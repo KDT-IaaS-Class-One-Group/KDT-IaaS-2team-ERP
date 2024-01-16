@@ -19,6 +19,11 @@ interface OrderInfo {
   postcode: string;
   auto_renew: number;
   staus: number;
+  productName1: string;
+  productName2: string;
+  productName3: string;
+  subscriptionName: string;
+  userId: string;
 }
 
 const pageSize = 10;
@@ -31,7 +36,7 @@ export default function OrderInfoPage() {
     totalPages: 1,
   });
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchOption, setSearchOption] = useState("User_Index"); // 기본값은 userId로 설정
+  const [searchOption, setSearchOption] = useState("userId"); // 기본값은 userId로 설정
 
   const [filterStatus, setFilterStatus] = useState("all"); // 모두 보기
   const [filterRenew, setFilterRenew] = useState("all"); // 모두 보기
@@ -43,8 +48,8 @@ export default function OrderInfoPage() {
       try {
         let apiUrl = "/api/admin/order?page=" + page + "&pageSize=" + pageSize;
 
-        if (searchOption === "User_Index") {
-          apiUrl += "&searchOption=User_Index&searchTerm=" + searchTerm;
+        if (searchOption === "userId") {
+          apiUrl += "&searchOption=userId&searchTerm=" + searchTerm;
         } else if (searchOption === "user_name") {
           apiUrl += "&searchOption=user_name&searchTerm=" + searchTerm;
         }
@@ -123,13 +128,13 @@ export default function OrderInfoPage() {
           onChange={(e) => setSearchOption(e.target.value)}
           className={styles.select}
         >
-          <option value="User_Index">아이디</option>
-          <option value="user_name">이름</option>
+          <option value="userId">구독자 ID</option>
+          <option value="user_name">구독자 이름</option>
         </select>
         <input
           type="text"
           placeholder={`${
-            searchOption === "User_Index" ? "주문자 ID" : "이름으"
+            searchOption === "userId" ? "구독자 ID" : "구독자 이름으"
           }로 검색`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -146,7 +151,7 @@ export default function OrderInfoPage() {
                 <th>상품3</th>
                 <th>구독 시작일</th>
                 <th>구독 만료일</th>
-                <th>구독자 아이디</th>
+                <th>구독자 ID</th>
                 <th>구독 이름</th>
                 <th>핸드폰</th>
                 <th>우편번호</th>
@@ -187,13 +192,13 @@ export default function OrderInfoPage() {
                   onClick={() => handleRowClick(order)}
                 >
                   <td>{order.Order_Index}</td>
-                  <td>{order.Subs_Index}</td>
-                  <td>{order.Product_Index}</td>
-                  <td>{order.Product_Index2}</td>
-                  <td>{order.Product_Index3}</td>
+                  <td>{order.subscriptionName}</td>
+                  <td>{order.productName1}</td>
+                  <td>{order.productName2}</td>
+                  <td>{order.productName3}</td>
                   <td>{formatdate(order.Subs_Start)}</td>
                   <td>{formatdate(order.Subs_End)}</td>
-                  <td>{order.User_Index}</td>
+                  <td>{order.userId}</td>
                   <td>{order.user_name}</td>
                   <td>{order.user_phone}</td>
                   <td>{order.postcode}</td>
@@ -219,57 +224,62 @@ export default function OrderInfoPage() {
                         <td>{selectedBoard.Order_Index}</td>
                       </tr>
                       <tr>
-                        <td>구독번호</td>
-                        <td>{selectedBoard.subs_index}</td>
+                        <td>구독서비스</td>
+                        <td>{selectedBoard.subscriptionName}</td>
                       </tr>
                       <tr>
                         <td>주문상품1</td>
-                        <td>{selectedBoard.product1}</td>
+                        <td>{selectedBoard.productName1}</td>
                       </tr>
                       <tr>
                         <td>주문상품2</td>
-                        <td>{selectedBoard.product2}</td>
+                        <td>{selectedBoard.productName2}</td>
                       </tr>
                       <tr>
                         <td>주문상품3</td>
-                        <td>{selectedBoard.product3}</td>
-                      </tr>
-                      <tr>
-                        <td>주문자ID</td>
-                        <td>{selectedBoard.userId}</td>
+                        <td>{selectedBoard.productName3}</td>
                       </tr>
                       <tr>
                         <td>구독 시작일</td>
                         <td>{formatdate(selectedBoard.Subs_Start)}</td>
-                      </tr>                      <tr>
+                      </tr>
+                      <tr>
                         <td>구독 만료일</td>
                         <td>{formatdate(selectedBoard.Subs_End)}</td>
                       </tr>
                       <tr>
-                        <td>구독 서비스</td>
-                        <td>{selectedBoard.order_name}</td>
+                        <td>구독자ID</td>
+                        <td>{selectedBoard.userId}</td>
+                      </tr>
+                      <tr>
+                        <td>구독자이름</td>
+                        <td>{selectedBoard.user_name}</td>
                       </tr>
                       <tr>
                         <td>번호</td>
-                        <td>{selectedBoard.order_phone}</td>
+                        <td>{selectedBoard.user_phone}</td>
+                      </tr>
+                      <tr>
+                        <td>우편번호</td>
+                        <td>{selectedBoard.postcode}</td>
                       </tr>
                       <tr>
                         <td>주소</td>
                         <td>{selectedBoard.address}</td>
                       </tr>
                       <tr>
-                        <td>우편번호</td>
-                        <td>{selectedBoard.zip_code}</td>
+                        <td>상세주소</td>
+                        <td>{selectedBoard.detailaddress}</td>
                       </tr>
                       <tr>
                         <td>갱신여부</td>
-                        <td>{selectedBoard.auto_renew === 1 ? "미갱신" : "갱신"}</td>
+                        <td>
+                          {selectedBoard.auto_renew === 1 ? "미갱신" : "갱신"}
+                        </td>
                       </tr>
                       <tr>
                         <td>구독여부</td>
-                        <td>
-                          {selectedBoard.staus === 1 ? "해지" : "구독"}
-                        </td>
+                        <td>{selectedBoard.staus === 1 ? "해지" : "구독"}</td>
                       </tr>
                     </tbody>
                   </table>
