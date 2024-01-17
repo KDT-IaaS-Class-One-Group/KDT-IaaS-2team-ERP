@@ -11,6 +11,7 @@ interface ProductInfo {
   timestamp: string;
   imageUrl?: string;
   info: string;
+  sale_status: number;
 }
 
 const pageSize = 10;
@@ -44,6 +45,7 @@ export default function Product(): React.ReactNode {
       timestamp: "",
       imageUrl: "",
       info: "",
+      sale_status: 1,
     });
   };
 
@@ -76,6 +78,7 @@ export default function Product(): React.ReactNode {
     timestamp: "",
     imageUrl: "",
     info: "",
+    sale_status: 1
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -120,6 +123,7 @@ export default function Product(): React.ReactNode {
         timestamp: "",
         imageUrl: "",
         info: "",
+        sale_status: 1
       });
       setShowForm(false); // 폼 닫기
     } catch (error) {
@@ -130,24 +134,29 @@ export default function Product(): React.ReactNode {
 
   const handleDelete = async (product_id: string) => {
     try {
-      const response = await fetch(`/api/admin/product/${product_id}`, {
-        method: "DELETE",
+      const response = await fetch(`/api/admin/productSale/${product_id}`, {
+        method: "PUT", // 또는 PATCH
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          sale_status: 0, // 판매 중지를 나타내는 값
+        }),
       });
+  
       if (response.ok) {
-        console.log("Product deleted successfully");
+        console.log("Product sale status updated successfully");
         fetchData(pageInfo.currentPage);
-        alert("삭제 완료");
+        alert("판매상태 변경 완료");
       } else {
-        console.error(`Error deleting Product: ${response.status}`);
-        alert("삭제 실패");
+        console.error(`Error updating Product sale status: ${response.status}`);
+        alert("판매상태 변경 실패");
       }
     } catch (error) {
-      console.error("Error deleting Product:", error);
+      console.error("Error updating Product sale status:", error);
     }
   };
+  
 
   const handleAdd = () => {
     setShowEditForm(false); // 수정 폼 숨기기
@@ -176,7 +185,7 @@ export default function Product(): React.ReactNode {
         },
         body: JSON.stringify(productInfo),
       });
-
+  
       if (response.ok) {
         alert("수정 완료");
         fetchData(pageInfo.currentPage);
@@ -192,6 +201,7 @@ export default function Product(): React.ReactNode {
       console.error("Error updating product:", error);
     }
   };
+  
 
   const formatdate = (date: string) => {
     const dateDate = new Date(date);
@@ -211,7 +221,7 @@ export default function Product(): React.ReactNode {
         <NavLinks />
       </div>
       <div className={styles.main}>
-        <h1 className={styles.title}>상품 관리</h1>
+        {/* <h1 className={styles.title}>상품 관리</h1> */}
         <button onClick={handleAdd} className={styles.addButton}>
           추가
         </button>
@@ -244,7 +254,7 @@ export default function Product(): React.ReactNode {
             </label>
             <label className={styles.addLabel}>
               상세정보:
-              <input
+              <textarea
                 type="text"
                 name="info"
                 value={productInfo.info}
@@ -286,7 +296,7 @@ export default function Product(): React.ReactNode {
             </label>
             <label className={styles.addLabel}>
               상세정보:
-              <input
+              <textarea
                 type="text"
                 name="info"
                 value={productInfo.info}
@@ -311,6 +321,7 @@ export default function Product(): React.ReactNode {
                 <th>재고</th>
                 <th>이미지</th>
                 <th>상세설명</th>
+                <th>판매상태</th>
                 <th>등록일</th>
                 <th></th>
               </tr>
@@ -330,11 +341,12 @@ export default function Product(): React.ReactNode {
                   <td>{product.stock_quantity}</td>
                   <td>{product.imageUrl}</td>
                   <td className={styles.truncate}>{product.info}</td>
+                  <td>{product.sale_status === 0 ? "판매중지" : "판매중"}</td>
                   <td>{formatdate(product.timestamp)}</td>
 
                   <td>
                     <button
-                      className={styles.delButton}
+                      className={styles.corrButton}
                       onClick={() => handleCorrection(product.product_id)}
                     >
                       수정
@@ -343,7 +355,7 @@ export default function Product(): React.ReactNode {
                       className={styles.delButton}
                       onClick={() => handleDelete(product.product_id)}
                     >
-                      삭제
+                      판매상태
                     </button>
                   </td>
                 </tr>
