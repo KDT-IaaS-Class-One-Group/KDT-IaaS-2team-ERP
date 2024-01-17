@@ -122,24 +122,28 @@ export default function SubsProduct(): React.ReactNode {
     }
   };
 
-  const handleDelete = async (subs_index: string) => {
+  const handleDelete = async (Subs_Index: string) => {
     try {
-      const response = await fetch(`/api/subs-product/${subs_index}`, {
-        method: "DELETE",
+      const response = await fetch(`/api/subs-productSale/${Subs_Index}`, {
+        method: "PUT", // 또는 PATCH
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          sale_status: 0, // 판매 중지를 나타내는 값
+        }),
       });
-
+  
       if (response.ok) {
+        console.log("subscription sale status updated successfully");
         fetchData(pageInfo.currentPage);
-        alert("삭제 완료");
+        alert("판매상태 변경 완료");
       } else {
-        console.error(`Error deleting subscription: ${response.status}`);
-        alert("삭제 실패");
+        console.error(`Error updating subscription sale status: ${response.status}`);
+        alert("판매상태 변경 실패");
       }
     } catch (error) {
-      console.error("Error deleting subscription:", error);
+      console.error("Error updating subscription sale status:", error);
     }
   };
 
@@ -205,7 +209,7 @@ export default function SubsProduct(): React.ReactNode {
         <NavLinks />
       </div>
       <div className={styles.main}>
-        <h1 className={styles.title}>구독 서비스 관리</h1>
+        {/* <h1 className={styles.title}>구독 서비스 관리</h1> */}
         <button onClick={handleAdd} className={styles.addButton}>
           추가
         </button>
@@ -350,6 +354,7 @@ export default function SubsProduct(): React.ReactNode {
                 <th>상품 수량 (주)</th>
                 <th>가격</th>
                 <th>이미지</th>
+                <th>판매상태</th>
                 <th>등록일</th>
                 <th></th>
               </tr>
@@ -370,10 +375,11 @@ export default function SubsProduct(): React.ReactNode {
                   <td>{sub.size}</td>
                   <td>{sub.price}</td>
                   <td>{sub.imageUrl}</td>
+                  <td>{sub.sale_status === 0 ? "판매중지" : "판매중"}</td>
                   <td>{formatdate(sub.timestamp)}</td>
                   <td>
                     <button
-                      className={styles.delButton}
+                      className={styles.corrButton}
                       onClick={() => handleCorrection(sub.Subs_Index)}
                     >
                       수정
@@ -382,7 +388,7 @@ export default function SubsProduct(): React.ReactNode {
                       className={styles.delButton}
                       onClick={() => handleDelete(sub.Subs_Index)}
                     >
-                      삭제
+                      판매상태
                     </button>
                   </td>
                 </tr>
