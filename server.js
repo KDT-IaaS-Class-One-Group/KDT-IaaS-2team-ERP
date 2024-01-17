@@ -1968,30 +1968,29 @@ app.prepare().then(() => {
   server.post("/api/service", async (req, res) => {
     try {
       const token = req.headers.authorization?.replace("Bearer ", "");
-  
+
       if (!token) {
         return res.status(401).json({ error: "토큰이 제공되지 않았습니다." });
       }
-  
+
       const decodedToken = jwt.verify(token, secretKey);
-  
+
       const { password, title, content } = req.body;
-  
+
       // 토큰에서 User_Index 추출
       const userIndex = decodedToken.User_Index;
-  
+
       // 글 작성 쿼리
       const insertQuery =
         "INSERT INTO Board (User_Index, password, title, content) VALUES (?, ?, ?, ?)";
       await db.query(insertQuery, [userIndex, password, title, content]);
-  
+
       res.json({ success: true, message: "글 작성 성공" });
     } catch (error) {
       console.error("Error adding board:", error);
       res.status(500).json({ success: false, error: "Internal Server Error" });
     }
   });
-  
 
   server.post("/api/addCash", async (req, res) => {
     try {
