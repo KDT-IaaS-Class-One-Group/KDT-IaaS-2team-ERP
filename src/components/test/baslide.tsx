@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef} from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Scrollbar, Autoplay , Parallax} from 'swiper/modules';
+import { Navigation, Scrollbar, Autoplay , Parallax , EffectCards} from 'swiper/modules';
 import SwiperCore  from 'swiper';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Image from 'next/image';
 import styles from '@/styles/baslide.module.scss'
+import { Card } from '@chakra-ui/react';
 
 
 interface Product {
@@ -22,7 +23,7 @@ export default function SwiperTest() {
   
   const [productData, setProductData] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  SwiperCore.use([Navigation, Scrollbar, Autoplay, Parallax]);
+  SwiperCore.use([Navigation, Scrollbar, Autoplay, Parallax, EffectCards]);
   const swiperRef = useRef<SwiperCore>();
   const fetchProductData = async () => {
     try {
@@ -53,26 +54,27 @@ export default function SwiperTest() {
             swiper.update(); 
           }, 1000);
         }}
-        modules={[Navigation, Scrollbar,Parallax,]}
+        modules={[Navigation, Scrollbar,Parallax, EffectCards]}
         className={styles.swiperslider}
-
-        spaceBetween={50} // 슬라이스 사이 간격
+        effect={'cards'}
+        cardsEffect={{perSlideOffset:30 , slideShadows: false, perSlideRotate:10, rotate: true}}
+        spaceBetween={250} // 슬라이스 사이 간격
         slidesPerView={1} // 보여질 슬라이스 수
-        navigation={true} // prev, next button
+        // navigation={true} // prev, next button
         parallax
         observeParents
         observer={true}
-        
+        grabCursor={true}
         autoplay={{
           delay: 2500,
-      // 사용자 상호작용시 슬라이더 일시 정지 비활성
         }}
       >
         {productData.map((product, index) => {
           return(
-          <SwiperSlide key={product.id} className={styles.card}>          
-            <div className={styles.image} onClick={() => handleSlideClick(index)} style={{width:"35vw",height:"45vh"}}> 
-              <Image fill={true} src={`/productimage/image${index+1}.jpg`} alt={`Product ${index + 1}`} />
+          <SwiperSlide key={product.id} className={styles.card} style={{display:"flex", justifyContent:"center"}}>          
+            <div className={styles.image} onClick={() => handleSlideClick(index)} style={{width:"25vw",height:"55vh",borderRadius:"5%"
+          , display:"flex" , justifyContent:"center"}}> 
+              <Image fill={true} style={{borderRadius:"10%"}} src={`/productimage/image${index+1}.jpg`} alt={`Product ${index + 1}`} />
             </div>
           </SwiperSlide>
           );

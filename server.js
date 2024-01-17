@@ -18,8 +18,8 @@ const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
-  user: "yuan",
-  password: "1234",
+  user: "root",
+  password: "723546",
   database: "erp",
   connectionLimit: 5,
 });
@@ -127,27 +127,27 @@ app.prepare().then(() => {
     });
   };
 
-  // API 엔드포인트: 라디오 선택 상자 옵션
-  server.get("/api/radio-options", async (req, res) => {
-    try {
-      // product 테이블에서 product_name과 img1을 가져옴
-      const [rows, fields] = await pool.query(
-        "SELECT product_name, img1 FROM product"
-      );
-
-      // 데이터 형식을 클라이언트에 맞게 가공
-      const options = rows.map((row) => ({
-        id: row.product_name, // 예시로 product_name을 id로 사용
-        label: row.product_name,
-        img: row.img1,
-      }));
-
-      res.json(options);
-    } catch (error) {
-      console.error("데이터를 불러오는 도중 오류 발생:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  });
+    // API 엔드포인트: 라디오 선택 상자 옵션
+    server.get("/api/radio-options", async (req, res) => {
+      try {
+        // product 테이블에서 product_name과 img1을 가져옴
+        const [rows, fields] = await pool.query(
+          "SELECT product_name, imageUrl FROM product"
+        );
+  
+        // 데이터 형식을 클라이언트에 맞게 가공
+        const options = rows.map((row) => ({
+          id: row.product_name, // 예시로 product_name을 id로 사용
+          label: row.product_name,
+          imagerUrl: row.imageUrl,
+        }));
+  
+        res.json(options);
+      } catch (error) {
+        console.error("데이터를 불러오는 도중 오류 발생:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    });
 
   server.get("/api/orderindex", async (req, res) => {
     try {
@@ -196,7 +196,7 @@ app.prepare().then(() => {
     }
   });
 
-  cron.schedule("2 * * * *", () => {
+  cron.schedule("55 * * * *", () => {
     try {
       checkAndRenewSubscriptions(pool);
       console.log("checkAndRenewSubscriptions.js가 실행되었습니다.");
@@ -810,14 +810,16 @@ app.prepare().then(() => {
   server.get("/api/products", async (req, res) => {
     try {
       const [rows] = await db.execute(
-        "SELECT product_id , product_name, stock_quantity , info FROM product"
+        "SELECT product_id , product_name, stock_quantity , imageUrl, info FROM product"
       );
       const dataFromDB = rows.map((row) => ({
         id: row.product_id,
         name: row.product_name,
         stock: row.stock_quantity,
         info: row.info,
+        imageUrl: row.imageUrl,
       }));
+
       res.json(dataFromDB);
     } catch (error) {
       console.error("쿼리 실행 중 오류 발생:", error);
@@ -842,14 +844,14 @@ app.prepare().then(() => {
 
       const productsPromises = ids.map(async (id) => {
         const [rows] = await db.query(
-          "SELECT product_id, category_id, product_name, stock_quantity, info FROM product WHERE product_id = ?",
+          "SELECT product_id, product_name, stock_quantity, info, imageUrl FROM product WHERE product_id = ?",
           [id]
         );
         if (rows.length > 0) {
           const row = rows[0];
           return {
             id: row.product_id,
-            category: row.category_id,
+            imageUrl: row.imageUrl,
             name: row.product_name,
             stock: row.stock_quantity,
             info: row.info,
@@ -982,16 +984,17 @@ app.prepare().then(() => {
 
     try {
       const [rows] = await db.execute(
-        "SELECT Subs_Index, Name, price, Week, size FROM subscription WHERE Subs_Index = ?",
+        "SELECT Subs_Index, Name, price, week, size, imageUrl FROM subscription WHERE Subs_Index = ?",
         [Subs_Index]
       );
 
       const dataFromDB = rows.map((row) => ({
         Subs_Index: row.Subs_Index,
         Name: row.Name,
-        price: row.price,
-        Week: row.Week,
+        Price: row.price,
+        Week: row.week,
         size: row.size,
+        imageUrl:row.imageUrl
       }));
       res.json(dataFromDB);
     } catch (error) {

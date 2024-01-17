@@ -7,11 +7,17 @@
   height:70vh;
 }
 .swiperslider{
-  width:40vw;
-  height:60vh;
+  width:35vw;
+  height:55vh;
+  display:flex;
+}
+.styles.card{
+  width:25vw;
+  height:55vh;
 }
 .image{
-  width:40vw;
-  height:55vh;
+  width:25vw;
+  height: 55vh;
   position: relative;
+  border-radius: 5%;
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef} from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Scrollbar, Autoplay } from 'swiper/modules';
+import { Navigation, Scrollbar, EffectCards } from 'swiper/modules';
 import SwiperCore  from 'swiper';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -13,7 +13,7 @@ interface DataItem {
   name: string;
   price: number;
   week: number;
-  Subs_Index: number; // 또는 실제 타입에 맞게 지정
+  Subs_Index: number; 
   imageUrl: string;
 }
 
@@ -47,18 +47,19 @@ export default function SubSwiper() {
         onSwiper={(swiper) =>{
           swiperRef.current = swiper;
         }}
-        modules={[Navigation, Scrollbar]}
+        modules={[Navigation, Scrollbar,]}
         className={styles.swiperslider}
         spaceBetween={0} // 슬라이스 사이 간격
         slidesPerView={4} // 보여질 슬라이스 수
         navigation={true} // prev, next button
+        scrollbar={true}
       >
         {data.map((item, index) => {
           return(
           <SwiperSlide key={index}>
             <div className={styles.card}>         
                 <div className={styles.image}> 
-                  <Image fill={true}  src={item.imageUrl} alt={`Product ${index + 1}`} />
+                  <Image fill={true} className={styles.image} src={item.imageUrl} alt={`Product ${index + 1}`} />
                 </div>
                 <p style={{ margin: 0 }}>Name: {item.name}</p>
                 <p style={{ margin: 0 }}>Price: {item.price}</p>

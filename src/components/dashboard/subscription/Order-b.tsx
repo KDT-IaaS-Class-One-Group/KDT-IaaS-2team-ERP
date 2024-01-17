@@ -53,11 +53,12 @@ export default function OrderInfoPage() {
         } else if (searchOption === "user_name") {
           apiUrl += "&searchOption=user_name&searchTerm=" + searchTerm;
         }
-
+        console.log(searchTerm)
         const response = await fetch(apiUrl);
         const data = await response.json();
-
+        console.log("zz",data)
         setOrders(data.orders);
+        console.log("학인", data.orders)
         setPageInfo({
           currentPage: data.pageInfo.currentPage,
           pageSize: data.pageInfo.pageSize,
@@ -203,9 +204,9 @@ export default function OrderInfoPage() {
                   <td>{order.user_phone}</td>
                   <td>{order.postcode}</td>
                   <td>{order.address}</td>
-                  <td>{order.detailaddress}</td>
-                  <td>{order.auto_renew === 1 ? "미갱신" : "갱신"}</td>
-                  <td>{order.staus === 1 ? "해지" : "구독"}</td>
+        
+                  <td>{order.auto_renew === 1 ? "갱신" : "미갱신"}</td>
+                  <td>{order.staus === 1 ? "구독" : "해지"}</td>
                 </tr>
               ))}
             </tbody>

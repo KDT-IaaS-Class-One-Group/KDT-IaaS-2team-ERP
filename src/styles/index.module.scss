@@ -46,31 +46,12 @@
   z-index: -1;
 }
 .blue {
-  background-color: brown;
+  background-color: #f6f1eb;;
   display:flex;
   flex-wrap: wrap;
   justify-content: space-around;
   align-items: center;
-  .infobox1{
-    width:28vw;
-    height:40vh;
-    background-color: #f6f1eb;
-  }
-  .infobox2{
-    width:57vw;
-    height:40vh;
-    background-color: #f6f1eb;
-  }
-  .infobox3{
-    width:57vw;  
-    height:40vh;
-    background-color: #f6f1eb;
-  }
-  .infobox4{
-    width:28vw;
-    height:40vh;
-    background-color: #f6f1eb;
-  }
+
 }
 .image{
   width:18vw;
@@ -87,7 +68,7 @@
 }
 
 .purple {
-  background-color: lightgreen
+  background-color: #f6f1eb;
 }
 
 .box{

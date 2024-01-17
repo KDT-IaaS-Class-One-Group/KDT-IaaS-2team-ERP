@@ -5,6 +5,7 @@ import "swiper/swiper-bundle.css"; // Swiper 스타일을 불러옵니다.
 import styles from "@/styles/index.module.scss";
 import Topbar from "@/components/Topbar/Topbar";
 import Footbar from "@/components/Footer/Footer";
+import Aboutus from "@/components/main/aboutus/aboutus";
 import SlideComponent from "@/components/productslide/slide";
 import Link from "next/link";
 import Image from 'next/image';
@@ -94,10 +95,7 @@ function Index() {
         <SwiperTest/>
       </div>
       <div className={`${styles.div} ${styles.blue}`}>
-        <div className={styles.infobox1}></div>
-        <div className={styles.infobox2}></div>
-        <div className={styles.infobox3}></div>
-        <div className={styles.infobox4}></div>
+        <Aboutus/>
       </div>
       <Footbar />
     </div>
