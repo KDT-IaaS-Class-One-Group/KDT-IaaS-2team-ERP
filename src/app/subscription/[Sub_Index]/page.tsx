@@ -5,6 +5,7 @@ import Link from "next/link";
 import styled from "styled-components";
 import Image from 'next/image';
 import styles from "@/styles/subpage.module.scss"
+
 // const RadioContainer = styled.div`
 //   margin-top: 20px;
 // `;
@@ -72,6 +73,7 @@ export default function SubscriptionClientSide() {
   const [data, setData] = useState<SubscriptionClientSideProps[]>([]);
   const [productList, setProductList] = useState<Product[]>([]); // Product 타입으로 변경
   const [selectedProducts, setSelectedProducts] = useState<Array<number>>([]);
+  const [selectedProductImages, setSelectedProductImages] = useState(Array(data.length).fill(''));
   const [radioOptions, setRadioOptions] = useState<Products[]>([]); // 라디오 상자 옵션 데이터
   const Subs_Index = useParams();
   const subs_index = Subs_Index.Sub_Index;
@@ -85,6 +87,7 @@ export default function SubscriptionClientSide() {
         // dataFromServer를 이용하여 product 테이블에서 상품 리스트를 가져옴
         const productListResponse = await fetch("/api/products");
         const productListFromServer = await productListResponse.json();
+        console.log(productListFromServer)
         const productNames = productListFromServer.map(
           (product: any) => product.name
         );
@@ -119,6 +122,17 @@ export default function SubscriptionClientSide() {
     const updatedSelectedProducts = [...selectedProducts];
     updatedSelectedProducts[index] = parseInt(e.target.value, 10); // 선택된 상품의 id를 숫자로 변환하여 저장
     setSelectedProducts(updatedSelectedProducts);
+
+    const updatedSelectedProductImages = [...selectedProductImages];
+    console.log(updatedSelectedProductImages)
+    updatedSelectedProductImages[index] = getProductImageById(parseInt(e.target.value, 10));
+    setSelectedProductImages(updatedSelectedProductImages);
+  };
+
+  const getProductImageById = (productId : any) => {
+    const selectedProduct = productList.find(product => product.id === productId);
+    console.log(selectedProduct)
+    return selectedProduct ? selectedProduct.imageUrl : ''; // 제품이 찾아지면 이미지 URL을 반환하고, 그렇지 않으면 빈 문자열을 반환합니다.
   };
 
   const calculateEndDate = (weeks: number): string => {
@@ -194,22 +208,29 @@ export default function SubscriptionClientSide() {
           <p>구독 기간 종료일: {calculateEndDate(item.Week)}</p>
         </div>
       ))}
-        <div className={styles.choicebox}>
-        {Array.from({ length: Math.floor(data.reduce((acc, item) => acc + item.size, 0) )}).map((_, index) => (
-          <select
-            key={index}
-            value={selectedProducts[index]}
-            onChange={(e) => handleSelectChange(e, index)}
-            className={styles.input}
-          >
-            <option value="">상품을 선택하세요</option>
-            {productList.map((product) => (
-              <option key={product.id} value={product.id}>
-                {product.name}
-              </option>
-            ))}
-          </select>
+         <div className={styles.choicebox}>
+        {Array.from({ length: Math.floor(data.reduce((acc, item) => acc + item.size, 0)) }).map((_, index) => (
+          <div key={index}>
+            <select
+              value={selectedProducts[index]}
+              onChange={(e) => handleSelectChange(e, index)}
+              className={styles.input}
+            >
+              <option value="">상품을 선택하세요</option>
+              {productList.map((product) => (
+                <option key={product.id} value={product.id}>
+                  {product.name}
+                </option>
+              ))}
+            </select>
+            {selectedProductImages[index] && (
+              <div className={styles.imagebox}>
+                <Image src={selectedProductImages[index]} fill alt={`선택한 제품 ${index + 1}`} />
+              </div>
+            )}
+          </div>
         ))}
+        
         <Link href="#">
           <button onClick={handleOrderButtonClick}>주문하기</button>
         </Link>

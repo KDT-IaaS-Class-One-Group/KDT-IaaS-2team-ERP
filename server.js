@@ -800,15 +800,16 @@ app.prepare().then(() => {
   server.get("/api/products", async (req, res) => {
     try {
       const [rows] = await db.execute(
-        "SELECT product_id , product_name, stock_quantity , imageUrl,info FROM product"
+        "SELECT product_id , product_name, stock_quantity , imageUrl, info FROM product"
       );
       const dataFromDB = rows.map((row) => ({
         id: row.product_id,
         name: row.product_name,
         stock: row.stock_quantity,
         info: row.info,
-        imageUrl: row.imagUrl,
+        imageUrl: row.imageUrl,
       }));
+
       res.json(dataFromDB);
     } catch (error) {
       console.error("쿼리 실행 중 오류 발생:", error);
@@ -833,14 +834,14 @@ app.prepare().then(() => {
 
       const productsPromises = ids.map(async (id) => {
         const [rows] = await db.query(
-          "SELECT product_id, category_id, product_name, stock_quantity, info FROM product WHERE product_id = ?",
+          "SELECT product_id, product_name, stock_quantity, info, imageUrl FROM product WHERE product_id = ?",
           [id]
         );
         if (rows.length > 0) {
           const row = rows[0];
           return {
             id: row.product_id,
-            category: row.category_id,
+            imageUrl: row.imageUrl,
             name: row.product_name,
             stock: row.stock_quantity,
             info: row.info,

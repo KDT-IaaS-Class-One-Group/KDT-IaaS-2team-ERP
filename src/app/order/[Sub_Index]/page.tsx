@@ -35,8 +35,9 @@ interface UserInfo {
 }
 
 interface ProductClientSideProps {
-  id: number;
-  name: string;
+  id  : number;
+  name  : string;
+  imageUrl  : string;
 }
 
 export default function OrderClientSide() {
@@ -181,6 +182,7 @@ export default function OrderClientSide() {
         headers: {
           "Content-Type": "application/json",
         },
+
         body: JSON.stringify({
           token: localStorage.token,
           Subs_Index: Subs_Index,
@@ -193,6 +195,7 @@ export default function OrderClientSide() {
           order_name: selectedAddressType === 1 ? userInfo?.name : orderNameInput,
           order_phone: selectedAddressType === 1 ? userInfo?.phoneNumber : orderPhoneInput,
         }),
+
       });
 
       if (!response.ok) {
@@ -250,8 +253,7 @@ export default function OrderClientSide() {
 
   const getaddress = (data : any) => {
     console.log(data)
-    const  address1 = data;
-    // 필요한 주소 정보를 조합하여 주소 문자열 반환
+    const address1 = data;
     return address1
   };
 
@@ -268,9 +270,6 @@ export default function OrderClientSide() {
     setSelectedZonecode(postcodeData);
     setPostcode(postcodeData);
   };
-
-   // 예를 들어, postcode 변경 시
-
 
   return (
     <div className={styles.root}> 
