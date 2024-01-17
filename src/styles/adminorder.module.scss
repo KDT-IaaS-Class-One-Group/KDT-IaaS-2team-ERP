@@ -115,14 +115,29 @@
   font-size: large;
 }
 
+.corrButton {
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: pointer;
+  border: none;
+  width: 35px;
+  height: 25px;
+  background-color: #495464;
+  line-height: 20px;
+  border-radius: 2px;
+  margin-right: 5px;
+}
+
 .delButton {
   color: white;
   text-align: center;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
   border: none;
-  width: 40px;
+  width: 55px;
   height: 25px;
   background-color: #495464;
   line-height: 20px;
@@ -209,4 +224,8 @@
   right: 8px;
   font-size: 40px;
   cursor: pointer;
+}
+
+.orderTable th:nth-child(9){
+  width: 120px;
 }
