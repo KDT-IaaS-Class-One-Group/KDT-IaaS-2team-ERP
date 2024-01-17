@@ -18,8 +18,8 @@ const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
   port: "3306",
-  user: "root",
-  password: "723546",
+  user: "yuan",
+  password: "1234",
   database: "erp",
   connectionLimit: 5,
 });
@@ -1384,7 +1384,7 @@ app.prepare().then(() => {
         // 데이터베이스에서 구독 정보 업데이트
         const [result] = await db.query(
           "UPDATE subscription SET name = ?, week = ?, size = ?, price = ?, imageUrl = ? WHERE Subs_Index = ?",
-          [name, week, price, size, imageUrl, Subs_Index]
+          [name, week, size, price, imageUrl, Subs_Index]
         );
 
         if (result.affectedRows === 1) {

@@ -12,6 +12,7 @@ interface SubscriptionInfo {
   price: string;
   imageUrl?: string;
   timestamp: string;
+  sale_status: number;
 }
 
 const pageSize = 10; // 페이지당 표시할 항목 수
@@ -65,6 +66,7 @@ export default function SubsProduct(): React.ReactNode {
     price: "",
     imageUrl: "",
     timestamp: "",
+    sale_status:1
   });
 
   const handleChange = (
@@ -87,6 +89,7 @@ export default function SubsProduct(): React.ReactNode {
       price: "",
       imageUrl: "",
       timestamp: "",
+      sale_status:1
     });
   };
 
