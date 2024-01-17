@@ -127,27 +127,27 @@ app.prepare().then(() => {
     });
   };
 
-    // API 엔드포인트: 라디오 선택 상자 옵션
-    server.get("/api/radio-options", async (req, res) => {
-      try {
-        // product 테이블에서 product_name과 img1을 가져옴
-        const [rows, fields] = await pool.query(
-          "SELECT product_name, imageUrl FROM product"
-        );
-  
-        // 데이터 형식을 클라이언트에 맞게 가공
-        const options = rows.map((row) => ({
-          id: row.product_name, // 예시로 product_name을 id로 사용
-          label: row.product_name,
-          imagerUrl: row.imageUrl,
-        }));
-  
-        res.json(options);
-      } catch (error) {
-        console.error("데이터를 불러오는 도중 오류 발생:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-      }
-    });
+  // API 엔드포인트: 라디오 선택 상자 옵션
+  server.get("/api/radio-options", async (req, res) => {
+    try {
+      // product 테이블에서 product_name과 img1을 가져옴
+      const [rows, fields] = await pool.query(
+        "SELECT product_name, imageUrl FROM product"
+      );
+
+      // 데이터 형식을 클라이언트에 맞게 가공
+      const options = rows.map((row) => ({
+        id: row.product_name, // 예시로 product_name을 id로 사용
+        label: row.product_name,
+        imagerUrl: row.imageUrl,
+      }));
+
+      res.json(options);
+    } catch (error) {
+      console.error("데이터를 불러오는 도중 오류 발생:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
 
   server.get("/api/orderindex", async (req, res) => {
     try {
@@ -659,7 +659,8 @@ app.prepare().then(() => {
 
       if (searchTerm) {
         if (searchOption === "userId") {
-          totalCountQuery += " LEFT JOIN Users ON Board.User_Index = Users.User_Index WHERE Users.userId LIKE ?";
+          totalCountQuery +=
+            " LEFT JOIN Users ON Board.User_Index = Users.User_Index WHERE Users.userId LIKE ?";
         } else if (searchOption === "title") {
           totalCountQuery += " WHERE title LIKE ?";
         }
@@ -994,7 +995,7 @@ app.prepare().then(() => {
         Price: row.price,
         Week: row.week,
         size: row.size,
-        imageUrl:row.imageUrl
+        imageUrl: row.imageUrl,
       }));
       res.json(dataFromDB);
     } catch (error) {
@@ -1093,23 +1094,118 @@ app.prepare().then(() => {
     }
   });
 
-  server.get("/customer/getData", async (req, res) => {
+  server.get("/api/service", async (req, res) => {
     try {
-      const connection = await pool.getConnection();
-      const [rows, fields] = await connection.query(
-        "SELECT boardKey, email, userID, title, content, password FROM board"
-      );
+      const page = parseInt(req.query.page) || 1;
+      const pageSize = parseInt(req.query.pageSize) || 10;
+      const searchTerm = req.query.searchTerm || "";
+      const searchOption = req.query.searchOption || "userId";
 
-      // 데이터베이스에서 가져온 정보를 클라이언트에게 반환합니다.
-      res.json(rows);
+      let query =
+        "SELECT Board.*, Users.userId, Users.email FROM Board LEFT JOIN Users ON Board.User_Index = Users.User_Index";
 
-      // 연결 해제
-      connection.release();
+      let queryParams = [];
+
+      if (searchTerm) {
+        if (searchOption === "userId") {
+          query += " WHERE userId LIKE ?";
+        } else if (searchOption === "title") {
+          query += " WHERE title LIKE ?";
+        }
+
+        queryParams.push(`%${searchTerm}%`);
+      }
+
+      query += " ORDER BY Board.date DESC"; // 시간 역순으로 정렬
+
+      const [reverseBoards] = await db.query(query, queryParams);
+
+      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM Board";
+
+      if (searchTerm) {
+        if (searchOption === "userId") {
+          totalCountQuery +=
+            " LEFT JOIN Users ON Board.User_Index = Users.User_Index WHERE Users.userId LIKE ?";
+        } else if (searchOption === "title") {
+          totalCountQuery += " WHERE title LIKE ?";
+        }
+
+        queryParams.push(`%${searchTerm}%`);
+      }
+
+      const [totalCount] = await db.query(totalCountQuery, queryParams);
+      const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
+
+      // Apply LIMIT for pagination
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = page * pageSize;
+
+      const boards = reverseBoards.slice(startIndex, endIndex);
+
+      res.json({
+        boards,
+        pageInfo: {
+          currentPage: page,
+          pageSize,
+          totalPages,
+        },
+      });
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      console.error("Error fetching boards:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
+
+  server.post("/api/service/:boardIndex/check-password", async (req, res) => {
+    const boardIndex = req.params.boardIndex;
+    const enteredPassword = req.body.password;
+
+    try {
+      // 글 인덱스로 데이터베이스에서 해당 글 찾기
+      const [boardResult] = await db.query(
+        "SELECT * FROM Board WHERE Board_Index = ?",
+        [boardIndex]
+      );
+
+      const board = boardResult[0];
+
+      if (!board) {
+        return res
+          .status(404)
+          .json({ success: false, message: "글을 찾을 수 없습니다." });
+      }
+
+      // 입력한 비밀번호와 데이터베이스의 실제 비밀번호 비교
+      if (enteredPassword === board.password) {
+        res.json({ success: true, message: "비밀번호가 일치합니다." });
+      } else {
+        res.json({ success: false, message: "비밀번호가 일치하지 않습니다." });
+      }
+    } catch (error) {
+      console.error("Error checking password:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
+  });
+
+  // server.get("/customer/getData", async (req, res) => {
+  //   try {
+  //     const connection = await pool.getConnection();
+  //     const [rows, fields] = await connection.query(
+  //       "SELECT Board_Index, userId, title, content, date, password, image, email, phoneNumber, name, reply FROM board"
+  //     );
+
+  //     // 데이터베이스에서 가져온 정보를 클라이언트에게 반환합니다.
+  //     res.json(rows);
+
+  //     // 연결 해제
+  //     connection.release();
+  //   } catch (error) {
+  //     console.error("Error fetching posts:", error);
+  //     res.status(500).json({ error: "Internal Server Error" });
+  //   }
+  // });
 
   // 기본적인 Next.js 페이지 핸들링
   server.get("*", (req, res) => {
@@ -1360,7 +1456,7 @@ app.prepare().then(() => {
           "UPDATE Subscription SET sale_status = IF(sale_status = 0, 1, 0) WHERE Subs_Index = ?",
           [Subs_Index]
         );
-  
+
         if (result.affectedRows === 1) {
           res.status(200).json({ message: "Subscription 상태 변경 성공" });
         } else {
@@ -1407,8 +1503,7 @@ app.prepare().then(() => {
   server.post("/api/admin/product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { product_name, stock_quantity, imageUrl, info } =
-          req.body; // 변경된 부분
+        const { product_name, stock_quantity, imageUrl, info } = req.body; // 변경된 부분
 
         // 데이터베이스에서 subscription 정보 추가
         const [result] = await db.query(
@@ -1462,8 +1557,7 @@ app.prepare().then(() => {
     const { product_id } = req.params;
     try {
       if (req.method === "PUT") {
-        const { product_name, stock_quantity, imageUrl, info } =
-          req.body;
+        const { product_name, stock_quantity, imageUrl, info } = req.body;
 
         // 데이터베이스에서 구독 정보 업데이트
         const [result] = await db.query(
@@ -1496,7 +1590,7 @@ app.prepare().then(() => {
           "UPDATE product SET sale_status = IF(sale_status = 0, 1, 0) WHERE product_id = ?",
           [product_id]
         );
-  
+
         if (result.affectedRows === 1) {
           res.status(200).json({ message: "Product 상태 변경 성공" });
         } else {
@@ -1799,8 +1893,7 @@ app.prepare().then(() => {
   server.post("/api/admin/product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { product_name, stock_quantity, imageUrl, info } =
-          req.body; // 변경된 부분
+        const { product_name, stock_quantity, imageUrl, info } = req.body; // 변경된 부분
 
         const [result] = await db.query(
           "INSERT INTO product (product_name, stock_quantity, imageUrl, info) VALUES (?, ?, ?, ?)",
@@ -1824,53 +1917,81 @@ app.prepare().then(() => {
     }
   });
 
-  server.post("/customer/writingPage/create-post", async (req, res) => {
-    const formData = req.body;
-    console.log(formData);
+  // server.post("/customer/writingPage/create-post", async (req, res) => {
+  //   const formData = req.body;
+  //   console.log(formData);
 
+  //   try {
+  //     // users 테이블에서 해당 User_Index 값이 존재하는지 확인
+  //     const [userResult] = await db.query(
+  //       "SELECT * FROM users WHERE User_Index = ?",
+  //       [formData.User_Index]
+  //     );
+  //     console.log(formData.User_Index);
+  //     // User_Index 값이 존재하는 경우에만 게시글을 삽입
+  //     if (userResult.length === 1) {
+  //       // 데이터베이스에 데이터 삽입
+  //       const [result] = await db.query(
+  //         "INSERT INTO board (User_Index, userID, email, title, content, date, password) VALUES (?, ?, ?, ?, ?, NOW(), ?)",
+  //         [
+  //           formData.User_Index,
+  //           formData.userID,
+  //           formData.email,
+  //           formData.title,
+  //           formData.content,
+  //           formData.password,
+  //         ]
+  //       );
+
+  //       // 삽입 성공 시 클라이언트에 응답
+  //       if (result.affectedRows === 1) {
+  //         console.log("Board created successfully!");
+  //         res.status(200).json({ message: "Board created successfully!" });
+  //       } else {
+  //         console.error("Failed to create board");
+  //         res.status(500).json({ error: "Failed to create board" });
+  //       }
+  //     } else {
+  //       // User_index 값이 존재하지 않는 경우 클라이언트에 오류 응답
+  //       console.error(
+  //         "User not found for given User_Index:",
+  //         formData.User_Index
+  //       );
+  //       res.status(404).json({ error: "User not found for given User_Index" });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error creating board:", error);
+  //     res.status(500).json({ error: "Internal Server Error" });
+  //   }
+  // });
+
+  server.post("/api/service", async (req, res) => {
     try {
-      // users 테이블에서 해당 User_Index 값이 존재하는지 확인
-      const [userResult] = await db.query(
-        "SELECT * FROM users WHERE User_Index = ?",
-        [formData.User_Index]
-      );
-      console.log(formData.User_Index);
-      // User_Index 값이 존재하는 경우에만 게시글을 삽입
-      if (userResult.length === 1) {
-        // 데이터베이스에 데이터 삽입
-        const [result] = await db.query(
-          "INSERT INTO board (User_Index, userID, email, title, content, date, password) VALUES (?, ?, ?, ?, ?, NOW(), ?)",
-          [
-            formData.User_Index,
-            formData.userID,
-            formData.email,
-            formData.title,
-            formData.content,
-            formData.password,
-          ]
-        );
-
-        // 삽입 성공 시 클라이언트에 응답
-        if (result.affectedRows === 1) {
-          console.log("Board created successfully!");
-          res.status(200).json({ message: "Board created successfully!" });
-        } else {
-          console.error("Failed to create board");
-          res.status(500).json({ error: "Failed to create board" });
-        }
-      } else {
-        // User_index 값이 존재하지 않는 경우 클라이언트에 오류 응답
-        console.error(
-          "User not found for given User_Index:",
-          formData.User_Index
-        );
-        res.status(404).json({ error: "User not found for given User_Index" });
+      const token = req.headers.authorization?.replace("Bearer ", "");
+  
+      if (!token) {
+        return res.status(401).json({ error: "토큰이 제공되지 않았습니다." });
       }
+  
+      const decodedToken = jwt.verify(token, secretKey);
+  
+      const { password, title, content } = req.body;
+  
+      // 토큰에서 User_Index 추출
+      const userIndex = decodedToken.User_Index;
+  
+      // 글 작성 쿼리
+      const insertQuery =
+        "INSERT INTO Board (User_Index, password, title, content) VALUES (?, ?, ?, ?)";
+      await db.query(insertQuery, [userIndex, password, title, content]);
+  
+      res.json({ success: true, message: "글 작성 성공" });
     } catch (error) {
-      console.error("Error creating board:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+      console.error("Error adding board:", error);
+      res.status(500).json({ success: false, error: "Internal Server Error" });
     }
   });
+  
 
   server.post("/api/addCash", async (req, res) => {
     try {
