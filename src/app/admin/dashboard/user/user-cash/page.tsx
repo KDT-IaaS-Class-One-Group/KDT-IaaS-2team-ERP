@@ -102,7 +102,7 @@ export default function UsercashPage() {
         <NavLinks />
       </div>
       <div className={styles.main}>
-        <h1 className={styles.title}>회원 캐시 관리</h1>
+        {/* <h1 className={styles.title}>회원 캐시 관리</h1> */}
         <label htmlFor="searchOption"></label>
         <select
           id="searchOption"

@@ -96,7 +96,7 @@ export default function UserinfoPage() {
         <NavLinks />
       </div>
       <div className={styles.main}>
-        <h1 className={styles.title}>회원 정보 조회</h1>
+        {/* <h1 className={styles.title}>회원 정보 조회</h1> */}
         <label htmlFor="searchOption"></label>
         <select
           id="searchOption"

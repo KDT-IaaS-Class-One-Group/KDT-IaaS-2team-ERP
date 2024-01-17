@@ -126,7 +126,7 @@ export default function QA() {
         <NavLinks />
       </div>
       <div className={styles.main}>
-        <h1 className={styles.title}>Q&A 관리</h1>
+        {/* <h1 className={styles.title}>Q&A 관리</h1> */}
         <label htmlFor="searchOption"></label>
         <select
           id="searchOption"
