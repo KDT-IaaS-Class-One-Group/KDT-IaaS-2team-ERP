@@ -1324,27 +1324,50 @@ app.prepare().then(() => {
     }
   });
 
-  server.delete("/api/subs-product/:Subs_Index", async (req, res) => {
+  // server.delete("/api/subs-product/:Subs_Index", async (req, res) => {
+  //   const { Subs_Index } = req.params;
+  //   try {
+  //     if (req.method === "DELETE") {
+  //       const [result] = await db.query(
+  //         "DELETE FROM subscription WHERE Subs_Index = ?",
+  //         [Subs_Index]
+  //       );
+
+  //       if (result.affectedRows === 1) {
+  //         res.status(200).json({ message: "subscription 삭제 성공" });
+  //       } else {
+  //         // 추가 실패
+  //         res.status(500).json({ error: "subscription 삭제 실패" });
+  //       }
+  //     } else {
+  //       // 허용되지 않은 메서드
+  //       res.status(405).json({ error: "허용되지 않은 메서드" });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting subscription:", error);
+  //     res.status(500).json({ error: "Internal Server Error" });
+  //   }
+  // });
+
+  server.put("/api/subs-productSale/:Subs_Index", async (req, res) => {
     const { Subs_Index } = req.params;
     try {
-      if (req.method === "DELETE") {
+      if (req.method === "PUT") {
         const [result] = await db.query(
-          "DELETE FROM subscription WHERE Subs_Index = ?",
+          "UPDATE Subscription SET sale_status = IF(sale_status = 0, 1, 0) WHERE Subs_Index = ?",
           [Subs_Index]
         );
-
+  
         if (result.affectedRows === 1) {
-          res.status(200).json({ message: "subscription 삭제 성공" });
+          res.status(200).json({ message: "Subscription 상태 변경 성공" });
         } else {
-          // 추가 실패
-          res.status(500).json({ error: "subscription 삭제 실패" });
+          res.status(404).json({ error: "Subs_Index 찾을 수 없습니다." });
         }
       } else {
-        // 허용되지 않은 메서드
         res.status(405).json({ error: "허용되지 않은 메서드" });
       }
     } catch (error) {
-      console.error("Error deleting subscription:", error);
+      console.error("Error updating Subscription status:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
@@ -1407,30 +1430,30 @@ app.prepare().then(() => {
     }
   });
 
-  server.delete("/api/admin/product/:product_id", async (req, res) => {
-    const { product_id } = req.params;
-    try {
-      if (req.method === "DELETE") {
-        const [result] = await db.query(
-          "DELETE FROM product WHERE product_id = ?",
-          [product_id]
-        );
+  // server.delete("/api/admin/product/:product_id", async (req, res) => {
+  //   const { product_id } = req.params;
+  //   try {
+  //     if (req.method === "DELETE") {
+  //       const [result] = await db.query(
+  //         "DELETE FROM product WHERE product_id = ?",
+  //         [product_id]
+  //       );
 
-        if (result.affectedRows === 1) {
-          res.status(200).json({ message: "product 삭제 성공" });
-        } else {
-          // 추가 실패
-          res.status(500).json({ error: "product 삭제 실패" });
-        }
-      } else {
-        // 허용되지 않은 메서드
-        res.status(405).json({ error: "허용되지 않은 메서드" });
-      }
-    } catch (error) {
-      console.error("Error deleting product:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  });
+  //       if (result.affectedRows === 1) {
+  //         res.status(200).json({ message: "product 삭제 성공" });
+  //       } else {
+  //         // 추가 실패
+  //         res.status(500).json({ error: "product 삭제 실패" });
+  //       }
+  //     } else {
+  //       // 허용되지 않은 메서드
+  //       res.status(405).json({ error: "허용되지 않은 메서드" });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting product:", error);
+  //     res.status(500).json({ error: "Internal Server Error" });
+  //   }
+  // });
 
   server.put("/api/admin/product/:product_id", async (req, res) => {
     const { product_id } = req.params;
@@ -1459,6 +1482,29 @@ app.prepare().then(() => {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "내부 서버 오류" });
+    }
+  });
+
+  server.put("/api/admin/productSale/:product_id", async (req, res) => {
+    const { product_id } = req.params;
+    try {
+      if (req.method === "PUT") {
+        const [result] = await db.query(
+          "UPDATE product SET sale_status = IF(sale_status = 0, 1, 0) WHERE product_id = ?",
+          [product_id]
+        );
+  
+        if (result.affectedRows === 1) {
+          res.status(200).json({ message: "Product 상태 변경 성공" });
+        } else {
+          res.status(404).json({ error: "product_id 찾을 수 없습니다." });
+        }
+      } else {
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error("Error updating product status:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   });
 
