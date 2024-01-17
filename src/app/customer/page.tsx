@@ -1,89 +1,213 @@
 "use client";
-import Topbar from "@/components/Topbar/Topbar";
-import styles from "@/styles/customer.module.scss";
-import { useState, useEffect } from "react";
-import React from "react";
-import Modal from "@/components/customer/Modal"; // 모달 컴포넌트 import 추가
 
-interface item {
-  boardKey: number;
+import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
+import Topbar from "@/components/Topbar/Topbar";
+import { useRouter } from "next/navigation";
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import styles from "@/styles/qna.module.scss";
+
+interface BoardInfo {
+  Board_Index: string;
+  userId: string;
   title: string;
-  password: string;
   content: string;
-  userID: string;
+  date: string;
+  password: string;
+  image: string;
+  email: string;
+  phoneNumber: string;
+  name: string;
   reply: string;
+  replyStatus: number;
 }
 
-export default function Page() {
-  const [modalData, setModalData] = useState<item>({
-    boardKey: 0,
-    title: "",
-    password: "",
-    content: "",
-    userID: "",
-    reply: "",
+const pageSize = 10;
+
+export default function QA() {
+  const [boards, setBoards] = useState<BoardInfo[]>([]);
+  const [pageInfo, setPageInfo] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalPages: 1,
   });
-  const [showModal, setShowModal] = useState(false); // 추가: 컨텐츠를 보여줄지 여부 상태
-  const [titles, setTitles] = useState([]);
-  const [userId, setUserId] = useState<string>("");
+  const [token, setToken] = useState<string | null>(null);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchOption, setSearchOption] = useState("userId"); // 기본값은 userId로 설정
+  const [selectedBoard, setSelectedBoard] = useState<BoardInfo | null>(null);
+  const [BoardInfo, setBoardInfo] = useState<BoardInfo>({
+    Board_Index: "",
+    userId: "",
+    title: "",
+    content: "",
+    date: "",
+    password: "",
+    image: "",
+    email: "",
+    phoneNumber: "",
+    name: "",
+    reply: "",
+    replyStatus: 1,
+  });
+  const [showForm, setShowForm] = useState(false);
+  const resetForm = () => {
+    setBoardInfo({
+      Board_Index: "",
+      userId: "",
+      title: "",
+      content: "",
+      date: "",
+      password: "",
+      image: "",
+      email: "",
+      phoneNumber: "",
+      name: "",
+      reply: "",
+      replyStatus: 1,
+    });
+  };
   useEffect(() => {
-    // 토큰을 localStorage에서 가져오기
-    const token = localStorage.getItem("token");
+    const storedToken = localStorage.getItem('token');
+    setToken(storedToken);
 
-    if (token) {
-      // 토큰을 '.'을 기준으로 세 부분으로 분리
-      const tokenParts = token.split(".");
+  }, []);
+  const fetchData = useCallback(
+    async (page: number) => {
+      try {
+        let apiUrl = "/api/service?page=" + page + "&pageSize=" + pageSize;
 
-      // 페이로드는 Base64로 인코딩된 두 번째 부분
-      const payload = JSON.parse(atob(tokenParts[1]));
+        if (searchOption === "userId") {
+          apiUrl += "&searchOption=userId&searchTerm=" + searchTerm;
+        } else if (searchOption === "title") {
+          apiUrl += "&searchOption=title&searchTerm=" + searchTerm;
+        }
 
-      // 사용자 ID 추출
-      const userId = payload.userId;
-      setUserId(userId); // 추출한 사용자 ID 상태에 저장
-    }
-    fetch("/customer/getData") // 적절한 API 경로를 사용하여 데이터를 가져옵니다.
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        setBoards(data.boards);
+        setPageInfo({
+          currentPage: data.pageInfo.currentPage,
+          pageSize: data.pageInfo.pageSize,
+          totalPages: data.pageInfo.totalPages,
+        });
+      } catch (error) {
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+      }
+    },
+    [searchTerm, searchOption]
+  );
+
+  const handleRowClick = (board: BoardInfo) => {
+    // 모달을 열 때, 비밀번호를 입력받을 수 있는 폼을 렌더링
+    const enteredPassword = prompt("비밀번호를 입력하세요:");
+
+    // 서버로 비밀번호 확인 요청
+    fetch(`/api/service/${board.Board_Index}/check-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ password: enteredPassword }),
+    })
       .then((response) => response.json())
-      .then((titles) => {
-        setTitles(titles);
+      .then((data) => {
+        if (data.success) {
+          // 비밀번호가 일치하면 모달 열기
+          setSelectedBoard(board);
+        } else {
+          // 비밀번호가 일치하지 않으면 에러 처리 또는 다른 행동 수행
+          alert("비밀번호가 일치하지 않습니다.");
+        }
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
+        console.error("Error checking password:", error);
       });
-  }, []);
+  };
 
-  const handleTitleClick = (
-    title: string,
-    password: string,
-    content: string,
-    reply: string
+  const handlePageChange = (newPage: number) => {
+    setPageInfo({
+      ...pageInfo,
+      currentPage: newPage,
+    });
+  };
+
+  const handleAdd = () => {
+    setShowForm(true); // 추가 폼 표시
+    resetForm();
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const updatedBoardinfo = {
+        ...BoardInfo,
+      };
+
+      const currentToken = token || '';
+
+      const response = await fetch("/api/service", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${currentToken}`,
+        },
+        body: JSON.stringify(updatedBoardinfo),
+      });
+
+      if (response.ok) {
+        fetchData(pageInfo.currentPage);
+        alert("등록 완료");
+        setShowForm(false); // 폼 닫기
+      } else {
+        console.error(`Error adding board: ${response.status}`);
+        alert("등록 실패");
+      }
+
+      // 입력 폼 초기화
+      resetForm();
+      setShowForm(false); // 폼 닫기
+    } catch (error) {
+      console.error("Error adding board:", error);
+    }
+  };
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const enteredPassword = prompt("암호를 입력하세요:");
-
-    if (enteredPassword === password) {
-      setModalData({ ...modalData, title, content, reply });
-      setShowModal(true); // 모달을 열고 데이터 설정
-    } else {
-      alert("잘못된 암호입니다.");
-    }
+    const { name, value } = e.target;
+    setBoardInfo((prevInfo) => ({
+      ...prevInfo,
+      [name]: value,
+    }));
   };
 
-  const closeModal = () => {
-    setShowModal(false); // 모달 닫기
+  const formatDateTime = (datetime: string) => {
+    const dateTime = new Date(datetime);
+    const options = {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: false,
+    };
+    const dateTimeString = dateTime.toLocaleString();
+    return dateTimeString;
   };
 
-  const handleGoToWritingPage = () => {
-    // Check if the user is logged in (token exists)
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      // If the token exists, navigate to the writing page
-      window.location.href = "/customer/writingPage";
-    } else {
-      // If the token doesn't exist, show an alert
-      alert("로그인이 필요합니다. 로그인 후 다시 시도해주세요.");
-    }
+  const handleModalClose = () => {
+    setSelectedBoard(null);
+    setShowForm(false);
   };
+
+  useEffect(() => {
+    fetchData(pageInfo.currentPage);
+  }, [fetchData, pageInfo.currentPage]);
+
+  useEffect(() => {
+    setSearchTerm("");
+  }, []);
 
   return (
     <div className={styles.root}>
@@ -91,40 +215,168 @@ export default function Page() {
         <Topbar />
       </div>
       <div className={styles.main}>
-        <div>
-          <div className={`${styles.spaceBetween} ${styles.paddingLeft}`}>
-            <div></div>
-            <div>
-              <p>사용자 ID: {userId}</p>
-              <button onClick={handleGoToWritingPage}>
-                Go to Writing Page
-              </button>
-            </div>
-          </div>
-          <div className={`${styles.flex} ${styles.marginTop}`}>
-            <div className={styles.marginRight}>
-              {titles.map((item: item, index: number) => (
-                <h3
-                  key={index}
-                  onClick={() =>
-                    handleTitleClick(item.title, item.password, item.content, item.reply)
-                  }
+        <h1>Q&A</h1>
+        <label htmlFor="searchOption"></label>
+        <select
+          id="searchOption"
+          value={searchOption}
+          onChange={(e) => setSearchOption(e.target.value)}
+          className={styles.select}
+        >
+          <option value="userId">ID</option>
+          <option value="title">제목</option>
+        </select>
+        <input
+          type="text"
+          placeholder={`${
+            searchOption === "userId" ? "ID로 검색" : "제목으로 검색"
+          }`}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className={styles.search}
+        />
+        <button onClick={handleAdd} className={styles.addButton}>
+          글쓰기
+        </button>
+        <div className={styles.qnaContent}>
+          <table className={styles.qnaTable}>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>제목</th>
+                <th>글쓴이</th>
+                <th>작성시간</th>
+                <th>답변상태</th>
+              </tr>
+            </thead>
+            <tbody>
+              {boards.map((board) => (
+                <tr
+                  key={board.Board_Index}
+                  onClick={() => handleRowClick(board)}
                 >
-                  글번호: {item.boardKey} 글제목: {item.title} , 작성자:
-                  {item.userID}
-                </h3>
+                  <td>{board.Board_Index}</td>
+                  <td>{board.title}</td>
+                  <td>{board.userId}</td>
+                  <td>{formatDateTime(board.date)}</td>
+                  <td>{board.replyStatus === 0 ? "미답변" : "답변완료"}</td>
+                </tr>
               ))}
+            </tbody>
+          </table>
+          {selectedBoard !== null && (
+            <div className={`${styles.modal} ${styles.show}`}>
+              <div>
+                <div className={styles.modalContent}>
+                  <span className={styles.close} onClick={handleModalClose}>
+                    &times;
+                  </span>
+                  <table className={styles.infoTable}>
+                    <tbody>
+                      <tr>
+                        <td>No</td>
+                        <td>{selectedBoard.Board_Index}</td>
+
+                        <td>작성시간</td>
+                        <td>{formatDateTime(selectedBoard.date)}</td>
+
+                        <td>글쓴이</td>
+                        <td>{selectedBoard.userId}</td>
+                      </tr>
+                      <tr>
+                        <th colSpan="6">제목</th>
+                      </tr>
+                      <tr>
+                        <td colSpan="6">{selectedBoard.title}</td>
+                      </tr>
+                      <tr>
+                        <th colSpan="6">내용</th>
+                      </tr>
+                      <tr>
+                        <td colSpan="6">{selectedBoard.content}</td>
+                      </tr>
+                      <tr>
+                        <th colSpan="6">답변</th>
+                      </tr>
+                      <tr>
+                        <td colSpan="6">{selectedBoard.reply}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-            <div>
-              {showModal && (
-                <Modal
-                  title={modalData.title}
-                  content={modalData.content}
-                  reply={modalData.reply}
-                  closeModal={closeModal}
-                />
-              )}
+          )}
+
+          {showForm && (
+            <div className={`${styles.modal} ${styles.show}`}>
+              <div className={styles.modalContent}>
+                <span className={styles.close} onClick={handleModalClose}>
+                  &times;
+                </span>
+                <table className={styles.wirteTable}>
+                  <tbody>
+                    <tr>
+                      <td>
+                        비밀번호 :
+                        <input
+                          type="password"
+                          name="password"
+                          value={BoardInfo.password}
+                          onChange={handleChange}
+                          className={styles.addInput}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        제목:
+                        <input
+                          type="title"
+                          name="title"
+                          value={BoardInfo.title}
+                          onChange={handleChange}
+                          className={styles.addInput}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        내용 :
+                        <textarea
+                          name="content"
+                          value={BoardInfo.content}
+                          onChange={handleChange}
+                          className={styles.addInput}
+                        />
+                      </td>
+                    </tr>
+                    <button
+                      onClick={() => handleSubmit()}
+                      className={styles.delButton}
+                    >
+                      등록
+                    </button>
+                  </tbody>
+                </table>
+              </div>
             </div>
+          )}
+          <div>
+            {Array.from(
+              { length: pageInfo.totalPages },
+              (_, index) => index + 1
+            ).map((pageNumber) => (
+              <button
+                key={pageNumber}
+                className={`${styles.paginationButton} ${
+                  pageNumber === pageInfo.currentPage ? styles.active : ""
+                }`}
+                onClick={() => handlePageChange(pageNumber)}
+              >
+                {pageNumber}
+              </button>
+            ))}
           </div>
         </div>
       </div>
