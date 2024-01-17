@@ -120,7 +120,7 @@ export default function OrderInfoPage() {
         <NavLinks />
       </div>
       <div className={styles.main}>
-        <h1 className={styles.title}>구독 내역 조회</h1>
+        {/* <h1 className={styles.title}>구독 내역 조회</h1> */}
         <label htmlFor="searchOption"></label>
         <select
           id="searchOption"
