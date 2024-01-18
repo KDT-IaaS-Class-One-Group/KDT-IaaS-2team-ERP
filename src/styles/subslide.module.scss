@@ -16,7 +16,11 @@
 }
 .card{
   width:20vw;
-  margin-left: 2vw;
+  margin-left: 3vw;
   border-radius: 5%;
   margin-right: 3vw;
+  p{
+    text-align: center;
+    font-weight: bold;
+  }
 }
