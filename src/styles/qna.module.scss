@@ -27,7 +27,7 @@
 }
 
 .addButton {
-  width: 120px;
+  width: 100px;
   height: 40px;
   background-color: black;
   border: 0;
@@ -35,9 +35,9 @@
   color: white;
   border-radius: 5px;
   font-weight: bold;
-  font-size: large;
+  font-size: 15px;
   position: relative;
-  left: 25vw;
+  left: 20vw;
   border-radius: 30px;
 }
 
@@ -52,15 +52,17 @@
 
 .qnaTable {
   width: 100%;
+  height: 100%;
   border-collapse: collapse;
+  font-size: 13px;
 
   th,
   td {
     border: 0;
     padding: 10px;
-    height: 40px;
+    max-height: 20px;
     text-align: center;
-    font-size: 19px;
+    font-size: 14px;
   }
 
   th {
@@ -91,7 +93,7 @@
 }
 
 .qnaTable th:nth-child(2) {
-  width: 700px;
+  width: 300px;
 }
 
 .qnaTable td:nth-child(2) {
