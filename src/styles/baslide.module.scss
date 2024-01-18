@@ -1,23 +1,47 @@
-.swipercontainer{
-  width:40vw;
-  height:70vh;
+.swipercontainer {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box; /* 패딩을 요소의 크기에 포함시킴 */
+  display: flex;
+  padding: 40px;
+  align-items: center;
 }
-.slider{
-  width:40vw;
-  height:70vh;
+
+.slider {
+  overflow: hidden;
+  width:45vw;
+  height:75vh; /* 내용이 넘칠 경우를 대비하여 오버플로우 감춤 */
 }
-.swiperslider{
-  width:35vw;
-  height:55vh;
+
+.swiperslider {
+  width:40vw;
+  height:60vh;
   display:flex;
 }
-.styles.card{
-  width:25vw;
-  height:55vh;
+
+.card {
+  display: flex;
+  width:30vw;
+  height:60vh;
 }
-.image{
-  width:25vw;
-  height: 55vh;
+
+.image {
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; 
+  width:30vw;
+  height: 60vh;
   position: relative;
-  border-radius: 5%;
+}
+
+.selectedproductinfo {
+  flex: 1; /* 우측 세부 정보 영역이 남은 공간을 차지하도록 설정 */
+  padding: 20px; /* 내용 간격 조절을 위한 패딩 추가 */
+  margin:20px;
+  background-color: #F1E4C3;  
+  height: 55vh;
+  border-radius: 10px;
+  text-align: center;
 }
