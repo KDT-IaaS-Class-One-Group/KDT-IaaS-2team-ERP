@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
 import Topbar from "@/components/Topbar/Topbar";
 import { useRouter } from "next/navigation";
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload } from "jsonwebtoken";
 import styles from "@/styles/qna.module.scss";
 
 interface BoardInfo {
@@ -31,6 +31,7 @@ export default function QA() {
     totalPages: 1,
   });
   const [token, setToken] = useState<string | null>(null);
+  const router = useRouter();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOption, setSearchOption] = useState("userId"); // 기본값은 userId로 설정
@@ -67,9 +68,8 @@ export default function QA() {
     });
   };
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
+    const storedToken = localStorage.getItem("token");
     setToken(storedToken);
-
   }, []);
   const fetchData = useCallback(
     async (page: number) => {
@@ -133,7 +133,12 @@ export default function QA() {
   };
 
   const handleAdd = () => {
-    setShowForm(true); // 추가 폼 표시
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    setShowForm(true); // Show the form for adding a new post
     resetForm();
   };
 
@@ -143,7 +148,7 @@ export default function QA() {
         ...BoardInfo,
       };
 
-      const currentToken = token || '';
+      const currentToken = token || "";
 
       const response = await fetch("/api/service", {
         method: "POST",
@@ -215,29 +220,34 @@ export default function QA() {
         <Topbar />
       </div>
       <div className={styles.main}>
-        <h1>Q&A</h1>
-        <label htmlFor="searchOption"></label>
-        <select
-          id="searchOption"
-          value={searchOption}
-          onChange={(e) => setSearchOption(e.target.value)}
-          className={styles.select}
-        >
-          <option value="userId">ID</option>
-          <option value="title">제목</option>
-        </select>
-        <input
-          type="text"
-          placeholder={`${
-            searchOption === "userId" ? "ID로 검색" : "제목으로 검색"
-          }`}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className={styles.search}
-        />
-        <button onClick={handleAdd} className={styles.addButton}>
-          글쓰기
-        </button>
+        <div className={styles.titleD}>
+
+        <h1 className={styles.title}>Q&A</h1>
+        </div>
+        <div>
+          <label htmlFor="searchOption"></label>
+          <select
+            id="searchOption"
+            value={searchOption}
+            onChange={(e) => setSearchOption(e.target.value)}
+            className={styles.select}
+          >
+            <option value="userId">ID</option>
+            <option value="title">제목</option>
+          </select>
+          <input
+            type="text"
+            placeholder={`${
+              searchOption === "userId" ? "ID로 검색" : "제목으로 검색"
+            }`}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className={styles.search}
+          />
+          <button onClick={handleAdd} className={styles.addButton}>
+            글쓰기
+          </button>
+        </div>
         <div className={styles.qnaContent}>
           <table className={styles.qnaTable}>
             <thead>
@@ -318,36 +328,37 @@ export default function QA() {
                   <tbody>
                     <tr>
                       <td>
-                        비밀번호 :
                         <input
                           type="password"
                           name="password"
                           value={BoardInfo.password}
                           onChange={handleChange}
-                          className={styles.addInput}
+                          className={styles.writePassword}
+                          placeholder="password"
+                          required
                         />
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        제목:
                         <input
                           type="title"
                           name="title"
                           value={BoardInfo.title}
                           onChange={handleChange}
-                          className={styles.addInput}
-                        />
+                          className={styles.writeTitle}
+                          placeholder="제목"
+                          required />
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        내용 :
                         <textarea
                           name="content"
                           value={BoardInfo.content}
                           onChange={handleChange}
-                          className={styles.addInput}
+                          className={styles.writeContent}
+                          placeholder="내용"
                         />
                       </td>
                     </tr>
