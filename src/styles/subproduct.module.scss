@@ -13,8 +13,8 @@
 }
 .main{
   width:100vw;
-  background-color: brown;
   display:flex;
+  background-color: #F9EFDB;
   justify-content: center;
 }
 
@@ -31,7 +31,12 @@
   flex-direction: column;
   margin-left: 5vw;
   margin-top: 10vh;
-  border: 1px solid black;
+  background-color: #9dbc985f;
+  border-radius: 5px;
+    p{
+      text-align: center;
+      font-weight: bold;
+  }
 }
 .image{
   width:20vw;
