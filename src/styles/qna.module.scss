@@ -1,69 +1,108 @@
 .search {
-  position: relative;
-  left: 29vw;
-  margin-left: 10px;
   height: 25px;
+  position: relative;
+  left: 3.5vw;
+}
+
+.titleD {
+  border-bottom: solid 3px #222222;
+  height: 100px;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 3rem;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .select {
-  position: relative;
-  left: 29vw;
   height: 30px;
+  position: relative;
+  left: 2.5vw;
 }
 
 .addButton {
-  width: 80px;
+  width: 120px;
   height: 40px;
-  background-color: #BBBFCA;
+  background-color: black;
   border: 0;
   line-height: 40px;
   color: white;
   border-radius: 5px;
   font-weight: bold;
-  position: relative;
-  left: 63vw;
   font-size: large;
+  position: relative;
+  left: 25vw;
+  border-radius: 30px;
 }
 
 .qnaContent {
   display: flex;
   flex-direction: column;
-  margin-right: 20vw;
   width: 70vw;
   position: relative;
-  margin-top: 20px;
+  margin-top: 30px;
   box-sizing: border-box;
 }
 
 .qnaTable {
   width: 100%;
   border-collapse: collapse;
-  border: 2px solid #f4f4f4;
+
+  th,
+  td {
+    border: 0;
+    padding: 10px;
+    height: 40px;
+    text-align: center;
+    font-size: 19px;
+  }
+
+  th {
+    border-top: 2px solid #555;
+    text-align: center;
+  }
+
+  tbody tr:hover {
+    cursor: pointer;
+    background-color: #E8E8E8;
+  }
+
+  td {
+    border-top: 1px solid #ddd;
+  }
+
+  td:nth-child(2),
+  td:nth-child(4),
+  td:nth-child(5) {
+    color: #555;
+  }
 }
 
-.qnaTable tr:hover {
-  cursor: pointer;
-  background-color: #E8E8E8;
+.qnaTable th:nth-child(1),
+.qnaTable td:nth-child(1) {
+  width: 50px;
+  font-weight: bold;
 }
 
-.qnaTable th,
-.qnaTable td {
-  padding: 8px;
-  border: 1px solid #f4f4f4;
-  text-align: center;
-  height: 40px;
+.qnaTable th:nth-child(2) {
+  width: 700px;
 }
 
-.qnaTable td {
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 40px;
-  text-overflow: ellipsis;
+.qnaTable td:nth-child(2) {
+  text-align: left;
+  padding-left: 50px;
 }
 
-.qnaTable th {
-  background-color: #f4f4f4;
-  font-size: 1.2rem;
+.qnaTable td:nth-child(3),
+.qnaTable td:nth-child(4),
+.qnaTable td:nth-child(5) {
+  color: #aaaaaa;
 }
 
 .paginationButton {
@@ -104,8 +143,8 @@
 .modal {
   display: none;
   position: fixed;
-  top: 41%;
-  left: 39%;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
   background-color: rgba(0, 0, 0, 0.5);
   width: 55vw;
@@ -161,15 +200,15 @@
 
 .close {
   position: absolute;
-  top: -9px;
-  right: 8px;
-  font-size: 40px;
+  top: 7px;
+  right: 17px;
+  font-size: 43px;
   cursor: pointer;
 }
 
 .infoTable tr:nth-child(1) td:nth-child(1),
-.infoTable tr:nth-child(1) td:nth-child(3), 
-  .infoTable tr:nth-child(1) td:nth-child(5) {
+.infoTable tr:nth-child(1) td:nth-child(3),
+.infoTable tr:nth-child(1) td:nth-child(5) {
   background-color: #f2f2f2;
   height: 40px;
   font-weight: bold;
@@ -188,36 +227,6 @@
   text-align: center;
 }
 
-.replyInput {
-  margin-top: 10px 10px 0 10px;
-  width: 90%;
-  height: 85%;
-  word-wrap: break-word;
-  word-break: break-all;
-  resize: none;
-  border: 0;
-
-  &:focus {
-    outline: none;
-  }
-}
-
-.replyButton {
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  font-size: 13px;
-  cursor: pointer;
-  border: none;
-  width: 40px;
-  height: 25px;
-  background-color: #495464;
-  line-height: 20px;
-  border-radius: 2px;
-  position: relative;
-  right: 22vw;
-}
-
 .wirteTable {
   width: 100%;
   height: 100%;
@@ -228,19 +237,97 @@
   word-break: break-all;
 }
 
-.wirteTable th,
 .wirteTable td {
-  border: 1px solid #ddd;
   padding: 5px;
-  text-align: left;
+  text-align: center;
   overflow: auto;
 }
 
-.wirteTable th {
+.wirteTable tr:nth-child(2)>td {
+  height: 80px;
+}
+
+.wirteTable tr:nth-child(3)>td {
+  height: 440px;
+}
+
+.writePassword {
+  font-size: 15px;
+  color: #222222;
+  width: 160px;
+  border: none;
+  border-bottom: solid #aaaaaa 1px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  position: relative;
+  background: none;
+  z-index: 5;
+  font-size: 18px;
+}
+
+.writePassword::placeholder {
+  color: #aaaaaa;
   text-align: center;
+}
+
+.writePassword:focus {
+  outline: none;
+}
+
+.writeTitle {
+  font-size: 15px;
+  color: #222222;
+  width: 900px;
+  border: none;
+  border: solid #aaaaaa 1px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  position: relative;
+  background: none;
+  z-index: 5;
+  font-size: 19px;
+  line-height: 30px;
+
+}
+
+.writeTitle::placeholder {
+  color: #aaaaaa;
+  text-align: center;
+}
+
+.writeTitle:focus {
+  outline: none;
+}
+
+.writeContent {
+  font-size: 15px;
+  color: #222222;
+  width: 900px;
+  border: none;
+  border: solid #aaaaaa 1px;
+  padding: 10px;
+  position: relative;
+  background: none;
+  z-index: 5;
+  font-size: 19px;
+  height: 400px;
+}
+
+.writeContent::placeholder {
+  color: #aaaaaa;
+  text-align: center;
+}
+
+.writeContent:focus {
+  outline: none;
+}
+
+.delButton {
+  position: relative;
+  left: 460px;
+  border: 0;
+  width: 90px;
+  height: 40px;
   font-weight: bold;
-  width: 100px;
-  background-color: #f2f2f2;
-  height: 30px;
-  /* 고정된 높이 */
+  font-size: 18px;
 }
