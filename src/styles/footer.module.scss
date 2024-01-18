@@ -3,8 +3,8 @@
   height:50vh;
   display:flex;
   flex-direction: column;
-  background-color:black;
-  color:white;
+  background-color:#D2E3C8;
+  color:#304D30;
 }
 
 .footdiv2{
@@ -12,6 +12,7 @@
   height:40vh;
   display:flex;
   justify-content: space-between;
+  align-items: center;
 }
 .suvdiv1{
   width:23vw;
@@ -43,4 +44,11 @@
 .suvdiv4{
   width:20vw;
   height:10vh;
+  display:flex;
+}
+
+.logo{
+  margin : 10px;
+  height: 50%;
+  border-radius: 3px;
 }
