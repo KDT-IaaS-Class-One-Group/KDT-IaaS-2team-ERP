@@ -71,9 +71,8 @@ export default function SwiperTest() {
       >
         {productData.map((product, index) => {
           return(
-          <SwiperSlide key={product.id} className={styles.card} style={{display:"flex", justifyContent:"center"}}>          
-            <div className={styles.image} onClick={() => handleSlideClick(index)} style={{width:"25vw",height:"55vh",borderRadius:"5%"
-          , display:"flex" , justifyContent:"center"}}> 
+          <SwiperSlide key={product.id} className={styles.card}>          
+            <div className={styles.image} onClick={() => handleSlideClick(index)}> 
               <Image fill={true} style={{borderRadius:"10%"}} src={`/productimage/image${index+1}.jpg`} alt={`Product ${index + 1}`} />
             </div>
           </SwiperSlide>
@@ -82,8 +81,8 @@ export default function SwiperTest() {
       </Swiper>
       {selectedProduct && (
         <div className={styles.selectedproductinfo}>
-          <p>Name: {selectedProduct.name}</p>
-          <p>info: {selectedProduct.info}</p>
+          <p>원두 : {selectedProduct.name}</p>
+          <p>상세정보 : {selectedProduct.info}</p>
           {/* 기타 정보 표시 */}
         </div>
       )}
