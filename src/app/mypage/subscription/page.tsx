@@ -116,7 +116,7 @@ export default function MyPagesub() {
         </div>
       )}
 
-    <div>
+    {/* <div>
       <p>다음 결제일: {formatDateString(new Date(subsEnd - 1).toISOString())}</p>
       {data.auto_renew === 1 ? (
         <div>
@@ -126,7 +126,7 @@ export default function MyPagesub() {
       ) : (
         <p>현재 구독이 자동 갱신되고 있지 않습니다.</p>
       )}
-    </div>
+    </div> */}
     </main>
   );
 }

@@ -84,7 +84,7 @@ function Index() {
         )}
         <div className={styles.box1}>
           당신을 위한 <br /> 원두를 선택하세요!
-          <button>원두 선택하기!</button>
+          <button>지금 바로 구독</button>
         </div>
       </div>
       <div className={`${styles.div} ${styles.yellow}`}>
