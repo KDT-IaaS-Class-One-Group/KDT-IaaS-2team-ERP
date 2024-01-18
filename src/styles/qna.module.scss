@@ -1,0 +1,246 @@
+.search {
+  position: relative;
+  left: 29vw;
+  margin-left: 10px;
+  height: 25px;
+}
+
+.select {
+  position: relative;
+  left: 29vw;
+  height: 30px;
+}
+
+.addButton {
+  width: 80px;
+  height: 40px;
+  background-color: #BBBFCA;
+  border: 0;
+  line-height: 40px;
+  color: white;
+  border-radius: 5px;
+  font-weight: bold;
+  position: relative;
+  left: 63vw;
+  font-size: large;
+}
+
+.qnaContent {
+  display: flex;
+  flex-direction: column;
+  margin-right: 20vw;
+  width: 70vw;
+  position: relative;
+  margin-top: 20px;
+  box-sizing: border-box;
+}
+
+.qnaTable {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #f4f4f4;
+}
+
+.qnaTable tr:hover {
+  cursor: pointer;
+  background-color: #E8E8E8;
+}
+
+.qnaTable th,
+.qnaTable td {
+  padding: 8px;
+  border: 1px solid #f4f4f4;
+  text-align: center;
+  height: 40px;
+}
+
+.qnaTable td {
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 40px;
+  text-overflow: ellipsis;
+}
+
+.qnaTable th {
+  background-color: #f4f4f4;
+  font-size: 1.2rem;
+}
+
+.paginationButton {
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  width: 25px;
+  height: 25px;
+  margin-left: 3px;
+  background-color: #BBBFCA;
+  line-height: 20px;
+  border-radius: 2px;
+  position: relative;
+  left: 33vw;
+  margin-top: 20px;
+
+  &.active {
+    background-color: #495464;
+  }
+}
+
+.qnaButton {
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  width: 40px;
+  height: 25px;
+  background-color: #495464;
+  line-height: 20px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 41%;
+  left: 39%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 55vw;
+  height: 74vh;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  border-radius: 8px;
+
+  &.show {
+    display: block;
+  }
+}
+
+.modalContent {
+  height: 68vh;
+  width: 52vw;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  position: relative;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.infoTable {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  overflow: auto;
+  max-width: 1000px;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.infoTable th,
+.infoTable td {
+  border: 1px solid #ddd;
+  padding: 5px;
+  text-align: left;
+  overflow: auto;
+}
+
+.infoTable th {
+  text-align: center;
+  font-weight: bold;
+  width: 100px;
+  background-color: #f2f2f2;
+  height: 30px;
+  /* 고정된 높이 */
+}
+
+.close {
+  position: absolute;
+  top: -9px;
+  right: 8px;
+  font-size: 40px;
+  cursor: pointer;
+}
+
+.infoTable tr:nth-child(1) td:nth-child(1),
+.infoTable tr:nth-child(1) td:nth-child(3), 
+  .infoTable tr:nth-child(1) td:nth-child(5) {
+  background-color: #f2f2f2;
+  height: 40px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.infoTable tr:nth-child(1) td:nth-child(2),
+.infoTable tr:nth-child(1) td:nth-child(4),
+.infoTable tr:nth-child(2) td:nth-child(2),
+.infoTable tr:nth-child(2) td:nth-child(4) {
+  width: 250px;
+}
+
+.infoTable tr:nth-child(3) td {
+  height: 40px;
+  text-align: center;
+}
+
+.replyInput {
+  margin-top: 10px 10px 0 10px;
+  width: 90%;
+  height: 85%;
+  word-wrap: break-word;
+  word-break: break-all;
+  resize: none;
+  border: 0;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.replyButton {
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  width: 40px;
+  height: 25px;
+  background-color: #495464;
+  line-height: 20px;
+  border-radius: 2px;
+  position: relative;
+  right: 22vw;
+}
+
+.wirteTable {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  overflow: auto;
+  max-width: 1000px;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.wirteTable th,
+.wirteTable td {
+  border: 1px solid #ddd;
+  padding: 5px;
+  text-align: left;
+  overflow: auto;
+}
+
+.wirteTable th {
+  text-align: center;
+  font-weight: bold;
+  width: 100px;
+  background-color: #f2f2f2;
+  height: 30px;
+  /* 고정된 높이 */
+}
