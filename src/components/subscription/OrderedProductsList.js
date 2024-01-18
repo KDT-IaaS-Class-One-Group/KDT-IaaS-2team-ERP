@@ -8,7 +8,7 @@ const OrderedProductsList = ({ products }) => {
           <div key={index}>
             <p>{product.name}</p>
             <div className="imagebox">
-              <Image src={products.imageUrl} width={250}
+              <Image src={product.imageUrl} width={250}
               height={200} alt={`선택한 제품 ${index + 1}`}></Image>
             </div>
           </div>

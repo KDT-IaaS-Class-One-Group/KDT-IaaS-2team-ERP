@@ -76,7 +76,7 @@ export default function SubscriptionClientSide() {
   const [selectedProductImages, setSelectedProductImages] = useState(Array(data.length).fill(''));
   const [radioOptions, setRadioOptions] = useState<Products[]>([]); // 라디오 상자 옵션 데이터
   const Subs_Index = useParams();
-  const subs_index = Subs_Index.Sub_Index;
+  const subs_index = Subs_Index.Subs_Index;
 
   useEffect(() => {
     const fetchData = async () => {

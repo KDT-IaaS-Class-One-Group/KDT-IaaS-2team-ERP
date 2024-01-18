@@ -17,7 +17,7 @@ import Search from "@/components/test/modal";
 interface OrderClientSideProps {
   Subs_Index: number;
   Name: string;
-  price: number;
+  Price: number;
   Week: number;
 }
 
@@ -46,7 +46,7 @@ export default function OrderClientSide() {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [price, setPrice] = useState(0);
   const Subs_Index = useParams();
-  const subs_index = Subs_Index.Sub_Index;
+  const subs_index = Subs_Index.Subs_Index;
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedProducts = searchParams.get("selectedProducts");
@@ -77,7 +77,7 @@ export default function OrderClientSide() {
     if (selectedProducts) {
       const ids = selectedProducts.split(",").map((id) => parseInt(id, 10));
       setSelectedProductIds(ids);
-
+      
       // 서버로 선택한 상품 정보 요청
       fetch(`/api/productss?productIds=${ids.join(",")}`)
         .then((response) => response.json())
@@ -99,8 +99,8 @@ export default function OrderClientSide() {
         setData(dataFromServer);
 
         if (dataFromServer) {
-          setPrice(dataFromServer[0].price);
-          console.log("price set successfully:", dataFromServer[0].price);
+          setPrice(dataFromServer[0].Price);
+          console.log("price set successfully:", dataFromServer[0].Price);
           console.log("Updated price state:", price);
         } else {
           console.log("No price data in the response:", dataFromServer);
@@ -151,8 +151,8 @@ export default function OrderClientSide() {
           address,
           cash,
           order_Index,
-          detailaddress,
           postcode,
+          detailaddress,
         };
 
         setUserInfo(userInformation);
@@ -170,7 +170,7 @@ export default function OrderClientSide() {
 
   const handlePayment = async () => {
     try {
-      // if (userInfo && userInfo.User_Index !== null) {
+      // if (userInfo && userInfo.order_Index !== null) {
       //   console.log("이미 구독 중입니다.");
       //   alert("이미 구독 중입니다.");
       //   router.push("/");
@@ -185,13 +185,12 @@ export default function OrderClientSide() {
 
         body: JSON.stringify({
           token: localStorage.token,
-          Subs_Index: Subs_Index,
+          Subs_Index: subs_index,
           price: price,
           ids: selectedProducts,
           postcode: selectedAddressType === 1 ? userInfo?.postcode : postcode,
           address: selectedAddressType === 1 ? userInfo?.address : address,
           detailaddress: selectedAddressType === 1 ? userInfo?.detailaddress : detailaddress,
-          User_Index: userInfo?.User_Index,
           order_name: selectedAddressType === 1 ? userInfo?.name : orderNameInput,
           order_phone: selectedAddressType === 1 ? userInfo?.phoneNumber : orderPhoneInput,
         }),

@@ -8,12 +8,34 @@
 }
 .top{
   width:100vw;
-  height:15vh;
+  height:12vh;
   background-color: lightgray;
 }
 .main{
   width:100vw;
-  height:85vh;
+  background-color: brown;
+  display:flex;
+  justify-content: center;
+}
 
-  background-color: lightgreen;
+.container{
+  width:80vw;
+  display:flex;
+  flex-wrap: wrap;
+}
+
+.card{
+  width:20vw;
+  height:60vh;
+  display:flex;
+  flex-direction: column;
+  margin-left: 5vw;
+  margin-top: 10vh;
+  border: 1px solid black;
+}
+.image{
+  width:20vw;
+  height:40vh;
+  display:flex;
+  position: relative;
 }

@@ -196,7 +196,7 @@ app.prepare().then(() => {
     }
   });
 
-  cron.schedule("55 * * * *", () => {
+  cron.schedule("2 * * * *", () => {
     try {
       checkAndRenewSubscriptions(pool);
       console.log("checkAndRenewSubscriptions.js가 실행되었습니다.");
@@ -707,27 +707,12 @@ app.prepare().then(() => {
 
       // orderIndex를 사용하여 orderdetails 테이블에서 subs_index, Subs_Start, Subs_End를 가져오기
       const orderDetailsData = await db.query(
-        "SELECT Subs_Index, Subs_Start, Subs_End FROM orderdetails WHERE order_Index = ?",
+        "SELECT Subs_Index, Subs_Start, Subs_End , auto_renew , order_name, order_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 FROM orderdetails WHERE order_Index = ?",
         [orderIndex]
-      );
-
-      const orderProductdata = await db.query(
-        "SELECT product_id FROM orderproduct WHERE order_Index = ?",
-        [orderIndex]
-      );
-
-      // orderProductdata는 여러 행을 포함하는 배열일 것입니다.
-      // 각 행에서 product_id 값을 추출하여 배열에 저장합니다.
-      const productIds = orderProductdata[0].map((row) => row.product_id);
-
-      // productIds 배열을 이용하여 원하는 작업 수행
-
-      const productData = await db.query(
-        ` SELECT * FROM product WHERE product_id IN (${productIds.join(", ")})`
       );
 
       if (orderDetailsData.length > 0) {
-        const { Subs_Index, Subs_Start, Subs_End } = orderDetailsData[0][0];
+        const { Subs_Index, Subs_Start, Subs_End ,auto_renew , order_name, order_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 } = orderDetailsData[0][0];
 
         // Subs_Index를 사용하여 subscription 테이블에서 데이터를 가져오기
         const subscriptionData = await db.query(
@@ -735,12 +720,24 @@ app.prepare().then(() => {
           [Subs_Index]
         );
         if (subscriptionData.length > 0) {
-          // subscriptionData와 orderDetailsData의 Subs_Start, Subs_End 정보를 함께 전송
+          
           res.status(200).json({
-            productdata: productData[0],
             subscriptionData: subscriptionData[0][0],
             Subs_Start: Subs_Start.toISOString(),
             Subs_End: Subs_End.toISOString(),
+            auto_renew,
+            order_name,
+            order_phone,
+            postcode,
+            address,
+            detailaddress,
+            status, 
+            Product_Index , 
+            Product_Index2 , 
+            Product_Index3 , 
+            productName1 , 
+            productName2 , 
+            productName3
           });
         } else {
           res.status(404).json({ error: "구독 정보를 찾을 수 없습니다." });
@@ -872,21 +869,48 @@ app.prepare().then(() => {
   server.post("/api/payment", async (req, res) => {
     try {
       const token = req.body.token;
+      const decodedToken = jwt.verify(token, secretKey);
       const price = req.body.price;
       const subsIndex = req.body.Subs_Index;
       const ids = req.body.ids;
       const address = req.body.address;
-      const userIndex = req.body.User_Index; // 사용자의 user_Index
+      const detailaddress = req.body.detailaddress
+      const userIndex = decodedToken.User_Index; // 사용자의 user_Index
       const orderName = req.body.order_name; // 주문자 이름
       const orderPhone = req.body.order_phone; // 주문자 전화번호
-      const zipCode = req.body.postcode; // 우편번호
-      console.log("address : ", address);
+      const postcode = req.body.postcode; // 우편번호
+      console.log("무ㅡ슨오류 : ", subsIndex);
       // 토큰 해독
-      const decodedToken = jwt.verify(token, secretKey);
-      console.log(decodedToken);
+      const productIds = ids.split(",").map((id) => parseInt(id, 10));
+  
       // 데이터베이스 연결
       const connection = await pool.getConnection();
 
+      const placeholders = Array(productIds.length).fill('?').join(', ');
+      const getProductNamesQuery = `
+          SELECT product_id, product_name
+          FROM product
+          WHERE product_id IN (${placeholders})
+        `;
+
+        const [productNamesResult] = await connection.query(
+          getProductNamesQuery,
+          productIds
+        );
+
+        // 각 product_id에 대한 name을 가져와서 저장
+        const productNames = {};
+        for (const row of productNamesResult) {
+          productNames[row.product_id] = row.product_name;
+        }
+        console.log("뭐",productNames)
+        // Orderdetails에 추가할 product_names 생성
+        const productName1 = productNames[productIds[0]] || null;
+        const productName2 = productNames[productIds[1]] || null;
+        const productName3 = productNames[productIds[2]] || null;
+        console.log("가",productName1)
+        console.log("문",productName2)
+        console.log("제",productName3)
       try {
         // 사용자의 캐시 확인
         const checkCashQuery = `SELECT cash FROM users WHERE User_Index = ?`;
@@ -917,8 +941,9 @@ app.prepare().then(() => {
 
         // 사용자의 user_Index 값으로 주문 정보를 추가
         const orderQuery = `
-      INSERT INTO Orderdetails (Subs_Index, User_Index, Subs_Start, Subs_End, address, order_name, order_phone, zip_code) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO Orderdetails (Subs_Index, User_Index, Subs_Start, Subs_End, address, order_name, order_phone, postcode
+        ,detailaddress ,Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
     `;
         const orderValues = [
           subsIndex,
@@ -928,14 +953,20 @@ app.prepare().then(() => {
           address,
           orderName, // 사용자로부터 받은 주문자 이름
           orderPhone, // 사용자로부터 받은 주문자 전화번호
-          zipCode,
+          postcode,
+          detailaddress,
+          productIds[0],
+          productIds[1],
+          productIds[2],
+          productName1,
+          productName2,
+          productName3,
         ];
 
         const [orderResult] = await connection.query(orderQuery, orderValues);
         const orderId = orderResult.insertId;
 
-        // ids를 배열로 변환
-        const productIds = ids.split(",").map((id) => parseInt(id, 10));
+
 
         // users 테이블 구독상탭 변경
         const updateUserOrderIndexQuery = `UPDATE users SET order_Index = ? WHERE User_Index = ?`;
@@ -945,19 +976,7 @@ app.prepare().then(() => {
           updateUserOrderIndexValues
         );
 
-        // OrderProduct에 추가
-        const orderProductQuery = `
-        INSERT INTO OrderProduct (Order_Index, product_id)
-        VALUES (?, ?)
-      `;
-
-        // 각 product_id에 대해 OrderProduct 행 추가
-        for (const productId of productIds) {
-          const orderProductValues = [orderId, productId];
-          await connection.query(orderProductQuery, orderProductValues);
-        }
-
-        // 트랜잭션 커밋
+   
         await connection.commit();
 
         // 연결 해제
