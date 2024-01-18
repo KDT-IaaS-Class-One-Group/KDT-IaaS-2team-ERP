@@ -83,7 +83,7 @@ function Index() {
           />
         )}
         <div className={styles.box1}>
-          당신을 위한 <br /> 원두를 선택하세요!
+          NTS와 함께하는 <br></br>HOME CAFE 생활
           <button>지금 바로 구독</button>
         </div>
       </div>
