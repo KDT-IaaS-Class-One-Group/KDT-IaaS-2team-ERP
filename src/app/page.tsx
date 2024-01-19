@@ -71,7 +71,9 @@ function Index() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.top}>
       <Topbar />
+      </div>
       <div className={`${styles.div} ${styles.gray}`}>
         {hasWindow && (
           <video
@@ -84,7 +86,9 @@ function Index() {
         )}
         <div className={styles.box1}>
           NTS와 함께하는 <br></br>HOME CAFE 생활
-          <button>지금 바로 구독</button>
+          <Link href={`/subproduct`}>
+          <button>지금 바로 구독하기</button>
+          </Link>
         </div>
       </div>
       <div className={`${styles.div} ${styles.yellow}`}>
