@@ -1,20 +1,23 @@
 .root{
   width:100vw;
-  height:80vh;
+  height:60vh;
   display:flex;
 }
 .infobox{
   width:50vw;
-  height:80vh;
+  height:70vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   color:#B6C4B6;
   background-color: #304D30;
+  box-sizing: border-box;
+  padding: 30px;
+  
   .container{
     width:40vw;
-    height:65vh;
+    height:55vh;
     display: flex;
     flex-direction: column;
   }
@@ -41,7 +44,7 @@
 }
 .imagebox{
   width:50vw;  
-  height:80vh;
+  height:70vh;
   // background-color: brown;
   display:flex;
   position: relative;

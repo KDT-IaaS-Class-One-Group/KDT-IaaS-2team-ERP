@@ -1,10 +1,10 @@
 .footbar{
   width:100vw;
-  height:50vh;
+  height:40vh;
   display:flex;
   flex-direction: column;
-  background-color:#D2E3C8;
-  color:#304D30;
+  background-color:#b6c4b610;
+  color:#163020;
 }
 
 .footdiv2{
@@ -24,10 +24,12 @@
   font-weight: 900;
 }
 .suvdiv2{
-  font-size:1rem;
+  font-size:14px;
   width:50vw;
   height:30vh;
-  line-height:120%;
+  line-height:130%;
+  text-align: right;
+  margin-right: 50px;
 }
 .footdiv3{
   width:100vw;
@@ -42,9 +44,10 @@
   font-size:1vw;
 }
 .suvdiv4{
-  width:20vw;
-  height:10vh;
+  width:15vw;
+  height:7vh;
   display:flex;
+  justify-content: flex-end;
 }
 
 .logo{

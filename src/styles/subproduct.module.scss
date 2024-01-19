@@ -3,44 +3,49 @@
   padding:0;
   display:flex;
   flex-direction: column;
-  width:100vw;
-  height:100vh;
+  width:100%;
+  // background-color: #F9EFDB;
+  height:100%;
 }
 .top{
   width:100vw;
-  height:12vh;
-  background-color: lightgray;
+  height:14vh;
 }
+
 .main{
   width:100vw;
   display:flex;
-  background-color: #F9EFDB;
   justify-content: center;
 }
 
 .container{
-  width:80vw;
+  width:90vw;
   display:flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .card{
-  width:20vw;
-  height:60vh;
+  width:25vw;
+  height:65vh;
   display:flex;
   flex-direction: column;
-  margin-left: 5vw;
+  margin-left: 2vw;
   margin-top: 10vh;
-  background-color: #9dbc985f;
-  border-radius: 5px;
+  background-color: #F1E4C3;
+  border-radius: 20px;
+  // border: 1px solid #163020;
     p{
       text-align: center;
       font-weight: bold;
+      margin-top: 1vh;
   }
 }
 .image{
-  width:20vw;
-  height:40vh;
+  width:25vw;
+  height:65vh;
+  border-radius: 20px;
   display:flex;
   position: relative;
+  cursor: pointer;
 }

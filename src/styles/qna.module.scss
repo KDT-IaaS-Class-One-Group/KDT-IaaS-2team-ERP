@@ -1,17 +1,22 @@
 .search {
-  height: 25px;
+  height: 20px;
   position: relative;
   left: 3.5vw;
 }
 
+.top{
+  width:100vw;
+  height:14vh;
+}
+
 .titleD {
   border-bottom: solid 3px #222222;
-  height: 100px;
+  height: 70px;
   margin-bottom: 20px;
 }
 
 .title {
-  font-size: 3rem;
+  font-size: 2rem;
 }
 
 .main {
@@ -21,17 +26,17 @@
 }
 
 .select {
-  height: 30px;
+  height: 25px;
   position: relative;
   left: 2.5vw;
 }
 
 .addButton {
-  width: 100px;
-  height: 40px;
+  width: 80px;
+  height: 30px;
   background-color: black;
   border: 0;
-  line-height: 40px;
+  line-height: 30px;
   color: white;
   border-radius: 5px;
   font-weight: bold;
@@ -121,7 +126,7 @@
   line-height: 20px;
   border-radius: 2px;
   position: relative;
-  left: 33vw;
+  left: 31vw;
   margin-top: 20px;
 
   &.active {

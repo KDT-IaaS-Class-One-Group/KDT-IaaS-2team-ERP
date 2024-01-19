@@ -1,28 +1,40 @@
+.title > p{
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #B99470;
+}
+
 .swipercontainer {
-  width: 100%;
+  width: 90%;
   height: 100%;
   box-sizing: border-box; /* 패딩을 요소의 크기에 포함시킴 */
   display: flex;
-  padding: 40px;
-  align-items: center;
+  align-items: flex-start;
+  margin-left: 5%;
+  justify-content: flex-start;
 }
 
 .slider {
   overflow: hidden;
-  width:45vw;
-  height:75vh; /* 내용이 넘칠 경우를 대비하여 오버플로우 감춤 */
+  width:35vw;
+  height:75vh;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .swiperslider {
-  width:40vw;
+  width:35vw;
   height:60vh;
   display:flex;
 }
 
 .card {
   display: flex;
-  width:30vw;
-  height:60vh;
+  width: 30vw;
+  height: 60vh;
+  align-items: center;
+  justify-content: center;
 }
 
 .image {
@@ -34,14 +46,22 @@
   width:30vw;
   height: 60vh;
   position: relative;
+  cursor: pointer;
+  z-index: 0;
 }
 
 .selectedproductinfo {
   flex: 1; /* 우측 세부 정보 영역이 남은 공간을 차지하도록 설정 */
   padding: 20px; /* 내용 간격 조절을 위한 패딩 추가 */
-  margin:20px;
-  background-color: #F1E4C3;  
-  height: 55vh;
+  background-color: #f1e4c377;  
+  height: 60vh;
   border-radius: 10px;
   text-align: center;
+  box-sizing: border-box;
+  margin-left: 50px;
+}
+
+.selectedproductinfo > p:nth-child(1){
+  font-size: 2rem;
+  font-weight: 900;
 }

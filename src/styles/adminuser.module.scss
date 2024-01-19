@@ -67,11 +67,12 @@
   overflow: hidden;
   max-width: 40px;
   text-overflow: ellipsis;
+  font-size: 13px;
 }
 
 .userTable th {
   background-color: #f4f4f4;
-  font-size: 1.2rem;
+  font-size: 13px;
 }
 
 .pagination {
@@ -121,8 +122,8 @@
 .modal {
   display: none;
   position: fixed;
-  top: 48%;
-  left: 46%;
+  top: 55%;
+  left: 55%;
   transform: translate(-50%, -50%);
   background-color: rgba(0, 0, 0, 0.5);
   width: 55vw;
@@ -144,7 +145,7 @@
   padding: 30px;
   border-radius: 8px;
   position: relative;
-  font-size: 1.2rem;
+  font-size: 13px;
   display: flex;
   align-items: center;
 }
@@ -158,8 +159,9 @@
 
 .infoTable td {
   border: 1px solid #ddd;
-  padding: 13px;
+  padding: 5px;
   text-align: left;
+  // height: 8px;
 }
 
 .infoTable td:first-child {

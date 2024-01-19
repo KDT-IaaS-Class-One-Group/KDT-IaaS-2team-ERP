@@ -53,7 +53,8 @@
   padding: 8px;
   border: 1px solid #f4f4f4;
   text-align: center;
-  height: 40px;
+  height: 35px;
+  font-size: 13px;
 }
 
 .orderTable td {
@@ -65,7 +66,6 @@
 
 .orderTable th {
   background-color: #f4f4f4;
-  font-size: 1.2rem;
 }
 
 
@@ -102,17 +102,16 @@
 }
 
 .addButton {
-  width: 80px;
-  height: 40px;
+  width: 50px;
+  height: 30px;
   background-color: #BBBFCA;
   border: 0;
-  line-height: 40px;
+  line-height: 30px;
   color: white;
   border-radius: 5px;
   font-weight: bold;
   position: relative;
   left: 63vw;
-  font-size: large;
 }
 
 .corrButton {
@@ -169,8 +168,8 @@
 .modal {
   display: none;
   position: fixed;
-  top: 48%;
-  left: 46%;
+  top: 54%;
+  left: 53%;
   transform: translate(-50%, -50%);
   background-color: rgba(0, 0, 0, 0.5);
   width: 55vw;
@@ -189,10 +188,10 @@
   height: 68vh;
   width: 52vw;
   background-color: #fff;
-  padding: 30px;
+  padding: 20px;
   border-radius: 8px;
   position: relative;
-  font-size: 1.2rem;
+  font-size: 12px;
   display: flex;
   align-items: center;
 }
@@ -206,10 +205,11 @@
 
 .infoTable td {
   border: 1px solid #ddd;
-  padding: 10px;
+  padding: 5px;
   text-align: left;
-  max-height: 50px;
+  // height: 8px;
 }
+
 
 .infoTable td:first-child {
   text-align: center;

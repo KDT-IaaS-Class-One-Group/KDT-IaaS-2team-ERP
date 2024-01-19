@@ -7,11 +7,11 @@
   display:flex;
   justify-content: space-between;
   color: #163020;
-  background-color: #b6c4b650;
+  background-color: #b6c4b610;
   max-width:100%;
   position: fixed;
   align-items: center;
-  z-index: 1;
+  z-index: 100;
 }
 
 .div1 {
@@ -28,8 +28,9 @@
   display:flex;
   justify-content: center;
   align-items: center;
-  color:#163020;
-  // font-family: 'Grandiflora One';
+  // color:#638889;
+  cursor: pointer;
+  font-family: 'Grandiflora One';
 }
 .div3 {
   width: 20vw;
@@ -54,8 +55,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #eef0e55e;
-    color: #304d30;
+    background-color: #eef0e59c;
+    color: #18271d;
     cursor: pointer;
     text-decoration: none;
     border-radius: 5px;
@@ -63,8 +64,8 @@
 
     /* 링크 스타일 추가 */
     &:hover {
-      background-color: #304d30;
-      color: #eef0e5c6;
+      background-color: #F1E4C3;
+      color: #18271d;
     }
   }
 }
