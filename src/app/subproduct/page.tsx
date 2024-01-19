@@ -40,12 +40,12 @@ export default function Page() {
             <div className={styles.card} key={index}>         
               <Link href={`/subscription/${item.Subs_Index}`}>
               <div className={styles.image}> 
-                <Image fill={true} className={styles.image} src={item.imageUrl} alt={`Product ${index + 1}`} />
+                <Image fill={true} className={styles.image} src={`/productimage/image2 copy.png`} alt={`Product ${index + 1}`} />
               </div>
               </Link>
-              <p style={{ margin: 0 }}>{item.name}</p>
+              {/* <p style={{ margin: 0 }}>{item.name}</p>
               <p style={{ margin: 0 }}>{item.price} 원</p>
-              <p style={{ margin: 0 }}>{item.week} 주</p>
+              <p style={{ margin: 0 }}>{item.week} 주</p> */}
           </div> 
           ))}
         </div>
