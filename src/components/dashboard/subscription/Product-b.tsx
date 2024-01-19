@@ -14,7 +14,7 @@ interface ProductInfo {
   sale_status: number;
 }
 
-const pageSize = 10;
+const pageSize = 7;
 
 export default function Product(): React.ReactNode {
   const [showForm, setShowForm] = useState(false);
@@ -25,7 +25,7 @@ export default function Product(): React.ReactNode {
   const [products, setProducts] = useState<ProductInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 10,
+    pageSize: 7,
     totalPages: 1,
   });
   const [imageurl, setImageurl] = useState<string | null>(null);
@@ -221,29 +221,28 @@ export default function Product(): React.ReactNode {
         <NavLinks />
       </div>
       <div className={styles.main}>
-        {/* <h1 className={styles.title}>상품 관리</h1> */}
         <button onClick={handleAdd} className={styles.addButton}>
           추가
         </button>
         {showForm && (
           <div className={styles.addSubscription}>
             <label className={styles.addLabel}>
-              상품명:
               <input
                 type="text"
                 name="product_name"
                 value={productInfo.product_name}
                 onChange={handleChange}
+                placeholder="상품명"
                 className={styles.addInput}
               />
             </label>
             <label className={styles.addLabel}>
-              재고:
               <input
                 type="text"
                 name="stock_quantity"
                 value={productInfo.stock_quantity}
                 onChange={handleChange}
+                placeholder="재고"
                 className={styles.addInput}
               />
             </label>
@@ -253,12 +252,12 @@ export default function Product(): React.ReactNode {
               </div>
             </label>
             <label className={styles.addLabel}>
-              상세정보:
               <textarea
                 type="text"
                 name="info"
                 value={productInfo.info}
                 onChange={handleChange}
+                placeholder="상세정보"
                 className={styles.addInput}
               />
             </label>
