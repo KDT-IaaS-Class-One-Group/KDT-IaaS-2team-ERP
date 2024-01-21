@@ -9,6 +9,10 @@ const mysql = require("mysql2/promise");
 const multer = require("multer");
 const path = require("path");
 const cron = require("node-cron");
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
+const session = require('express-session');
 
 const {
   checkAndRenewSubscriptions,
@@ -17,9 +21,9 @@ const {
 const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
-  port: "3306",
+  port: "3307",
   user: "root",
-  password: "723546",
+  password: "0000",
   database: "erp",
   connectionLimit: 5,
 });
@@ -65,6 +69,58 @@ app.prepare().then(() => {
 
   const server = express();
   server.use(bodyParser.json());
+
+  // 세션 설정
+server.use(session({ secret: 'your-secret-key', resave: true, saveUninitialized: true }));
+
+// Passport 초기화 및 세션 설정
+server.use(passport.initialize());
+server.use(passport.session());
+
+// Google 로그인 설정
+passport.use(new GoogleStrategy({
+  clientID: 'your-google-client-id',
+  clientSecret: 'your-google-client-secret',
+  callbackURL: 'http://localhost:3000/auth/google/callback',
+}, (accessToken, refreshToken, profile, done) => {
+  return done(null, profile);
+}));
+
+// 사용자 정보를 세션에 저장
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
+});
+
+// 로그인 경로 설정
+server.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile'] })
+);
+
+server.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/' }),
+  (req, res) => {
+    res.redirect('/');
+  }
+);
+
+// 사용자 정보 확인을 위한 엔드포인트
+server.get('/user', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json(req.user);
+  } else {
+    res.status(401).json({ message: 'Not authenticated' });
+  }
+});
+
+// 로그아웃
+server.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});
 
   // cron.schedule('15 * * * *', async () => {
   //   try {

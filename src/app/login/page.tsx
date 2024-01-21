@@ -1,6 +1,7 @@
 'use client';
 import styles from "@/styles/login.module.scss";
 import React, { useState } from 'react';
+import SocialLogin from '../../components/social/SocialLogin';
 
 const Login: React.FC = () => {
   const [userId, setUserId] = useState('');
@@ -63,6 +64,7 @@ const Login: React.FC = () => {
           로그인
         </button>
       </form>
+      <SocialLogin />
     </div>
   );
 };
