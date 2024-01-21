@@ -10,8 +10,7 @@ const multer = require("multer");
 const path = require("path");
 const cron = require("node-cron");
 const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const FacebookStrategy = require('passport-facebook').Strategy;
+const NaverStrategy = require('passport-naver').Strategy;
 const session = require('express-session');
 
 const {
@@ -70,18 +69,18 @@ app.prepare().then(() => {
   const server = express();
   server.use(bodyParser.json());
 
-  // 세션 설정
+// 세션 설정
 server.use(session({ secret: 'your-secret-key', resave: true, saveUninitialized: true }));
 
 // Passport 초기화 및 세션 설정
 server.use(passport.initialize());
 server.use(passport.session());
 
-// Google 로그인 설정
-passport.use(new GoogleStrategy({
-  clientID: 'your-google-client-id',
-  clientSecret: 'your-google-client-secret',
-  callbackURL: 'http://localhost:3000/auth/google/callback',
+// 네이버 로그인 설정
+passport.use(new NaverStrategy({
+  clientID: 'WKwwvBCP5nfOU154jOxA',
+  clientSecret: 'DMDunK0R0p',
+  callbackURL: 'http://localhost:3000/naver-login', // 적절한 콜백 주소로 변경하세요.
 }, (accessToken, refreshToken, profile, done) => {
   return done(null, profile);
 }));
@@ -96,12 +95,12 @@ passport.deserializeUser((obj, done) => {
 });
 
 // 로그인 경로 설정
-server.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile'] })
+server.get('/auth/naver',
+  passport.authenticate('naver')
 );
 
-server.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/' }),
+server.get('/auth/naver/callback',
+  passport.authenticate('naver', { failureRedirect: '/' }),
   (req, res) => {
     res.redirect('/');
   }
