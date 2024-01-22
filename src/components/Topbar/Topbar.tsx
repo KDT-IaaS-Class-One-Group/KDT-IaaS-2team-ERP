@@ -53,7 +53,7 @@ function Topbar() {
         {isLoggedIn ? (
           <>
             <p>{`${name}님 환영합니다.`}</p>
-            <Link href="/mypage">마이페이지</Link>
+            <Link href="/mypage/myinfo">마이페이지</Link>
             <button onClick={handleLogout}>로그아웃</button>
           </>
         ) : (

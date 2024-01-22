@@ -153,7 +153,7 @@ export default function SubsProduct(): React.ReactNode {
   const handleCorrection = (Subs_Index: string) => {
     setShowForm(false); // 추가 폼 숨기기
     setEditingSubsIndex(Subs_Index);
-
+    
     const editingSub = subs.find((sub) => sub.Subs_Index === Subs_Index);
     if (editingSub) {
       setSubscriptionInfo(editingSub);
@@ -163,14 +163,22 @@ export default function SubsProduct(): React.ReactNode {
 
   const handleUpdate = async (Subs_Index: string) => {
     try {
-      const { name, week, size, price } = subscriptionInfo;
-      const updatedSubscription = { name, week, size, price };
+      const { name, week, size, price ,imageUrl } = subscriptionInfo;
+      const updatedSubscription = { name, week, size, price, imageUrl};
+
+      const updatedSubscriptionInfo = {
+        ...updatedSubscription,
+        imageUrl: imageurl, // 이미지 URL 추가
+      };
+
+      console.log(updatedSubscriptionInfo)
+
       const response = await fetch(`/api/subs-product/${Subs_Index}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedSubscription),
+        body: JSON.stringify(updatedSubscriptionInfo),
       });
 
       if (response.ok) {

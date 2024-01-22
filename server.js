@@ -700,18 +700,18 @@ app.prepare().then(() => {
       }
 
       const decodedToken = jwt.verify(token, secretKey);
-
+      // console.log(decodedToken)
       if (!decodedToken) {
         throw new JsonWebTokenError("jwt malformed");
       }
       const orderIndex = decodedToken.order_Index;
-
+      console.log(orderIndex)
       // orderIndex를 사용하여 orderdetails 테이블에서 subs_index, Subs_Start, Subs_End를 가져오기
       const orderDetailsData = await db.query(
         "SELECT Subs_Index, Subs_Start, Subs_End , auto_renew , order_name, order_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 FROM orderdetails WHERE order_Index = ?",
         [orderIndex]
       );
-
+        
       if (orderDetailsData.length > 0) {
         const { Subs_Index, Subs_Start, Subs_End ,auto_renew , order_name, order_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 } = orderDetailsData[0][0];
 
@@ -1225,6 +1225,32 @@ app.prepare().then(() => {
   //     res.status(500).json({ error: "Internal Server Error" });
   //   }
   // });
+
+
+  //토스 실험
+
+  server.get('/api/payment/:orderId', async (req, res) => {
+    const { orderId } = req.params;
+    const secretKey = process.env.TOSS_SECRET_KEY || "";
+    const basicToken = Buffer.from(`${secretKey}:`, "utf-8").toString("base64");
+
+    try {
+      const paymentsResponse = await fetch(
+        `https://api.tosspayments.com/v1/payments/orders/${orderId}`,
+        {
+          headers: {
+            Authorization: `Basic ${basicToken}`,
+            "Content-Type": "application/json",
+          }
+        }
+      );
+
+      const paymentsData = await paymentsResponse.json();
+      res.json(paymentsData);
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }})
 
   // 기본적인 Next.js 페이지 핸들링
   server.get("*", (req, res) => {
@@ -1763,6 +1789,7 @@ app.prepare().then(() => {
           detailaddress: decodedToken.detailaddress,
           gender: decodedToken.gender,
           cash: decodedToken.cash,
+          order_Index:decodedToken.order_Index
         },
         secretKey,
         { expiresIn: "1h" } // 원하는 만료 시간 설정
@@ -2054,6 +2081,76 @@ app.prepare().then(() => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
+
+
+  server.post("/api/cancelsubscription", async (req, res) => {
+    try {
+      if (req.method === "POST") {
+        const token = req.headers.authorization?.replace("Bearer ", "");
+  
+        if (!token) {
+          return res.status(401).json({ error: "토큰이 제공되지 않았습니다." });
+        }
+        
+        const decodedToken = jwt.verify(token, secretKey);
+        console.log(decodedToken)
+        // 토큰에서 User_Index 추출
+        const userIndex = decodedToken.User_Index;
+        const orderIndex = decodedToken.order_Index;
+        console.log(userIndex)
+        console.log(orderIndex)
+        // order_index를 기반으로 해당 구독을 찾아서 auto_renew 상태를 0으로 업데이트
+        const updateQuery = "UPDATE orderdetails SET auto_renew = 0 WHERE Order_Index = ? AND User_Index = ?";
+        const [updateResult] = await db.query(updateQuery, [orderIndex, userIndex]);
+  
+        if (updateResult.affectedRows === 1) {
+          // 업데이트 성공 시
+          res.status(200).json({ message: "구독이 취소되었습니다." });
+        } else {
+          // 업데이트 실패 시
+          res.status(500).json({ error: "구독 취소 실패" });
+        }
+      } else {
+        // 허용되지 않은 메서드
+        res.status(405).json({ error: "허용되지 않은 메서드" });
+      }
+    } catch (error) {
+      console.error("Error canceling subscription:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  //토스 결제 실험
+  server.post('https://api.tosspayments.com/v1/payments/confirm', async (req, res) => {
+    const { orderId, paymentKey, amount } = req.body;
+    const secretKey = process.env.TOSS_SECRET_KEY || "";
+    const url = "https://api.tosspayments.com/v1/payments/confirm";
+    const basicToken = Buffer.from(`${secretKey}:`, "utf-8").toString("base64");
+
+    try {
+      const confirmPaymentResponse = await fetch(url, {
+        method: 'post',
+        body: JSON.stringify({
+          amount,
+          orderId,
+          paymentKey,
+        }),
+        headers: {
+          Authorization: `Basic ${basicToken}`,
+          "Content-Type": "application/json"
+        },
+      });
+
+      // 서버에서의 추가 작업 (DB 처리 등)
+      // ...
+
+      res.status(confirmPaymentResponse.status).json(await confirmPaymentResponse.json());
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
 
   const PORT = process.env.PORT || 3000;
 

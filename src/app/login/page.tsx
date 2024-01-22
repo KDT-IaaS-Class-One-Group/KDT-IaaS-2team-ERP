@@ -36,25 +36,26 @@ const Login: React.FC = () => {
   };
 
   return (
+  <div className={styles.root}>
     <div className={styles.container}>
       <h1 className={styles.h1}>로그인</h1>
       <form className={styles.form}>
         <label className={styles.label}>
-          아이디:
           <input
             type="text"
             className={styles.input}
             value={userId}
+            placeholder="아이디를 입력하세요"
             onChange={(e) => setUserId(e.target.value)}
           />
         </label>
         <br />
         <label className={styles.label}>
-          비밀번호:
           <input
             type="password"
             className={styles.input}
             value={password}
+            placeholder="비밀번호를 입력하세요"
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
@@ -64,6 +65,7 @@ const Login: React.FC = () => {
         </button>
       </form>
     </div>
+  </div>
   );
 };
 

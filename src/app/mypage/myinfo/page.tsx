@@ -5,7 +5,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import styles from '@/styles/myinfo.module.scss'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
+import Search from "@/components/test/modal";
 interface UserInfo {
   userId: string;
   name: string;
@@ -19,10 +19,50 @@ interface UserInfo {
 }
 
 export default function MyPageinfo() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const handleSearch = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const getaddress = (data : any) => {
+    console.log(data)
+    const  address1 = data;
+    // 필요한 주소 정보를 조합하여 주소 문자열 반환
+    return address1
+  };
+
+  const handleSelectaddress = (data: any) => {
+    const address = getaddress(data);
+   
+    setIsModalOpen(false);
+
+    setUserInfo((prevInfo) =>
+    prevInfo
+    ? { ...prevInfo, address: address }
+      : { userId: '', name: '', birthdate: '', phoneNumber: '' , email: '', postcode: '', address: address, detailaddress: '', gender: '' }
+  )
+}
+    
+
+
+  const handleSelectZonecode = (data: any) => {
+    const postcodeData = getaddress(data);
+    setUserInfo((prevInfo) =>
+    prevInfo
+    ? { ...prevInfo, postcode: postcodeData }
+      : { userId: '', name: '', birthdate: '', phoneNumber: '' , email: '', postcode: postcodeData, address: '', detailaddress: '', gender: '' }
+  )
+  };
+  
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -162,14 +202,25 @@ export default function MyPageinfo() {
       console.error('서버 에러:', error);
     }
   };
-
-
+  const handleInputChange = (name: string, value: string) => {
+    setUserInfo({
+      ...userInfo,
+      [name]: value,
+    });
+  };
+  
+  const handlePostcodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    handleInputChange('postcode', value);
+  };
+  
+  // 예를 들어, address 변경 시
+  const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    handleInputChange('address', value);
+  };
 
   return (
-    <main>
-      <h1 className={`mb-4 text-xl md:text-2xl`}>
-        나의 정보
-      </h1>
       <div className={styles.myinfo}>
         {/* 사용자 정보를 표시하는 부분 */}
         {userInfo && (
@@ -177,145 +228,219 @@ export default function MyPageinfo() {
             {/* 수정 모드일 때는 입력 폼을 표시 */}
             {isEditMode ? (
               <div className={styles.myinfomodify}>
-                <p>사용자 ID: {userInfo.userId}</p>
-                <label>
-                  이름:
-                  <input
-                    type='text'
-                    value={userInfo.name}
-                    onChange={(e) =>
-                      setUserInfo((prevInfo) => 
-                        prevInfo ? { ...prevInfo, name: e.target.value } : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
-                      )
-                    }
-                  />
-                </label>
-                <label>
-                  생년월일:
-                  <DatePicker
-                    selected={new Date(userInfo.birthdate)} // 기존 날짜를 Date 객체로 변환하여 설정
-                    onChange={(date) =>
-                      setUserInfo((prevInfo) =>
-                        prevInfo
-                          ? { ...prevInfo, birthdate: date.toISOString() }
-                          : { userId: '', name: '', birthdate: date.toISOString(), phoneNumber: '', email: '', postcode:'', address: '', detailaddress:'' ,gender: '' }
-                      )
-                    }
-                  />
-                </label>
-                <label>
-                  전화번호:
-                  <input
-                    type='text'
-                    value={userInfo.phoneNumber}
-                    onChange={(e) =>
-                      setUserInfo((prevInfo) =>
-                        prevInfo
-                          ? { ...prevInfo, phoneNumber: e.target.value }
-                          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
-                      )
-                    }
-                  />
-                </label>
-                <label>
-                  이메일:
-                  <input
-                    type='text'
-                    value={userInfo.email}
-                    onChange={(e) =>
-                      setUserInfo((prevInfo) =>
-                        prevInfo
-                          ? { ...prevInfo, email: e.target.value }
-                          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
-                      )
-                    }
-                  />
-                </label>
-                <label>
-                  우편변호:
-                  <input
-                    type='text'
-                    value={userInfo.postcode}
-                    onChange={(e) =>
-                      setUserInfo((prevInfo) =>
-                        prevInfo
-                          ? { ...prevInfo, postcode: e.target.value }
-                          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
-                      )
-                    }
-                  />
-                </label>
-                <label>
-                  주소:
-                  <input
-                    type='text'
-                    value={userInfo.address}
-                    onChange={(e) =>
-                      setUserInfo((prevInfo) =>
-                        prevInfo
-                          ? { ...prevInfo, address: e.target.value }
-                          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
-                      )
-                    }
-                  />
-                </label>
-                <label>
-                  상세주소:
-                  <input
-                    type='text'
-                    value={userInfo.detailaddress}
-                    onChange={(e) =>
-                      setUserInfo((prevInfo) =>
-                        prevInfo
-                          ? { ...prevInfo, detailaddress: e.target.value }
-                          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
-                      )
-                    }
-                  />
-                </label>
-                <label>
-                  성별:
-                  
-                  <select name="gender" value={userInfo.gender}  onChange={(e) =>
-                      setUserInfo((prevInfo) =>
-                        prevInfo
-                          ? { ...prevInfo, gender: e.target.value }
-                          : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '',postcode:'', address: '', detailaddress:'' ,gender: '' }
-                      ) }>
-                    <option value="">선택하세요</option>
-                    <option value="남성">남성</option>
-                    <option value="여성">여성</option>
-                  </select>
-                </label>
-
-                {/* 나머지 수정 폼들도 추가 */}
-                {/* ... */}
+                 <table className={styles.userinfo}>
+                  <tbody>
+                    <tr>
+                      <td className={styles.item}>사용자 ID</td>
+                      <td className={styles.info}>{userInfo.userId}</td>
+                    </tr>
+                    <tr>
+                      <td className={styles.item}>이름</td>
+                      <td className={styles.info}>
+                        <label>
+                          <input
+                            type='text'
+                            value={userInfo.name}
+                            onChange={(e) =>
+                              setUserInfo((prevInfo) =>
+                                prevInfo
+                                  ? { ...prevInfo, name: e.target.value }
+                                  : { userId: '', name: e.target.value, birthdate: '', phoneNumber: '', email: '', postcode: '', address: '', detailaddress: '', gender: '' }
+                              )
+                            }
+                          />
+                        </label>
+                      </td>
+                    </tr>
+                    <tr>
+                    <td className={styles.item}>생년월일</td>
+                      <td className={styles.info}>
+                        <DatePicker
+                          selected={new Date(userInfo.birthdate)}
+                          onChange={(date) => {
+                            if (date !== null) {
+                              setUserInfo((prevInfo) =>
+                                prevInfo
+                                  ? { ...prevInfo, birthdate: date.toISOString() }
+                                  : { userId: '', name: '', birthdate: date.toISOString(), phoneNumber: '', email: '', postcode: '', address: '', detailaddress: '', gender: '' }
+                              );
+                            }
+                          }}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className={styles.item}>전화번호</td>
+                      <td className={styles.info}>
+                        <label>
+                          <input
+                            type='text'
+                            value={userInfo.phoneNumber}
+                            onChange={(e) =>
+                              setUserInfo((prevInfo) =>
+                                prevInfo
+                                ? { ...prevInfo, phoneNumber: e.target.value }
+                                  : { userId: '', name: '', birthdate: '', phoneNumber: e.target.value , email: '', postcode: '', address: '', detailaddress: '', gender: '' }
+                              )
+                            }
+                          />
+                        </label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className={styles.item}>이메일</td>
+                      <td className={styles.info}>
+                        <label>
+                          <input
+                            type='text'
+                            value={userInfo.email}
+                            onChange={(e) =>
+                              setUserInfo((prevInfo) =>
+                                prevInfo
+                                ? { ...prevInfo,  email: e.target.value  }
+                                  : { userId: '', name: '', birthdate: '', phoneNumber: '', email: e.target.value  , postcode: '', address: '', detailaddress: '', gender: '' }
+                              )
+                            }
+                          />
+                        </label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className={styles.item}>우편번호</td>
+                      <td className={styles.info}>
+                        <label>
+                          <input
+                            type='text'
+                            value={userInfo.postcode}
+                            onChange={(e) =>
+                              setUserInfo((prevInfo) =>
+                                prevInfo
+                                ? { ...prevInfo, postcode: e.target.value  }
+                                  : { userId: '', name: '', birthdate: '', phoneNumber: '', email: '', postcode: e.target.value, address: '', detailaddress: '', gender: '' }
+                              )
+                            }
+                            readOnly
+                          />
+                        </label>
+                        <button onClick={() => setIsModalOpen(true)}>주소 검색</button>
+                        <Search
+                          open={isModalOpen}
+                          onClose={handleCloseModal}
+                          onSelectAddress={handleSelectaddress}
+                          onSelectZonecode={handleSelectZonecode}
+                        >
+                          모달 내용
+                        </Search>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className={styles.item}>주소</td>
+                      <td className={styles.info}>
+                        <label>
+                          <input
+                            type='text'
+                            value={userInfo.address}
+                            onChange={(e) =>
+                              setUserInfo((prevInfo) =>
+                                prevInfo
+                                ? { ...prevInfo, address: e.target.value  }
+                                  : { userId: '', name: '', birthdate: '', phoneNumber: '', email: '', postcode: '', address: e.target.value , detailaddress: '', gender: '' }
+                              )
+                            }
+                            readOnly
+                          />
+                        </label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className={styles.item}>상세주소</td>
+                      <td className={styles.info}>
+                        <label>
+                          <input
+                            type='text'
+                            value={userInfo.detailaddress}
+                            onChange={(e) =>
+                              setUserInfo((prevInfo) =>
+                                prevInfo
+                                ? { ...prevInfo, detailaddress: e.target.value  }
+                                  : { userId: '', name: '', birthdate: '', phoneNumber: '', email: '', postcode: '', address:'' , detailaddress:  e.target.value , gender: '' }
+                              )
+                            }
+                          />
+                        </label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className={styles.item}>성별</td>
+                      <td className={styles.info}>
+                        <select
+                          name="gender"
+                          value={userInfo.gender}
+                          onChange={(e) =>
+                            setUserInfo((prevInfo) =>
+                              prevInfo
+                                ? { ...prevInfo, gender: e.target.value }
+                                : { userId: '', name: '', birthdate: '', phoneNumber: '', email: '', postcode: '', address: '', detailaddress: '', gender: e.target.value }
+                            )
+                          }
+                        >
+                          <option value="">선택하세요</option>
+                          <option value="남성">남성</option>
+                          <option value="여성">여성</option>
+                        </select>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
                 <button onClick={handleSaveChanges}>저장</button>
               </div>
             ) : (
               <div>
-                <p>사용자 ID: {userInfo.userId}</p>
-                <p>이름: {userInfo.name}</p>
-                <p>생년월일: {userInfo.birthdate}</p>
-                <p>전화번호: {userInfo.phoneNumber}</p>
-                <p>이메일: {userInfo.email}</p>
-                <p>우편번호:{userInfo.postcode}</p>
-                <p>주소: {userInfo.address}</p>
-                <p>상세주소:{userInfo.detailaddress}</p>
-                <p>성별: {userInfo.gender}</p>
-                <button onClick={handleEditModeToggle}>수정</button>
+                <table className={styles.userinfo}>
+                  <tr>
+                      <td className={styles.item}>사용자 ID</td>
+                      <td className={styles.info}>{userInfo.userId}</td>
+                  </tr>
+                  <tr>
+                      <td className={styles.item}>이름</td>
+                      <td className={styles.info}>{userInfo.name}</td>
+                  </tr>
+                  <tr>
+                      <td className={styles.item}>생년월일</td>
+                      <td className={styles.info}>{userInfo.birthdate}</td>
+                  </tr>
+                  <tr>
+                      <td className={styles.item}>전화번호</td>
+                      <td className={styles.info}>{userInfo.phoneNumber}</td>
+                  </tr>
+                  <tr>
+                      <td className={styles.item}>이메일</td>
+                      <td className={styles.info}>{userInfo.email}</td>
+                  </tr>
+                  <tr>
+                      <td className={styles.item}>우편번호</td>
+                      <td className={styles.info}>{userInfo.postcode}</td>
+                  </tr>
+                  <tr>
+                      <td className={styles.item}>주소</td>
+                      <td className={styles.info}>{userInfo.address}</td>
+                  </tr>
+                  <tr>
+                      <td className={styles.item}>상세주소</td>
+                      <td className={styles.info}>{userInfo.detailaddress}</td>
+                  </tr>
+                  <tr>
+                      <td className={styles.item}>성별</td>
+                      <td className={styles.info}>{userInfo.gender}</td>
+                  </tr>
+              </table>
+
+              <button onClick={handleEditModeToggle}>수정</button>
+              <button onClick={handleWithdrawal}>회원 탈퇴</button>
               </div>
             )}
           </div>
         )}
       </div>
-
-      <h1 className={`mb-4 text-xl md:text-2xl`}>
-        회원탈퇴
-      </h1>
-      <div className="withdrawn">
-        <button onClick={handleWithdrawal}>회원 탈퇴</button>
-      </div>
-    </main>
   );
 }

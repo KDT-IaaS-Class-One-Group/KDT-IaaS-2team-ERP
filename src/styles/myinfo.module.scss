@@ -1,13 +1,36 @@
 .myinfo{
   display: flex;
   flex-direction: column;
-  width:80vw;
+  width:87vw;
   height:50vh;
+  align-items: center;
 }
 
-.myinfomodify{
-  display: flex;
-  flex-direction: column;
-  width:80vw;
-  height:50vh;
+.userinfo {
+  border-collapse: collapse;
+  width: 70vw;
+  margin-top:10vh;
+}
+
+.userinfo td, .userinfo th {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.userinfo th {
+  background-color: #f2f2f2;
+}
+
+.item{
+  width:15vw;
+  display:flex;
+  justify-content: center;
+  background-color: lightblue;
+  font-size: 1rem;
+  font-weight: 800;
+}
+.info{
+  width:55vw;
+  font-size: 1rem;
 }

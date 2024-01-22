@@ -259,157 +259,147 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     <div className={styles.container}>
       <h1 className={styles.title}>회원가입</h1>
       <form className={styles.form}>
-        <label className={styles.formLabel}>
-          아이디:
-          <input type="text" name="userId" value={formData.userId} onChange={handleChange} className={styles.input} />
-          <button type="button" onClick={handleCheckDuplicate}>
-          중복 확인
-          </button>
-          {isUserIdValid === null ? null : (
-            <span className={styles.validMessage}>
-              {isUserIdValid === true
-                ? '사용 가능한 아이디입니다.'
-                : isUserIdValid === false
-                ? '이미 사용 중인 아이디입니다.'
-                : '중복 확인 중...'}
-            </span>
-          )}
-        </label>
-        <br />
-        <label className={styles.formLabel}>
-          비밀번호:
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className={styles.input}
-          />
-          {/* 비밀번호 유효성 아이콘 표시 */}
-          {isPasswordValid !== null && (
-            <span className={styles.passwordValidation}>
-              {isPasswordValid ? '✔' : '✘'}
-            </span>
-          )}
-          {/* 비밀번호 유효성 메시지 표시 */}
-          {isPasswordValid === false && (
-            <span className={styles.validMessage}>
-              비밀번호는 8글자 이상, 영문, 숫자, 특수문자를 모두 사용해야 합니다.
-            </span>
-          )}
-          </label>
-
-          <label className={styles.formLabel}>
-          비밀번호 확인:
-          <input
-            type="password"
-            name="passwordConfirm"
-            value={passwordConfirm}
-            onChange={handleChange}
-            className={styles.input}
-          />
-          {isPasswordMatch !== null && (
-            <span className={styles.validMessage}>
-              {isPasswordMatch ? '비밀번호가 일치합니다.' : '비밀번호가 일치하지 않습니다.'}
-            </span>
-          )}
-        </label>
-
-        <label className={styles.formLabel}>
-          이름:
-          <input type="text" name="name" value={formData.name} onChange={handleChange} className={styles.input} />
-        </label>
-        <br />
-        <label className={styles.formLabel}>
-          생년월일:
-          <DatePicker
-            selected={formData.birthdate}
-            onChange={(date: Date) => handleChange(date)}
-            peekNextMonth
-            showMonthDropdown
-            showYearDropdown
-            dateFormat="yyyy-MM-dd"
-          />
-        </label>
-        <br />
-        <label className={styles.formLabel}>
-          휴대폰번호:
-          <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} className={styles.input} />
-        </label>
-        <br />
-        <label className={styles.formLabel}>
-          이메일:
-          <input type="text" name="email" value={formData.email} onChange={handleChange} className={styles.input} />
-        </label>
-        <br />
-        <label className={styles.formLabel}>
-          주소:
-          <div className={styles.jusoContainer}>
-          <div className={styles.addressWrapper}>
-          <div className={styles.PostCodeAndButton}>
-        {/* 이 부분은 주소 검색 결과가 선택되면 자동으로 업데이트되므로 readOnly로 유지 */}
-        <Input
-          m="3px"
-          size="md"
-          name="postcode"
-          type="text"
-          placeholder="우편번호"
-          value={postcode}
-          onChange={handlePostcodeChange} 
-          readOnly
-        />
-        
-        <button onClick={() => setIsModalOpen(true)}>주소 검색</button>
-        <Search
-          open={isModalOpen}
-          onClose={handleCloseModal}
-          onSelectAddress={handleSelectaddress}
-          onSelectZonecode={handleSelectZonecode}
-        >
-          모달 내용
-        </Search>
-      </div>
-      {/* 주소 입력 값들은 자동으로 업데이트되므로 readOnly로 유지 */}
-      <Input
-        m="3px"
-        size="md"
-        type="text"
-        name="address"
-        placeholder="주소"
-        value={address}
-        onChange={handleAddressChange}
-        readOnly
-      />
-      <Input
-        m="3px"
-        size="md"
-        name="detailaddress"
-        type="text"
-        placeholder="상세주소"
-        value={detailaddress}
-        onChange={(e) => {setDetailaddress(e.target.value); handleChange(e);
-        }}
-      />
-    </div>
-    <div className={styles.ButtonWrapper}>
-    </div>
-    </div>
-    </label>
-        <label className={styles.formLabel}>
-          성별:
-          <select name="gender" value={formData.gender} onChange={handleChange} className={styles.input}>
-            <option value="">선택하세요</option>
-            <option value="남성">남성</option>
-            <option value="여성">여성</option>
-          </select>
-        </label>
-        <br />
+        <table className={styles.userTable}>
+          <tbody>
+            <tr>
+              <td className={styles.labelCell}>아이디</td>
+              <td className={styles.labelCell2}>
+                <input type="text" name="userId" value={formData.userId} onChange={handleChange} className={styles.input} />
+                <button type="button" onClick={handleCheckDuplicate}>중복 확인</button>
+                {isUserIdValid === null ? null : (
+                  <span className={styles.validMessage}>
+                    {isUserIdValid === true
+                      ? '사용 가능한 아이디입니다.'
+                      : isUserIdValid === false
+                      ? '이미 사용 중인 아이디입니다.'
+                      : '중복 확인 중...'}
+                  </span>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.labelCell}>비밀번호</td>
+              <td className={styles.labelCell2} >
+                <input type="password" name="password" value={formData.password} onChange={handleChange} className={styles.input} 
+                placeholder=' 8글자 이상, 영문, 숫자, 특수문자를 모두 사용해야 합니다.'/>
+                {isPasswordValid !== null && (
+                  <span className={styles.passwordValidation}>
+                    {isPasswordValid ? '✔' : '✘'}
+                  </span>
+                )}
+                {isPasswordValid === false && (
+                  <span className={styles.validMessage}>
+                    비밀번호는 8글자 이상, 영문, 숫자, 특수문자를 모두 사용해야 합니다.
+                  </span>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.labelCell}>비밀번호 확인</td>
+              <td className={styles.labelCell2}>
+                <input type="password" name="passwordConfirm" value={passwordConfirm} onChange={handleChange} className={styles.input} />
+                {isPasswordMatch !== null && (
+                  <span className={styles.validMessage}>
+                    {isPasswordMatch ? '비밀번호가 일치합니다.' : '비밀번호가 일치하지 않습니다.'}
+                  </span>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.labelCell}>이름</td>
+              <td className={styles.labelCell2}>
+                <input type="text" name="name" value={formData.name} onChange={handleChange} className={styles.input} />
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.labelCell}>생년월일</td>
+              <td className={styles.labelCell2}>
+                <DatePicker className={styles.input}
+                  selected={formData.birthdate}
+                  onChange={(date: Date) => handleChange(date)}
+                  peekNextMonth
+                  showMonthDropdown
+                  showYearDropdown
+                  dateFormat="yyyy-MM-dd"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.labelCell}>휴대폰번호</td>
+              <td className={styles.labelCell2}>
+                <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} className={styles.input} />
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.labelCell}>이메일</td>
+              <td className={styles.labelCell2}>
+                <input type="text" name="email" value={formData.email} onChange={handleChange} className={styles.input} />
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.labelCelladress}>주소</td>
+              <td className={styles.labelCelladress2}>
+                <div className={styles.jusoContainer}>
+                  <div className={styles.addressWrapper}>
+                    <div className={styles.PostCodeAndButton}>
+                      <input
+                        className={styles.input}
+                        name="postcode"
+                        type="text"
+                        placeholder="우편번호"
+                        value={postcode}
+                        onChange={handlePostcodeChange} 
+                        readOnly
+                      />
+                      <button onClick={() => setIsModalOpen(true)}>주소 검색</button>
+                      <Search
+                        open={isModalOpen}
+                        onClose={handleCloseModal}
+                        onSelectAddress={handleSelectaddress}
+                        onSelectZonecode={handleSelectZonecode}
+                      >
+                        모달 내용
+                      </Search>
+                    </div>
+                    <input
+                      className={styles.input}
+                      type="text"
+                      name="address"
+                      placeholder="주소"
+                      value={address}
+                      onChange={handleAddressChange}
+                      readOnly
+                    />
+                    <input
+                      className={styles.input}
+                      name="detailaddress"
+                      type="text"
+                      placeholder="상세주소"
+                      value={detailaddress}
+                      onChange={(e) => {setDetailaddress(e.target.value); handleChange(e);}}
+                    />
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td className={styles.labelCell}>성별</td>
+              <td className={styles.labelCell2}>
+                <select name="gender" value={formData.gender} onChange={handleChange} className={styles.input}>
+                  <option value="">선택하세요</option>
+                  <option value="남성">남성</option>
+                  <option value="여성">여성</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
         <button type="button" className={styles.button} onClick={handleSubmitClick} disabled={isUserIdValid === false}>
           회원가입
         </button>
       </form>
-    </div>
-  );
+</div>
+  )
 };
 
 export default SignUp;

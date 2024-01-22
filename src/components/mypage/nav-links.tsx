@@ -6,9 +6,8 @@ import clsx from 'clsx';
 import styles from "@/styles/navlink.module.scss";
 
 const links = [
-  { name: '정보관리', href: '/mypage/myinfo' },
-  { name: '캐쉬관리', href: '/mypage/mycash' },
-  { name: '구독관리', href: '/mypage/subscription' },
+  { name: '회원정보', href: '/mypage/myinfo' },
+  { name: '구독-캐쉬', href: '/mypage/subscription' },
 ];
 
 export default function NavLinks() {
