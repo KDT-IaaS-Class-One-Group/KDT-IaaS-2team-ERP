@@ -20,9 +20,9 @@ const {
 const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "localhost",
-  port: "3307",
+  port: "3306",
   user: "root",
-  password: "0000",
+  password: "723546",
   database: "erp",
   connectionLimit: 5,
 });
@@ -1284,28 +1284,7 @@ server.get('/logout', (req, res) => {
 
   //토스 실험
 
-  server.get('/api/payment/:orderId', async (req, res) => {
-    const { orderId } = req.params;
-    const secretKey = process.env.TOSS_SECRET_KEY || "";
-    const basicToken = Buffer.from(`${secretKey}:`, "utf-8").toString("base64");
-
-    try {
-      const paymentsResponse = await fetch(
-        `https://api.tosspayments.com/v1/payments/orders/${orderId}`,
-        {
-          headers: {
-            Authorization: `Basic ${basicToken}`,
-            "Content-Type": "application/json",
-          }
-        }
-      );
-
-      const paymentsData = await paymentsResponse.json();
-      res.json(paymentsData);
-    } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }})
+  
 
   // 기본적인 Next.js 페이지 핸들링
   server.get("*", (req, res) => {
@@ -2171,37 +2150,6 @@ server.get('/logout', (req, res) => {
       }
     } catch (error) {
       console.error("Error canceling subscription:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  });
-
-  //토스 결제 실험
-  server.post('https://api.tosspayments.com/v1/payments/confirm', async (req, res) => {
-    const { orderId, paymentKey, amount } = req.body;
-    const secretKey = process.env.TOSS_SECRET_KEY || "";
-    const url = "https://api.tosspayments.com/v1/payments/confirm";
-    const basicToken = Buffer.from(`${secretKey}:`, "utf-8").toString("base64");
-
-    try {
-      const confirmPaymentResponse = await fetch(url, {
-        method: 'post',
-        body: JSON.stringify({
-          amount,
-          orderId,
-          paymentKey,
-        }),
-        headers: {
-          Authorization: `Basic ${basicToken}`,
-          "Content-Type": "application/json"
-        },
-      });
-
-      // 서버에서의 추가 작업 (DB 처리 등)
-      // ...
-
-      res.status(confirmPaymentResponse.status).json(await confirmPaymentResponse.json());
-    } catch (error) {
-      console.error("Error:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
