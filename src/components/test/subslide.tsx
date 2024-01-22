@@ -38,40 +38,44 @@ export default function SubSwiper() {
   }, []);
 
   return (
-    <div className={styles.swipercontainer}>
-      <Swiper
-        onSwiper={(swiper) => {
-          swiperRef.current = swiper;
-        }}
-        modules={[Navigation, Scrollbar]}
-        className={styles.swiperslider}
-        spaceBetween={0} // 슬라이스 사이 간격
-        slidesPerView={4} // 보여질 슬라이스 수
-        navigation={true} // prev, next button
-        scrollbar={true}
-      >
-        {data.map((item, index) => {
-          return (
-            <SwiperSlide key={index}>
-              <div className={styles.card}>
-                <Link href={`/subscription/${item.Subs_Index}`}>
-                  <div className={styles.image}>
-                    <Image
-                      fill={true}
-                      className={styles.image}
-                      src={`/productimage/image2 copy.png`}
-                      alt={`Product ${index + 1}`}
-                    />
-                  </div>
-                </Link>
-                {/* <p style={{ margin: 0 }}>{item.name}</p>
+    <div className={styles.title}>
+      <h1>월정액 서비스</h1>
+      <p>할인된 가격으로 월정액 서비스를 이용해보세요</p>
+      <div className={styles.swipercontainer}>
+        <Swiper
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+          modules={[Navigation, Scrollbar]}
+          className={styles.swiperslider}
+          spaceBetween={0} // 슬라이스 사이 간격
+          slidesPerView={4} // 보여질 슬라이스 수
+          navigation={true} // prev, next button
+          scrollbar={true}
+        >
+          {data.map((item, index) => {
+            return (
+              <SwiperSlide key={index}>
+                <div className={styles.card}>
+                  <Link href={`/subscription/${item.Subs_Index}`}>
+                    <div className={styles.image}>
+                      <Image
+                        fill={true}
+                        className={styles.image}
+                        src={`/productimage/${item.name}.jpg`}
+                        alt={`${item.name}`}
+                      />
+                    </div>
+                  </Link>
+                  {/* <p style={{ margin: 0 }}>{item.name}</p>
                 <p style={{ margin: 0 }}>{item.price} 원</p>
                 <p style={{ margin: 0 }}>{item.week} 주</p> */}
-              </div>
-            </SwiperSlide>
-          );
-        })}
-      </Swiper>
+                </div>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      </div>
     </div>
   );
 }
