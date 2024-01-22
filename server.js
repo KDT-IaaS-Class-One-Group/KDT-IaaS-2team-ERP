@@ -19,10 +19,10 @@ const {
 
 const secretKey = "nts9604";
 const pool = mysql.createPool({
-  host: "localhost",
+  host: "database-1.cvxfnrpds7lh.ap-northeast-2.rds.amazonaws.com",
   port: "3306",
   user: "root",
-  password: "723546",
+  password: "123123123",
   database: "erp",
   connectionLimit: 5,
 });
@@ -238,7 +238,7 @@ server.get('/logout', (req, res) => {
 
       // 데이터베이스에서 user_Index를 기반으로 name 조회
       const [rows] = await pool.query(
-        "SELECT name FROM users WHERE User_Index = ?",
+        "SELECT name FROM Users WHERE User_Index = ?",
         [userIndex]
       );
 
@@ -420,7 +420,7 @@ server.get('/logout', (req, res) => {
       const searchTerm = req.query.searchTerm || "";
       const searchOption = req.query.searchOption || "userId";
 
-      let query = "SELECT * FROM users";
+      let query = "SELECT * FROM Users";
       let queryParams = [];
 
       if (searchTerm) {
@@ -438,7 +438,7 @@ server.get('/logout', (req, res) => {
 
       const [users] = await db.query(query, queryParams);
 
-      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM users";
+      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM Users";
       if (searchTerm) {
         if (searchOption === "userId") {
           totalCountQuery += " WHERE userId LIKE ?";
@@ -512,7 +512,7 @@ server.get('/logout', (req, res) => {
       const searchTerm = req.query.searchTerm || "";
       const searchOption = req.query.searchOption || "userId";
 
-      let query = "SELECT * FROM users";
+      let query = "SELECT * FROM Users";
       let queryParams = [];
 
       if (searchTerm) {
@@ -530,7 +530,7 @@ server.get('/logout', (req, res) => {
 
       const [users] = await db.query(query, queryParams);
 
-      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM users";
+      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM Users";
       if (searchTerm) {
         if (searchOption === "userId") {
           totalCountQuery += " WHERE userId LIKE ?";
@@ -566,7 +566,7 @@ server.get('/logout', (req, res) => {
       const searchTerm = req.query.searchTerm || "";
       const searchOption = req.query.searchOption || "userId";
 
-      let query = "SELECT * FROM users";
+      let query = "SELECT * FROM Users";
       let queryParams = [];
 
       if (searchTerm) {
@@ -584,7 +584,7 @@ server.get('/logout', (req, res) => {
 
       const [users] = await db.query(query, queryParams);
 
-      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM users";
+      let totalCountQuery = "SELECT COUNT(*) AS totalCount FROM Users";
       if (searchTerm) {
         if (searchOption === "userId") {
           totalCountQuery += " WHERE userId LIKE ?";
@@ -763,12 +763,12 @@ server.get('/logout', (req, res) => {
       console.log(orderIndex)
       // orderIndex를 사용하여 orderdetails 테이블에서 subs_index, Subs_Start, Subs_End를 가져오기
       const orderDetailsData = await db.query(
-        "SELECT Subs_Index, Subs_Start, Subs_End , auto_renew , order_name, order_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 FROM orderdetails WHERE order_Index = ?",
+        "SELECT Subs_Index, Subs_Start, Subs_End , auto_renew , user_name, user_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 FROM orderdetails WHERE order_Index = ?",
         [orderIndex]
       );
         
       if (orderDetailsData.length > 0) {
-        const { Subs_Index, Subs_Start, Subs_End ,auto_renew , order_name, order_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 } = orderDetailsData[0][0];
+        const { Subs_Index, Subs_Start, Subs_End ,auto_renew , user_name, user_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 } = orderDetailsData[0][0];
 
         // Subs_Index를 사용하여 subscription 테이블에서 데이터를 가져오기
         const subscriptionData = await db.query(
@@ -782,8 +782,8 @@ server.get('/logout', (req, res) => {
             Subs_Start: Subs_Start.toISOString(),
             Subs_End: Subs_End.toISOString(),
             auto_renew,
-            order_name,
-            order_phone,
+            user_name,
+            user_phone,
             postcode,
             address,
             detailaddress,
@@ -811,7 +811,7 @@ server.get('/logout', (req, res) => {
     try {
       const userId = req.params.userId;
 
-      const [rows] = await db.query("SELECT * FROM users WHERE userId = ?", [
+      const [rows] = await db.query("SELECT * FROM Users WHERE userId = ?", [
         userId,
       ]);
 
@@ -932,8 +932,8 @@ server.get('/logout', (req, res) => {
       const address = req.body.address;
       const detailaddress = req.body.detailaddress
       const userIndex = decodedToken.User_Index; // 사용자의 user_Index
-      const orderName = req.body.order_name; // 주문자 이름
-      const orderPhone = req.body.order_phone; // 주문자 전화번호
+      const orderName = req.body.user_name; // 주문자 이름
+      const orderPhone = req.body.user_phone; // 주문자 전화번호
       const postcode = req.body.postcode; // 우편번호
       console.log("무ㅡ슨오류 : ", subsIndex);
       // 토큰 해독
@@ -969,7 +969,7 @@ server.get('/logout', (req, res) => {
         console.log("제",productName3)
       try {
         // 사용자의 캐시 확인
-        const checkCashQuery = `SELECT cash FROM users WHERE User_Index = ?`;
+        const checkCashQuery = `SELECT cash FROM Users WHERE User_Index = ?`;
         const [cashResult] = await connection.query(checkCashQuery, [
           userIndex,
         ]);
@@ -985,7 +985,7 @@ server.get('/logout', (req, res) => {
         await connection.beginTransaction();
 
         // 사용자의 캐시 차감
-        const updateCashQuery = `UPDATE users SET cash = cash - ? WHERE User_Index = ?`;
+        const updateCashQuery = `UPDATE Users SET cash = cash - ? WHERE User_Index = ?`;
         const updateCashValues = [price, userIndex];
         await connection.query(updateCashQuery, updateCashValues);
 
@@ -997,7 +997,7 @@ server.get('/logout', (req, res) => {
 
         // 사용자의 user_Index 값으로 주문 정보를 추가
         const orderQuery = `
-      INSERT INTO Orderdetails (Subs_Index, User_Index, Subs_Start, Subs_End, address, order_name, order_phone, postcode
+      INSERT INTO Orderdetails (Subs_Index, User_Index, Subs_Start, Subs_End, address, user_phone, user_phone, postcode
         ,detailaddress ,Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
     `;
@@ -1025,7 +1025,7 @@ server.get('/logout', (req, res) => {
 
 
         // users 테이블 구독상탭 변경
-        const updateUserOrderIndexQuery = `UPDATE users SET order_Index = ? WHERE User_Index = ?`;
+        const updateUserOrderIndexQuery = `UPDATE Users SET order_Index = ? WHERE User_Index = ?`;
         const updateUserOrderIndexValues = [orderId, userIndex];
         await connection.query(
           updateUserOrderIndexQuery,
@@ -1085,12 +1085,12 @@ server.get('/logout', (req, res) => {
 
       const offset = (page - 1) * pageSize;
 
-      const [users] = await db.query("SELECT * FROM users LIMIT ?, ?", [
+      const [users] = await db.query("SELECT * FROM Users LIMIT ?, ?", [
         offset,
         pageSize,
       ]);
       const [totalCount] = await db.query(
-        "SELECT COUNT(*) AS totalCount FROM users"
+        "SELECT COUNT(*) AS totalCount FROM Users"
       );
       const totalPages = Math.ceil(totalCount[0].totalCount / pageSize);
 
@@ -1314,7 +1314,7 @@ server.get('/logout', (req, res) => {
         const isWithdrawn = false;
 
         const [rows, fields] = await db.query(
-          `INSERT INTO users (userId, password, name, birthdate, phoneNumber, email, postcode, address, detailaddress, gender, cash, joinDate, isWithdrawn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)`,
+          `INSERT INTO Users (userId, password, name, birthdate, phoneNumber, email, postcode, address, detailaddress, gender, cash, joinDate, isWithdrawn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)`,
           [
             userId,
             password,
@@ -1363,7 +1363,7 @@ server.get('/logout', (req, res) => {
         const { userId, password } = req.body;
 
         const [rows, fields] = await db.query(
-          "SELECT * FROM users WHERE userId = ?",
+          "SELECT * FROM Users WHERE userId = ?",
           [userId]
         );
 
@@ -1453,7 +1453,7 @@ server.get('/logout', (req, res) => {
         const { userId } = req.params;
 
         // 데이터베이스에서 사용자 정보 삭제
-        const [result] = await db.query("DELETE FROM users WHERE userId = ?", [
+        const [result] = await db.query("DELETE FROM Users WHERE userId = ?", [
           userId,
         ]);
 
@@ -1481,7 +1481,7 @@ server.get('/logout', (req, res) => {
         const { cash } = req.body;
         // 데이터베이스에서 사용자 캐쉬 정보 수정
         const [result] = await db.query(
-          "UPDATE users SET cash = ? WHERE userId = ?",
+          "UPDATE Users SET cash = ? WHERE userId = ?",
           [cash, userId]
         );
 
@@ -1691,7 +1691,7 @@ server.get('/logout', (req, res) => {
         const { reply } = req.body;
         // 데이터베이스에서 게시판 정보 수정
         const [result] = await db.query(
-          "UPDATE board SET reply = ? WHERE userId = ?",
+          "UPDATE Board SET reply = ? WHERE userId = ?",
           [reply, userId]
         );
 
@@ -1746,7 +1746,7 @@ server.get('/logout', (req, res) => {
 
         // 데이터베이스에서 사용자 정보 업데이트
         const [result] = await db.query(
-          "UPDATE users SET name = ?, birthdate = ?, phoneNumber = ?, email = ?, postcode = ? , address = ?, detailaddress = ? , gender = ? WHERE userId = ?",
+          "UPDATE Users SET name = ?, birthdate = ?, phoneNumber = ?, email = ?, postcode = ? , address = ?, detailaddress = ? , gender = ? WHERE userId = ?",
           [
             name,
             new Date(birthdate),
@@ -1897,7 +1897,7 @@ server.get('/logout', (req, res) => {
 
       // 데이터베이스에서 isWithdrawn 상태를 true로 변경
       const [result] = await db.query(
-        "UPDATE users SET isWithdrawn = true WHERE userId = ?",
+        "UPDATE Users SET isWithdrawn = true WHERE userId = ?",
         [userId]
       );
 
@@ -2079,7 +2079,7 @@ server.get('/logout', (req, res) => {
 
         // 데이터베이스에서 사용자의 현재 캐쉬 가져오기
         const [getUserResult] = await db.query(
-          "SELECT cash FROM users WHERE userId = ?",
+          "SELECT cash FROM Users WHERE userId = ?",
           [userId]
         );
 
@@ -2091,7 +2091,7 @@ server.get('/logout', (req, res) => {
 
           // 데이터베이스에서 사용자의 캐쉬 업데이트
           const [updateResult] = await db.query(
-            "UPDATE users SET cash = ? WHERE userId = ?",
+            "UPDATE Users SET cash = ? WHERE userId = ?",
             [updatedCash, userId]
           );
 
