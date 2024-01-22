@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "@/styles/subpage.module.scss";
+import SwiperTest from "@/components/test/baslide";
 
 interface SubscriptionClientSideProps {
   Subs_Index: number;
@@ -126,62 +127,66 @@ export default function SubscriptionClientSide() {
   };
 
   return (
-    <div className={styles.main}>
-      {data.map((item, index) => (
-        <div className={styles.subinfo} key={index}>
-          <div className={styles.image}>
-            <Image
-              fill={true}
-              className={styles.image}
-              src={item.imageUrl}
-              alt={`sub ${index + 1}`}
-            />
+    <div>
+      <div className={styles.main}>
+        {data.map((item, index) => (
+          <div className={styles.subinfo} key={index}>
+            <div className={styles.image}>
+              <Image
+                fill={true}
+                className={styles.image}
+                src={item.imageUrl}
+                alt={`sub ${index + 1}`}
+              />
+            </div>
+            <p>Name: {item.Name}</p>
+            <p>Price: {item.Price}</p>
+            <p>배송받는 기간: {item.Week} 주</p>
+            <p>일주일에 받는 원두: {item.size} 개 </p>
+            <p>구독 기간 종료일: {calculateEndDate(item.Week)}</p>
           </div>
-          <p>Name: {item.Name}</p>
-          <p>Price: {item.Price}</p>
-          <p>배송받는 기간: {item.Week} 주</p>
-          <p>일주일에 받는 원두: {item.size} 개 </p>
-          <p>구독 기간 종료일: {calculateEndDate(item.Week)}</p>
+        ))}
+
+        <div className={styles.choicebox}>
+          <div className={styles.imageContainer}>
+            {selectedProducts.map((productId, index) => (
+              <div key={index} className={styles.imagebox}>
+                <Image
+                  src={getProductImageById(productId)}
+                  fill
+                  alt={`선택한 제품 ${index + 1}`}
+                />
+              </div>
+            ))}
+          </div>
+
+          {Array.from({
+            length: Math.floor(data.reduce((acc, item) => acc + item.size, 0)),
+          }).map((_, index) => (
+            <div key={index} className={`${styles.input} ${styles.customSelect}`}>
+              <select
+                title="selectProduct"
+                value={selectedProducts[index]}
+                onChange={(e) => handleSelectChange(e, index)}
+                className={styles.input}
+              >
+                <option value="">상품을 선택하세요</option>
+                {productList.map((product) => (
+                  <option key={product.id} value={product.id}>
+                    {product.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+
+          <Link href="#">
+            <button onClick={handleOrderButtonClick} className={styles.button}>주문하기</button>
+          </Link>
         </div>
-      ))}
-
-      {/* 변경된 부분: 모든 선택된 상품에 대해 이미지를 출력 */}
-      <div className={styles.imageContainer}>
-        {selectedProducts.map((productId, index) => (
-          <div key={index} className={styles.imagebox}>
-            <Image
-              src={getProductImageById(productId)}
-              fill
-              alt={`선택한 제품 ${index + 1}`}
-            />
-          </div>
-        ))}
       </div>
-
-      <div className={styles.choicebox}>
-        {Array.from({
-          length: Math.floor(data.reduce((acc, item) => acc + item.size, 0)),
-        }).map((_, index) => (
-          <div key={index}>
-            <select
-              title="selectProduct"
-              value={selectedProducts[index]}
-              onChange={(e) => handleSelectChange(e, index)}
-              className={styles.input}
-            >
-              <option value="">상품을 선택하세요</option>
-              {productList.map((product) => (
-                <option key={product.id} value={product.id}>
-                  {product.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        ))}
-
-        <Link href="#">
-          <button onClick={handleOrderButtonClick}>주문하기</button>
-        </Link>
+      <div>
+        <SwiperTest />
       </div>
     </div>
   );
