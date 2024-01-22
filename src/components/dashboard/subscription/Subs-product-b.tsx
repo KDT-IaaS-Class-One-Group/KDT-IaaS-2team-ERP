@@ -7,15 +7,15 @@ import ImageUpload from "@/components/test/ImageUpload";
 interface SubscriptionInfo {
   Subs_Index: string;
   name: string;
-  week: number;
-  size: number;
+  week: string;
+  size: string;
   price: string;
   imageUrl?: string;
   timestamp: string;
   sale_status: number;
 }
 
-const pageSize = 10; // 페이지당 표시할 항목 수
+const pageSize = 7; // 페이지당 표시할 항목 수
 
 export default function SubsProduct(): React.ReactNode {
   const [showForm, setShowForm] = useState(false);
@@ -25,7 +25,7 @@ export default function SubsProduct(): React.ReactNode {
   const [imageurl, setImageurl] = useState<string | null>(null);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 10,
+    pageSize: 7,
     totalPages: 1,
   });
 
@@ -61,8 +61,8 @@ export default function SubsProduct(): React.ReactNode {
   const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfo>({
     Subs_Index: "",
     name: "",
-    week: 4,
-    size: 1,
+    week: "",
+    size: "",
     price: "",
     imageUrl: "",
     timestamp: "",
@@ -84,8 +84,8 @@ export default function SubsProduct(): React.ReactNode {
     setSubscriptionInfo({
       Subs_Index: "",
       name: "",
-      week: 4,
-      size: 1,
+      week: "",
+      size: "",
       price: "",
       imageUrl: "",
       timestamp: "",
@@ -227,24 +227,23 @@ export default function SubsProduct(): React.ReactNode {
         {showForm && (
           <div className={styles.addSubscription}>
             <label className={styles.addLabel}>
-              구독 서비스명 :
               <input
                 type="text"
                 name="name"
                 value={subscriptionInfo.name}
                 onChange={handleChange}
                 className={styles.addInput}
+                placeholder = "구독 서비스명"
               />
             </label>
             <label className={styles.addLabel}>
-              구독 주:
               <select
                 name="week"
                 value={subscriptionInfo.week}
                 onChange={handleChange}
                 className={styles.addInput}
               >
-                {[4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48].map(
+                {["기간", 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48].map(
                   (option) => (
                     <option key={option} value={option}>
                       {option}
@@ -254,14 +253,13 @@ export default function SubsProduct(): React.ReactNode {
               </select>
             </label>
             <label className={styles.addLabel}>
-              수량 :
               <select
                 name="size"
                 value={subscriptionInfo.size}
                 onChange={handleChange}
                 className={styles.addInput}
               >
-                {[1, 2, 3].map((option) => (
+                {["수량", 1, 2, 3].map((option) => (
                   <option key={option} value={option}>
                     {option}
                   </option>
@@ -269,12 +267,12 @@ export default function SubsProduct(): React.ReactNode {
               </select>
             </label>
             <label className={styles.addLabel}>
-              가격 :
               <input
                 type="text"
                 name="price"
                 value={subscriptionInfo.price}
                 onChange={handleChange}
+                placeholder = "가격"
                 className={styles.addInput}
               />
             </label>
@@ -291,24 +289,23 @@ export default function SubsProduct(): React.ReactNode {
         {showEditForm && (
           <div className={styles.addSubscription}>
             <label className={styles.addLabel}>
-              구독 서비스명 :
               <input
                 type="text"
                 name="name"
                 value={subscriptionInfo.name}
                 onChange={handleChange}
                 className={styles.addInput}
+                placeholder = "구독 서비스명"
               />
             </label>
             <label className={styles.addLabel}>
-              구독 주:
               <select
                 name="week"
                 value={subscriptionInfo.week}
                 onChange={handleChange}
                 className={styles.addInput}
               >
-                {[4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48].map(
+                {["기간", 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48].map(
                   (option) => (
                     <option key={option} value={option}>
                       {option}
@@ -318,14 +315,13 @@ export default function SubsProduct(): React.ReactNode {
               </select>
             </label>
             <label className={styles.addLabel}>
-              수량 :
               <select
                 name="size"
                 value={subscriptionInfo.size}
                 onChange={handleChange}
                 className={styles.addInput}
               >
-                {[1, 2, 3].map((option) => (
+                {["수량", 1, 2, 3].map((option) => (
                   <option key={option} value={option}>
                     {option}
                   </option>
@@ -333,12 +329,12 @@ export default function SubsProduct(): React.ReactNode {
               </select>
             </label>
             <label className={styles.addLabel}>
-              가격 :
               <input
                 type="text"
                 name="price"
                 value={subscriptionInfo.price}
                 onChange={handleChange}
+                placeholder = "가격"
                 className={styles.addInput}
               />
             </label>

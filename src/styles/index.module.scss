@@ -1,7 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Grandiflora+One&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap');
+
+@font-face {
+  font-family: 'Grandiflora One';
+  src: url('https://fonts.googleapis.com/css2?family=Grandiflora+One&display=swap') format("woff");
+  unicode-range: U+0061-007A;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'IBM Plex Sans KR';
+  src: url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap') format("woff");
+  font-style: normal;
+}
+
 .container {
   display: flex;
   flex-direction: column;
-  max-width:100%;}
+  max-width: 100%;
+}
+.top {
+  height: 14vh;
+}
 
 .div {
   width: 100vw;
@@ -9,7 +29,6 @@
 }
 
 .red {
-  background-color: red;
   position: absolute;
   width: 100vw;
   height: 15vh;
@@ -21,18 +40,28 @@
   display:flex;
 
   .box1{
-    width:25vw;
+    width:35vw;
     height: 30vh;
-    margin-top: 60vh;
+    margin-top: 55vh;
     margin-left:70vw;
-    font-size: 2rem;
-    font-family:Georgia, Serif;
-    color:brown;
-    font-weight: 900;
+    font-size: 2.3rem;
+    color:#135206;
+    font-weight: 700;
+
   }
   button{
     width:15vw;
     height:5vh;
+    border:0;
+    border-radius: 20px;
+    background-color: #f9efdbb9;
+    color: #135206;
+    margin-left: 2vw;
+    &:hover {
+      background-color: #135206;
+      color: #f9efdbb9;
+      cursor: pointer;
+    }
   }
 }
 .video {
@@ -51,6 +80,7 @@
   flex-wrap: wrap;
   justify-content: space-around;
   align-items: center;
+  height: 80vh;
 
 }
 .image{
@@ -69,18 +99,13 @@
 
 .purple {
   background-color: #f6f1eb;
+  height: 80vh;
 }
 
 .box{
   display:flex;
   margin-top:15vh;
 }
-// .swipercontainer{
-//   width:80vw;
-//   height:80vh;
-//   overflow: hidden;
-// }
-
 
 .swiperpagination{
   top: 200vh;

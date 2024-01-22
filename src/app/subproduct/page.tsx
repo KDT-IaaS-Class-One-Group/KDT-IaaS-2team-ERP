@@ -38,15 +38,14 @@ export default function Page() {
         <div className={styles.container}>
           {data.map((item, index) => (
             <div className={styles.card} key={index}>         
-              <div className={styles.image}> 
-                <Image fill={true} className={styles.image} src={item.imageUrl} alt={`Product ${index + 1}`} />
-              </div>
-              <p style={{ margin: 0 }}>Name: {item.name}</p>
-              <p style={{ margin: 0 }}>Price: {item.price}</p>
-              <p style={{ margin: 0 }}>Week: {item.week}</p>
               <Link href={`/subscription/${item.Subs_Index}`}>
-                <button>자세히 보기</button>
+              <div className={styles.image}> 
+                <Image fill={true} className={styles.image} src={`/productimage/image2 copy.png`} alt={`Product ${index + 1}`} />
+              </div>
               </Link>
+              {/* <p style={{ margin: 0 }}>{item.name}</p>
+              <p style={{ margin: 0 }}>{item.price} 원</p>
+              <p style={{ margin: 0 }}>{item.week} 주</p> */}
           </div> 
           ))}
         </div>

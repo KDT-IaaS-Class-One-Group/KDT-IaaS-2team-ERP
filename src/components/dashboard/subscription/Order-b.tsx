@@ -26,13 +26,13 @@ interface OrderInfo {
   userId: string;
 }
 
-const pageSize = 10;
+const pageSize = 7;
 
 export default function OrderInfoPage() {
   const [orders, setOrders] = useState<OrderInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 10,
+    pageSize: 7,
     totalPages: 1,
   });
   const [searchTerm, setSearchTerm] = useState("");
@@ -204,9 +204,9 @@ export default function OrderInfoPage() {
                   <td>{order.user_phone}</td>
                   <td>{order.postcode}</td>
                   <td>{order.address}</td>
-        
-                  <td>{order.auto_renew === 1 ? "갱신" : "미갱신"}</td>
-                  <td>{order.staus === 1 ? "구독" : "해지"}</td>
+                  <td>{order.detailaddress}</td>
+                  <td>{order.auto_renew === 0 ? "갱신" : "미갱신"}</td>
+                  <td>{order.staus === 0 ? "구독" : "해지"}</td>
                 </tr>
               ))}
             </tbody>

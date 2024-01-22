@@ -1,22 +1,27 @@
 .swipercontainer{
   width:98vw;
   height:80vh;
+  box-sizing: border-box;
 }
 
 .swiperslider{
-  width:98vw;
+  width:97vw;
   height:80vh;
-  position: relative;
 }
+
 .image{
-  width:20vw;
-  height:60vh;
+  width:18vw;
+  height:55vh;
   border-radius: 5%;
   position: relative;
 }
 .card{
-  width:20vw;
-  margin-left: 2vw;
+  width:18vw;
+  margin-left: 3vw;
   border-radius: 5%;
-  margin-right: 3vw;
+  margin-top: 10vh;
+  p{
+    text-align: center;
+    font-weight: bold;
+  }
 }

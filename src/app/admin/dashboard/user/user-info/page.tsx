@@ -21,13 +21,13 @@ interface UserInfo {
   order_Index: number;
 }
 
-const pageSize = 10; // 페이지당 표시할 항목 수
+const pageSize = 7; // 페이지당 표시할 항목 수
 
 export default function UserinfoPage() {
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 10,
+    pageSize: 7,
     totalPages: 1,
   });
   const [searchTerm, setSearchTerm] = useState("");

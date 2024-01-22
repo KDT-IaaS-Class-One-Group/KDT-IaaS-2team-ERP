@@ -55,7 +55,8 @@
   padding: 8px;
   border: 1px solid #f4f4f4;
   text-align: center;
-  height: 40px;
+  height: 35px;
+  font-size: 14px;
 }
 
 .qnaTable td {
@@ -67,7 +68,6 @@
 
 .qnaTable th {
   background-color: #f4f4f4;
-  font-size: 1.2rem;
 }
 
 .paginationButton {
@@ -108,8 +108,8 @@
 .modal {
   display: none;
   position: fixed;
-  top: 41%;
-  left: 39%;
+  top: 54%;
+  left: 53%;
   transform: translate(-50%, -50%);
   background-color: rgba(0, 0, 0, 0.5);
   width: 55vw;
@@ -131,7 +131,7 @@
   padding: 30px;
   border-radius: 8px;
   position: relative;
-  font-size: 1.2rem;
+  font-size: 13px;
   display: flex;
   align-items: center;
 }
@@ -159,7 +159,7 @@
   font-weight: bold;
   width: 100px;
   background-color: #f2f2f2;
-  height: 30px;
+  height: 20px;
   /* 고정된 높이 */
 }
 
@@ -176,7 +176,7 @@
 .infoTable tr:nth-child(2) td:nth-child(1),
 .infoTable tr:nth-child(2) td:nth-child(3) {
   background-color: #f2f2f2;
-  height: 40px;
+  height: 30px;
   font-weight: bold;
   text-align: center;
   width: 170px;

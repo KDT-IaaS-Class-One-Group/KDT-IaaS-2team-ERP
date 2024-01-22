@@ -56,7 +56,7 @@ const UserGraph = () => {
           <option value="gender">성별</option>
         </select>
         <div className={styles.graph}>
-          <ResponsiveContainer width="101%" height={700}>
+          <ResponsiveContainer width="101%" height={500}>
             <BarChart
               data={dynamicGraphData}
               margin={{ top: 20, right: 30, left: 20, bottom: 50 }}

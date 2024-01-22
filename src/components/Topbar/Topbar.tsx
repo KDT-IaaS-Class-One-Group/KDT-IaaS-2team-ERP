@@ -52,14 +52,14 @@ function Topbar() {
         
         {isLoggedIn ? (
           <>
-            <p>{`${name}님 환영합니다.`}</p>
-            <Link href="/mypage/myinfo">마이페이지</Link>
-            <button onClick={handleLogout}>로그아웃</button>
+            <p>{`${name} 님`}</p>
+            <Link href="/mypage" >MYPAGE</Link>
+            <button className={styles.link} onClick={handleLogout}>LOGOUT</button>
           </>
         ) : (
           <>
-            <Link className={styles.link} href="/signup">SignUp</Link>
-            <Link className={styles.link} href="/login">Login</Link>
+            <Link className={styles.link} href="/signup">SIGN UP</Link>
+            <Link className={styles.link} href="/login">LOGIN</Link>
           </>
         )}
       </div>
