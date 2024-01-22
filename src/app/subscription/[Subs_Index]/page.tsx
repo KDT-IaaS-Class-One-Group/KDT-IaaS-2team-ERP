@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import Image from 'next/image';
-import styles from "@/styles/subpage.module.scss"
+import Image from "next/image";
+import styles from "@/styles/subpage.module.scss";
 
 interface SubscriptionClientSideProps {
   Subs_Index: number;
@@ -11,29 +11,30 @@ interface SubscriptionClientSideProps {
   Price: number;
   Week: number;
   size: number;
-  imageUrl:string;
+  imageUrl: string;
 }
 
 interface Product {
   id: number;
   name: string;
   stock: number;
-  imageUrl:string;
+  imageUrl: string;
 }
-interface Products{
+interface Products {
   id: number;
   name: string;
   label: string;
   stock: number;
-  imageUrl:string;
+  imageUrl: string;
 }
-
 
 export default function SubscriptionClientSide() {
   const [data, setData] = useState<SubscriptionClientSideProps[]>([]);
   const [productList, setProductList] = useState<Product[]>([]); // Product 타입으로 변경
   const [selectedProducts, setSelectedProducts] = useState<Array<number>>([]);
-  const [selectedProductImages, setSelectedProductImages] = useState(Array(data.length).fill(''));
+  const [selectedProductImages, setSelectedProductImages] = useState(
+    Array(data.length).fill("")
+  );
   const [radioOptions, setRadioOptions] = useState<Products[]>([]); // 라디오 상자 옵션 데이터
   const Subs_Index = useParams();
   const subs_index = Subs_Index.Subs_Index;
@@ -46,7 +47,7 @@ export default function SubscriptionClientSide() {
         setData(dataFromServer);
         const productListResponse = await fetch("/api/products");
         const productListFromServer = await productListResponse.json();
-        console.log(productListFromServer)
+        console.log(productListFromServer);
         const productNames = productListFromServer.map(
           (product: any) => product.name
         );
@@ -68,15 +69,19 @@ export default function SubscriptionClientSide() {
     setSelectedProducts(updatedSelectedProducts);
 
     const updatedSelectedProductImages = [...selectedProductImages];
-    console.log(updatedSelectedProductImages)
-    updatedSelectedProductImages[index] = getProductImageById(parseInt(e.target.value, 10));
+    console.log(updatedSelectedProductImages);
+    updatedSelectedProductImages[index] = getProductImageById(
+      parseInt(e.target.value, 10)
+    );
     setSelectedProductImages(updatedSelectedProductImages);
   };
 
-  const getProductImageById = (productId : any) => {
-    const selectedProduct = productList.find(product => product.id === productId);
-    console.log(selectedProduct)
-    return selectedProduct ? selectedProduct.imageUrl : ''; 
+  const getProductImageById = (productId: any) => {
+    const selectedProduct = productList.find(
+      (product) => product.id === productId
+    );
+    console.log(selectedProduct);
+    return selectedProduct ? selectedProduct.imageUrl : "";
   };
 
   const calculateEndDate = (weeks: number): string => {
@@ -89,11 +94,17 @@ export default function SubscriptionClientSide() {
 
   const handleOrderButtonClick = async () => {
     try {
-      if (selectedProducts.length !== Math.floor(data.reduce((acc, item) => acc + item.size, 0) ))  {
+      if (
+        selectedProducts.length !==
+        Math.floor(data.reduce((acc, item) => acc + item.size, 0))
+      ) {
         alert("상품을 모두 선택하세요.");
         return;
-      }else{
-        window.location.href = `/order/${subs_index}?selectedProducts=${selectedProducts.join(',')}`;}
+      } else {
+        window.location.href = `/order/${subs_index}?selectedProducts=${selectedProducts.join(
+          ","
+        )}`;
+      }
       const response = await fetch(`/api/order`, {
         method: "POST",
         headers: {
@@ -103,7 +114,7 @@ export default function SubscriptionClientSide() {
           products: selectedProducts,
         }),
       });
-  
+
       if (response.ok) {
         console.log("주문 성공!");
       } else {
@@ -118,8 +129,13 @@ export default function SubscriptionClientSide() {
     <div className={styles.main}>
       {data.map((item, index) => (
         <div className={styles.subinfo} key={index}>
-          <div className={styles.image}> 
-            <Image fill={true} className={styles.image} src={item.imageUrl} alt={`sub ${index + 1}`} />
+          <div className={styles.image}>
+            <Image
+              fill={true}
+              className={styles.image}
+              src={item.imageUrl}
+              alt={`sub ${index + 1}`}
+            />
           </div>
           <p>Name: {item.Name}</p>
           <p>Price: {item.Price}</p>
@@ -128,9 +144,24 @@ export default function SubscriptionClientSide() {
           <p>구독 기간 종료일: {calculateEndDate(item.Week)}</p>
         </div>
       ))}
-      
-         <div className={styles.choicebox}>
-        {Array.from({ length: Math.floor(data.reduce((acc, item) => acc + item.size, 0)) }).map((_, index) => (
+
+      {/* 변경된 부분: 모든 선택된 상품에 대해 이미지를 출력 */}
+      <div className={styles.imageContainer}>
+        {selectedProducts.map((productId, index) => (
+          <div key={index} className={styles.imagebox}>
+            <Image
+              src={getProductImageById(productId)}
+              fill
+              alt={`선택한 제품 ${index + 1}`}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className={styles.choicebox}>
+        {Array.from({
+          length: Math.floor(data.reduce((acc, item) => acc + item.size, 0)),
+        }).map((_, index) => (
           <div key={index}>
             <select
               title="selectProduct"
@@ -145,18 +176,13 @@ export default function SubscriptionClientSide() {
                 </option>
               ))}
             </select>
-            {selectedProductImages[index] && (
-              <div className={styles.imagebox}>
-                <Image src={selectedProductImages[index]} fill alt={`선택한 제품 ${index + 1}`} />
-              </div>
-            )}
           </div>
         ))}
-        
+
         <Link href="#">
           <button onClick={handleOrderButtonClick}>주문하기</button>
         </Link>
-        </div>
+      </div>
     </div>
   );
 }
