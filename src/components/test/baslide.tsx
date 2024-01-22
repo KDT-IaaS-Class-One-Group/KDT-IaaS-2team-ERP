@@ -47,7 +47,7 @@ export default function SwiperTest() {
 
   return (
     <div className={styles.title}>
-      <p>어떤 원두가 있는지 확인해보세요 👇</p>
+      <p>세계의 맛을 담은 원두의 독특한 이야기와 풍미를 만나보세요 👇</p>
       <div className={styles.swipercontainer}>
         <Swiper
           onSwiper={(swiper) => {
@@ -86,8 +86,8 @@ export default function SwiperTest() {
                   <Image
                     fill={true}
                     style={{ borderRadius: "10%" }}
-                    src={`/productimage/image3 copy.png`}
-                    alt={`Product ${index + 1}`}
+                    src={`/productimage/${product.name}.jpg`}
+                    alt={`${product.name}`}
                   />
                 </div>
               </SwiperSlide>
