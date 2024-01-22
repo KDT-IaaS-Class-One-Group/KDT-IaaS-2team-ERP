@@ -40,7 +40,7 @@ export default function Topbar() {
   return (
     <div className={styles.topbar}>
       <div className={styles.div1} onClick={handleDiv1Click}>
-        NTS Admin
+        NTS <br></br>Admin
       </div>
       <div className={styles.div2}>
         <TopNav />

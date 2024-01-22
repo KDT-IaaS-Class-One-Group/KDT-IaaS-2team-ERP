@@ -14,7 +14,7 @@ interface ProductInfo {
   sale_status: number;
 }
 
-const pageSize = 7;
+const pageSize = 3;
 
 export default function Product(): React.ReactNode {
   const [showForm, setShowForm] = useState(false);
@@ -25,7 +25,7 @@ export default function Product(): React.ReactNode {
   const [products, setProducts] = useState<ProductInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 7,
+    pageSize: 3,
     totalPages: 1,
   });
   const [imageurl, setImageurl] = useState<string | null>(null);
@@ -258,7 +258,7 @@ export default function Product(): React.ReactNode {
                 value={productInfo.info}
                 onChange={handleChange}
                 placeholder="상세정보"
-                className={styles.addInput}
+                className={styles.addText}
               />
             </label>
             <button onClick={handleSubmit} className={styles.delButton}>
@@ -269,7 +269,6 @@ export default function Product(): React.ReactNode {
         {showEditForm && (
           <div className={styles.addSubscription}>
             <label className={styles.addLabel}>
-              상품명:
               <input
                 type="text"
                 name="product_name"
@@ -279,7 +278,6 @@ export default function Product(): React.ReactNode {
               />
             </label>
             <label className={styles.addLabel}>
-              재고:
               <input
                 type="text"
                 name="stock_quantity"
@@ -294,13 +292,12 @@ export default function Product(): React.ReactNode {
               </div>
             </label>
             <label className={styles.addLabel}>
-              상세정보:
               <textarea
                 type="text"
                 name="info"
                 value={productInfo.info}
                 onChange={handleChange}
-                className={styles.addInput}
+                className={styles.addText}
               />
             </label>
             <button
@@ -311,8 +308,8 @@ export default function Product(): React.ReactNode {
             </button>
           </div>
         )}
-        <div className={styles.orderContent}>
-          <table className={styles.orderTable}>
+        <div className={styles.proudctContent}>
+          <table className={styles.proudctTable}>
             <thead>
               <tr>
                 <th>상품번호</th>

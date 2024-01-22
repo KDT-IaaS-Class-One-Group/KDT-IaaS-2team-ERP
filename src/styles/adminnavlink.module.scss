@@ -1,10 +1,12 @@
-.linkname {
+.linkbox{
+  width:11vw;
+  position: relative;
   text-decoration: none;
   color: #495464;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
+  text-align: center;
 }
-
-.linkname:active {
-  font-weight: 700;
-  text-decoration: none;
+.activeLink{
+  background-color: #F5F5F5;
+  border-radius: 10px;
 }
