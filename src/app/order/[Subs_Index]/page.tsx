@@ -35,9 +35,9 @@ interface UserInfo {
 }
 
 interface ProductClientSideProps {
-  id  : number;
-  name  : string;
-  imageUrl  : string;
+  id: number;
+  name: string;
+  imageUrl: string;
 }
 
 export default function OrderClientSide() {
@@ -57,8 +57,8 @@ export default function OrderClientSide() {
   const [orderPhoneInput, setOrderPhoneInput] = useState("");
   // const [zipCodeInput, setZipCodeInput] = useState("");
   const [detailaddress, setDetailaddress] = useState<string>("");
-  const [address, setaddress] = useState<string>('');
-  const [postcode, setPostcode] = useState<string>('');
+  const [address, setaddress] = useState<string>("");
+  const [postcode, setPostcode] = useState<string>("");
   const [selectedAddressType, setSelectedAddressType] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedaddress, setSelectedaddress] = useState<string | null>(null);
@@ -77,7 +77,7 @@ export default function OrderClientSide() {
     if (selectedProducts) {
       const ids = selectedProducts.split(",").map((id) => parseInt(id, 10));
       setSelectedProductIds(ids);
-      
+
       // 서버로 선택한 상품 정보 요청
       fetch(`/api/productss?productIds=${ids.join(",")}`)
         .then((response) => response.json())
@@ -190,11 +190,13 @@ export default function OrderClientSide() {
           ids: selectedProducts,
           postcode: selectedAddressType === 1 ? userInfo?.postcode : postcode,
           address: selectedAddressType === 1 ? userInfo?.address : address,
-          detailaddress: selectedAddressType === 1 ? userInfo?.detailaddress : detailaddress,
-          order_name: selectedAddressType === 1 ? userInfo?.name : orderNameInput,
-          order_phone: selectedAddressType === 1 ? userInfo?.phoneNumber : orderPhoneInput,
+          detailaddress:
+            selectedAddressType === 1 ? userInfo?.detailaddress : detailaddress,
+          order_name:
+            selectedAddressType === 1 ? userInfo?.name : orderNameInput,
+          order_phone:
+            selectedAddressType === 1 ? userInfo?.phoneNumber : orderPhoneInput,
         }),
-
       });
 
       if (!response.ok) {
@@ -250,10 +252,10 @@ export default function OrderClientSide() {
     setIsModalOpen(false);
   };
 
-  const getaddress = (data : any) => {
-    console.log(data)
+  const getaddress = (data: any) => {
+    console.log(data);
     const address1 = data;
-    return address1
+    return address1;
   };
 
   // 모달에서 주소를 선택했을 때 호출되는 함수
@@ -271,22 +273,21 @@ export default function OrderClientSide() {
   };
 
   return (
-    <div className={styles.root}> 
+    <div className={styles.root}>
+      <div>
       <div className={styles.productbox}>
-        <h2> 상품 정보 </h2>
-
         <OrderReceipt data={data} />
 
-        <OrderedProductsList products={productData} />
-      </div>
-      <div className={styles.userbox}>
-        <h2> 주문자 정보 </h2>
-
         <UserInfoDisplay userInfo={userInfo} />
+      </div>
 
+      <OrderedProductsList products={productData} />
+      </div>
+
+      <div className={styles.userbox}>
         <h2 className={styles.deliveryInfoTitle}>배송지 정보 입력</h2>
 
-        <div>
+        <div style={{marginBottom: "2vh"}}>
           <input
             type="radio"
             id="addressType1"
@@ -361,7 +362,6 @@ export default function OrderClientSide() {
               type="text"
               placeholder="우편번호"
               value={postcode}
-            
               readOnly
             />
             <Search
@@ -372,7 +372,7 @@ export default function OrderClientSide() {
             >
               모달 내용
             </Search>
-          
+
             <Input
               m="3px"
               size="md"
@@ -390,14 +390,15 @@ export default function OrderClientSide() {
               type="text"
               placeholder="상세주소"
               value={detailaddress}
-              onChange={(e) => {setDetailaddress(e.target.value);
+              onChange={(e) => {
+                setDetailaddress(e.target.value);
               }}
             />
           </>
         )}
 
         <PaymentButton onClick={handlePayment} />
+      </div>
     </div>
-  </div>
   );
 }

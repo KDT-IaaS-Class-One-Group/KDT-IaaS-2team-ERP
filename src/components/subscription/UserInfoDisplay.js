@@ -6,6 +6,8 @@ const UserInfoDisplay = ({ userInfo }) => {
       {userInfo && (
         <div className="myinfo">
           <div>
+            <h2> 주문자 정보 </h2>
+
             <p>이름: {userInfo.name}</p>
             <p>전화번호: {userInfo.phoneNumber}</p>
             <p>이메일: {userInfo.email}</p>
