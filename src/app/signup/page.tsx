@@ -265,7 +265,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
               <td className={styles.labelCell}>아이디</td>
               <td className={styles.labelCell2}>
                 <input type="text" name="userId" value={formData.userId} onChange={handleChange} className={styles.input} />
-                <button type="button" onClick={handleCheckDuplicate}>중복 확인</button>
+                <button type="button" onClick={handleCheckDuplicate} className={styles.duplicateBtn}>중복 확인</button>
                 {isUserIdValid === null ? null : (
                   <span className={styles.validMessage}>
                     {isUserIdValid === true
@@ -281,9 +281,9 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
               <td className={styles.labelCell}>비밀번호</td>
               <td className={styles.labelCell2} >
                 <input type="password" name="password" value={formData.password} onChange={handleChange} className={styles.input} 
-                placeholder=' 8글자 이상, 영문, 숫자, 특수문자를 모두 사용해야 합니다.'/>
+                placeholder=' 8글자 이상, 영문, 숫자, 특수문자를 포함하세요'/>
                 {isPasswordValid !== null && (
-                  <span className={styles.passwordValidation}>
+                  <span className={styles.passwordValidation} >
                     {isPasswordValid ? '✔' : '✘'}
                   </span>
                 )}
@@ -297,7 +297,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
             <tr>
               <td className={styles.labelCell}>비밀번호 확인</td>
               <td className={styles.labelCell2}>
-                <input type="password" name="passwordConfirm" value={passwordConfirm} onChange={handleChange} className={styles.input} />
+                <input type="password" name="passwordConfirm" value={passwordConfirm} onChange={handleChange} className={styles.input} placeholder='비밀번호를 다시 입력하세요' />
                 {isPasswordMatch !== null && (
                   <span className={styles.validMessage}>
                     {isPasswordMatch ? '비밀번호가 일치합니다.' : '비밀번호가 일치하지 않습니다.'}
@@ -308,7 +308,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
             <tr>
               <td className={styles.labelCell}>이름</td>
               <td className={styles.labelCell2}>
-                <input type="text" name="name" value={formData.name} onChange={handleChange} className={styles.input} />
+                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder='이름을 입력하세요' className={styles.input} />
               </td>
             </tr>
             <tr>
@@ -327,7 +327,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
             <tr>
               <td className={styles.labelCell}>휴대폰번호</td>
               <td className={styles.labelCell2}>
-                <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} className={styles.input} />
+                <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} className={styles.input} placeholder='숫자만 입력하세요' />
               </td>
             </tr>
             <tr>
@@ -351,7 +351,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
                         onChange={handlePostcodeChange} 
                         readOnly
                       />
-                      <button onClick={() => setIsModalOpen(true)}>주소 검색</button>
+                      <button className={styles.addressBtn} onClick={() => setIsModalOpen(true)}>주소 검색</button>
                       <Search
                         open={isModalOpen}
                         onClose={handleCloseModal}
