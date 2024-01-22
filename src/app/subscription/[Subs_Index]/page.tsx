@@ -128,6 +128,7 @@ export default function SubscriptionClientSide() {
           <p>구독 기간 종료일: {calculateEndDate(item.Week)}</p>
         </div>
       ))}
+      
          <div className={styles.choicebox}>
         {Array.from({ length: Math.floor(data.reduce((acc, item) => acc + item.size, 0)) }).map((_, index) => (
           <div key={index}>

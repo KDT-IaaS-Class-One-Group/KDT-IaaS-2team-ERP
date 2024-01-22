@@ -1,4 +1,4 @@
-async function checkAndRenewSubscriptions(pool) {
+async function CheckAndRenewSubscriptions(pool) {
     try {
       // 현재 시각 출력
       console.log("현재 시각:", new Date());
@@ -112,4 +112,4 @@ async function checkAndRenewSubscriptions(pool) {
     }
   }
   
-  module.exports = { checkAndRenewSubscriptions };
+  module.exports = { CheckAndRenewSubscriptions };

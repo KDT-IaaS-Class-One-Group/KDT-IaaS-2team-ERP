@@ -15,8 +15,8 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
 
 const {
-  checkAndRenewSubscriptions,
-} = require("./src/components/checkAndRenewSubscriptions");
+  CheckAndRenewSubscriptions,
+} = require("./src/components/CheckAndRenewSubscriptions");
 
 const secretKey = "nts9604";
 const pool = mysql.createPool({
@@ -246,11 +246,11 @@ server.get('/user', (req, res) => {
 
   cron.schedule("2 * * * *", () => {
     try {
-      checkAndRenewSubscriptions(pool);
-      console.log("checkAndRenewSubscriptions.js가 실행되었습니다.");
+      CheckAndRenewSubscriptions(pool);
+      console.log("CheckAndRenewSubscriptions.js가 실행되었습니다.");
     } catch (error) {
       console.error(
-        "checkAndRenewSubscriptions.js 실행 중 오류가 발생했습니다:",
+        "CheckAndRenewSubscriptions.js 실행 중 오류가 발생했습니다:",
         error.message
       );
     }
