@@ -1,6 +1,7 @@
 'use client';
 import styles from "@/styles/login.module.scss";
 import React, { useState } from 'react';
+import NaverLogin from '../../components/social/NaverLogin';
 
 const Login: React.FC = () => {
   const [userId, setUserId] = useState('');
@@ -64,6 +65,7 @@ const Login: React.FC = () => {
           로그인
         </button>
       </form>
+      <NaverLogin />
     </div>
   </div>
   );
