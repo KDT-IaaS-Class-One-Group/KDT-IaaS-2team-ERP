@@ -15,7 +15,7 @@ interface SubscriptionInfo {
   sale_status: number;
 }
 
-const pageSize = 7; // 페이지당 표시할 항목 수
+const pageSize = 5; // 페이지당 표시할 항목 수
 
 export default function SubsProduct(): React.ReactNode {
   const [showForm, setShowForm] = useState(false);
@@ -25,7 +25,7 @@ export default function SubsProduct(): React.ReactNode {
   const [imageurl, setImageurl] = useState<string | null>(null);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 7,
+    pageSize: 5,
     totalPages: 1,
   });
 
@@ -220,7 +220,6 @@ export default function SubsProduct(): React.ReactNode {
         <NavLinks />
       </div>
       <div className={styles.main}>
-        {/* <h1 className={styles.title}>구독 서비스 관리</h1> */}
         <button onClick={handleAdd} className={styles.addButton}>
           추가
         </button>
@@ -281,7 +280,7 @@ export default function SubsProduct(): React.ReactNode {
                 <ImageUpload onImageUpload={handleImageUpload} />
               </div>
             </label>
-            <button onClick={handleSubmit} className={styles.delButton}>
+            <button onClick={handleSubmit} className={styles.button}>
               등록
             </button>
           </div>
@@ -345,14 +344,14 @@ export default function SubsProduct(): React.ReactNode {
             </label>
             <button
               onClick={() => handleUpdate(subscriptionInfo.Subs_Index)}
-              className={styles.delButton}
+              className={styles.button}
             >
               수정
             </button>
           </div>
         )}
         <div className={styles.orderContent}>
-          <table className={styles.orderTable}>
+          <table className={styles.subTable}>
             <thead>
               <tr>
                 <th>구독번호</th>
