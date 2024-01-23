@@ -1,70 +1,92 @@
-.image{
-  width:25vw;
-  height:60vh;
+.main {
+  width: 100vw;
+  height: 80vh;
+  margin-top: 4vh;
+  display: flex;
+  padding: 0;
+  border-bottom: 1px solid lightgrey;
+}
+
+.subinfo {
+  width: 50vw;
+  height: 78vh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  font-size: 14px;
+  font-weight: 600;
+  padding-left: 10vw;
+}
+
+.image {
+  width: 15vw;
+  height: 53vh;
   position: relative;
   border-radius: 5%;
   border: 5px;
 }
 
-.imageContainer{
-  display: flex;
-  height: 46vh;
-  width: 50vw;
-  align-items: center;
- }
-
- .imagebox{
-  width:18vw;
-  height:38vh;
-  position: relative; 
-  margin-right: 2vw;
- }
-
-
-.main{
-  width:100vw;
-  height:83vh;
-  margin-top: 4vh;
-  display: flex;
-  paddiNg:0;
-}
-
-.subinfo{
-  width: 30vw;
+.choicebox {
+  width: 60vw;
   height: 75vh;
-  display:flex;
-  align-items: center;
-  flex-direction: column;
-  font-size: 1rem;
-  font-weight: 700;
-  margin-left: 6vw;
-  margin-right: 6vw;
-}
-.choicebox{
-  width:60vw;
-  height:75vh;
   display: flex;
   flex-direction: column;
-  
+  align-items: center;
 
-  select{
-    width:30vw;
-    height:4vh;
-    margin-top: 0vh;
-    margin-bottom: 4vh;
+  select {
+    width: 25vw;
+    height: 5vh;
+    margin-top: 2vh;
   }
 }
 
-.input{
-  background-color: #f6f1eb;
+.input {
   color: #135206;
   border-radius: 20px;
+  text-align: center;
 }
 
-.button{
-  width:30vw;
-  height:4vh;
-  background-color: #f6f1eb;
-  color: #135206;
+.button {
+  width: 25vw;
+  margin-top: 3vh;
+  height: 5vh;
   border-radius: 20px;
+  background-color: #DBE7C9;
+  color: #294B29;
+  border: 0;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #294B29;
+  color: white;
+  border: 0;
+}
+
+.image {
+  width: 20vw;
+  height: 50vh;
+  position: relative;
+  border-radius: 5%;
+  border: 5px;
+}
+
+.imageContainer {
+  width: 60vw;
+  height: 45vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imagebox {
+  width: 16vw;
+  height: 36vh;
+  position: relative;
+  margin-right: 10px;
+  margin-bottom: 2vh;
+}
+
+.swiper {
+  height: 90vh;
 }

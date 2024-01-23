@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import styles from "@/styles/order.module.scss";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -11,7 +10,7 @@ import PaymentButton from "../../../components/subscription/PaymentButton";
 import OrderedProductsList from "../../../components/subscription/OrderedProductsList";
 import UserInfoDisplay from "../../../components/subscription/UserInfoDisplay";
 import OrderReceipt from "../../../components/subscription/OrderReceipt";
-import { Input, Button } from "@chakra-ui/react";
+import { Input } from "@chakra-ui/react";
 import Search from "@/components/test/modal";
 
 interface OrderClientSideProps {
@@ -52,10 +51,8 @@ export default function OrderClientSide() {
   const selectedProducts = searchParams.get("selectedProducts");
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
   const [productData, setProductData] = useState<ProductClientSideProps[]>([]);
-  // const [addressInput, setAddressInput] = useState("");
   const [orderNameInput, setOrderNameInput] = useState("");
   const [orderPhoneInput, setOrderPhoneInput] = useState("");
-  // const [zipCodeInput, setZipCodeInput] = useState("");
   const [detailaddress, setDetailaddress] = useState<string>("");
   const [address, setaddress] = useState<string>("");
   const [postcode, setPostcode] = useState<string>("");
@@ -82,7 +79,6 @@ export default function OrderClientSide() {
       fetch(`/api/productss?productIds=${ids.join(",")}`)
         .then((response) => response.json())
         .then((productDataFromServer) => {
-          console.log("Selected Products Data:", productDataFromServer);
           setProductData(productDataFromServer);
         })
         .catch((error) =>
@@ -100,8 +96,6 @@ export default function OrderClientSide() {
 
         if (dataFromServer) {
           setPrice(dataFromServer[0].Price);
-          console.log("price set successfully:", dataFromServer[0].Price);
-          console.log("Updated price state:", price);
         } else {
           console.log("No price data in the response:", dataFromServer);
         }
@@ -110,7 +104,7 @@ export default function OrderClientSide() {
       }
     };
     fetchData();
-  }, []);
+  }, [subs_index, price]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -273,21 +267,24 @@ export default function OrderClientSide() {
   };
 
   return (
-    <div className={styles.root}>
-      <div>
+    <div className={styles.orderroot}>
+      <h2> 주문 상품 </h2>
       <div className={styles.productbox}>
-        <OrderReceipt data={data} />
-
+        <div className={styles.product}>
+          <OrderedProductsList products={productData} />
+        </div>
+        <div className={styles.producttext}>
+          <OrderReceipt data={data} />
+        </div>
+      </div>
+      <h2> 주문자 정보 </h2>
+      <div className={styles.userbox}>
         <UserInfoDisplay userInfo={userInfo} />
       </div>
 
-      <OrderedProductsList products={productData} />
-      </div>
-
-      <div className={styles.userbox}>
-        <h2 className={styles.deliveryInfoTitle}>배송지 정보 입력</h2>
-
-        <div style={{marginBottom: "2vh"}}>
+      <h2 className={styles.deliveryInfoTitle}>배송지</h2>
+      <div className={styles.delbox}>
+        <div style={{ marginBottom: "2vh" }}>
           <input
             type="radio"
             id="addressType1"
@@ -296,7 +293,7 @@ export default function OrderClientSide() {
             checked={selectedAddressType === 1}
             onChange={() => setSelectedAddressType(1)}
           />
-          <label htmlFor="addressType1">주문자 동일</label>
+          <label htmlFor="addressType1">기본 배송지</label>
 
           <input
             type="radio"
@@ -306,19 +303,19 @@ export default function OrderClientSide() {
             checked={selectedAddressType === 2}
             onChange={() => setSelectedAddressType(2)}
           />
-          <label htmlFor="addressType2">새로 입력</label>
+          <label htmlFor="addressType2">신규 입력</label>
         </div>
 
         {/* 조건부로 배송지 정보 입력 표시 */}
         {selectedAddressType === 1 && (
           <>
             <OrderInfoInput
-              label="수령자 이름"
+              label="이름"
               value={userInfo?.name || ""}
               onChange={setOrderNameInput}
             />
             <OrderInfoInput
-              label="수령자 전화번호"
+              label="전화번호"
               value={userInfo?.phoneNumber || ""}
               onChange={setOrderPhoneInput}
             />
@@ -343,25 +340,44 @@ export default function OrderClientSide() {
         {selectedAddressType === 2 && (
           <>
             <OrderInfoInput
-              label="수령자 이름"
+              label="이름"
               value={orderNameInput}
               onChange={setOrderNameInput}
             />
 
             <OrderInfoInput
-              label="수령자 전화번호"
+              label="전화번호"
               value={orderPhoneInput}
               onChange={setOrderPhoneInput}
             />
             {/* 주소검색 */}
-            <button onClick={() => setIsModalOpen(true)}>주소 검색</button>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              style={{
+                height: "4vh",
+                width: "7vw",
+                marginBottom: "1vh",
+                marginTop: "2.5vh",
+                cursor: "pointer",
+                backgroundColor: "#D8D9DA",
+                border: "0",
+                borderRadius: "4px",
+              }}
+            >
+              주소 검색
+            </button>
             <Input
-              m="3px"
-              size="md"
               name="postcode"
               type="text"
               placeholder="우편번호"
               value={postcode}
+              style={{
+                height: "4vh",
+                width: "10vw",
+                marginBottom: "1vw",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+              }}
               readOnly
             />
             <Search
@@ -374,29 +390,39 @@ export default function OrderClientSide() {
             </Search>
 
             <Input
-              m="3px"
-              size="md"
               type="text"
               name="address"
               placeholder="주소"
               value={address}
               onChange={handleAddressChange}
+              style={{
+                height: "4vh",
+                width: "30vw",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+              }}
               readOnly
             />
             <Input
-              m="3px"
-              size="md"
               name="detailaddress"
               type="text"
               placeholder="상세주소"
               value={detailaddress}
+              style={{
+                height: "4vh",
+                width: "30vw",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                marginTop: "1vh",
+              }}
               onChange={(e) => {
                 setDetailaddress(e.target.value);
               }}
             />
           </>
         )}
-
+      </div>
+      <div>
         <PaymentButton onClick={handlePayment} />
       </div>
     </div>
