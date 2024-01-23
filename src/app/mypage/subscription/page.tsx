@@ -157,7 +157,7 @@ export default function MyPagesub() {
   }, []);
 
   const formatDateString = (dateString: string) => {
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
     return new Date(dateString).toLocaleDateString('ko-KR', options);
   };
 
@@ -269,7 +269,7 @@ const logout = () => {
               <div>
                 <p>현재 구독이 자동 갱신 중입니다.</p>
                 <p>다음 결제일: {subsEnd && formatDateString(new Date(new Date(subsEnd).getTime() - 24 * 60 * 60 * 1000).toString())}</p>
-                <button onClick={cancelSubscription}>구독 취소</button>
+                <button className={styles.btn} onClick={cancelSubscription}>구독 취소</button>
               </div>
             ) : (
               <p>현재 구독이 자동 갱신되고 있지 않습니다.</p>

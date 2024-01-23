@@ -28,10 +28,17 @@
   display:flex;
   justify-content: center;
   align-items: center;
-  // color:#638889;
+  color:#638889;
   cursor: pointer;
   font-family: 'Grandiflora One';
+  
+  a{
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+    color: #163020;
+    text-decoration-line: none;
+  }
 }
+
 .div3 {
   width: 20vw;
   height: 12vh;
@@ -62,11 +69,6 @@
     border-radius: 5px;
     border: 0;
 
-    /* 링크 스타일 추가 */
-    &:hover {
-      background-color: #F1E4C3;
-      color: #18271d;
-    }
   }
 }
 

@@ -623,7 +623,7 @@ server.get('/user', (req, res) => {
       const userIndex = decodedToken.User_Index;
   
       // userIndex를 사용하여 users 테이블에서 사용자 정보 가져오기
-      const userData = await db.query("SELECT * FROM users WHERE User_Index = ?", [userIndex]);
+      const userData = await db.query("SELECT * FROM Users WHERE User_Index = ?", [userIndex]);
   
       if (userData.length > 0) {
         res.status(200).json(userData[0][0]);
@@ -1326,7 +1326,7 @@ server.get('/user', (req, res) => {
   
       const userIndex = decodedToken.User_Index;
   
-      const [myInfo] = await db.query("SELECT * FROM users WHERE User_Index = ?", [
+      const [myInfo] = await db.query("SELECT * FROM Users WHERE User_Index = ?", [
         userIndex,
       ]);
   

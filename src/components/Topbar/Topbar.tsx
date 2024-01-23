@@ -36,20 +36,17 @@ function Topbar() {
     localStorage.removeItem('token');
     setIsLoggedIn(false);
     setName('');
-  };
-
-  const handleDiv1Click = () => {
-    // 홈페이지로 이동
     window.location.href = '/';
   };
+
+
   return (
     <div className={styles.topbar}>
       <div className={styles.div1}><TopNav/></div>
-      <div className={styles.div2} onClick={handleDiv1Click} >
-      NTS
+      <div className={styles.div2}>
+        <Link href="/" >NTS</Link>
       </div>
       <div className={styles.div3}>
-        
         {isLoggedIn ? (
           <>
             <p>{`${name} 님`}</p>
