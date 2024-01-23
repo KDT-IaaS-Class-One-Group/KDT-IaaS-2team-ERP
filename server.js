@@ -11,11 +11,12 @@ const path = require("path");
 const cron = require("node-cron");
 const passport = require('passport');
 const NaverStrategy = require('passport-naver').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
 
 const {
-  checkAndRenewSubscriptions,
-} = require("./src/components/checkAndRenewSubscriptions");
+  CheckAndRenewSubscriptions,
+} = require("./src/components/CheckAndRenewSubscriptions");
 
 const secretKey = "nts9604";
 const pool = mysql.createPool({
@@ -69,23 +70,26 @@ app.prepare().then(() => {
   const server = express();
   server.use(bodyParser.json());
 
-// 세션 설정
-server.use(session({ secret: 'your-secret-key', resave: true, saveUninitialized: true }));
+  // 세션 설정
+server.use(require('express-session')({ secret: 'nts9604', resave: true, saveUninitialized: true }));
 
-// Passport 초기화 및 세션 설정
+// Passport 초기화 및 세션 유지
 server.use(passport.initialize());
 server.use(passport.session());
 
-// 네이버 로그인 설정
-passport.use(new NaverStrategy({
-  clientID: 'WKwwvBCP5nfOU154jOxA',
-  clientSecret: 'DMDunK0R0p',
-  callbackURL: 'http://localhost:3000/naver-login', // 적절한 콜백 주소로 변경하세요.
-}, (accessToken, refreshToken, profile, done) => {
+// Google OAuth 2.0 설정
+passport.use(new GoogleStrategy({
+  clientID: '787289858978-efnpg04d2bnikb1g8bv2hf0qsgl9tf85.apps.googleusercontent.com',
+  clientSecret: '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',
+  callbackURL: 'http://localhost:3000/auth/google/callback',
+},
+(accessToken, refreshToken, profile, done) => {
+  // 로그인 성공 시 처리 (이 부분에서 데이터베이스에 사용자 정보를 저장할 수 있습니다.)
+  console.log('Logged in:', profile);
   return done(null, profile);
 }));
 
-// 사용자 정보를 세션에 저장
+// 세션에 사용자 정보 저장
 passport.serializeUser((user, done) => {
   done(null, user);
 });
@@ -94,31 +98,20 @@ passport.deserializeUser((obj, done) => {
   done(null, obj);
 });
 
-// 로그인 경로 설정
-server.get('/auth/naver',
-  passport.authenticate('naver')
-);
+// Google 로그인 라우트
+server.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-server.get('/auth/naver/callback',
-  passport.authenticate('naver', { failureRedirect: '/' }),
+// Google 로그인 콜백 라우트
+server.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
     res.redirect('/');
   }
 );
 
-// 사용자 정보 확인을 위한 엔드포인트
+// 사용자 정보 라우트
 server.get('/user', (req, res) => {
-  if (req.isAuthenticated()) {
-    res.json(req.user);
-  } else {
-    res.status(401).json({ message: 'Not authenticated' });
-  }
-});
-
-// 로그아웃
-server.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('/');
+  res.json(req.user);
 });
 
   // cron.schedule('15 * * * *', async () => {
@@ -253,11 +246,11 @@ server.get('/logout', (req, res) => {
 
   cron.schedule("2 * * * *", () => {
     try {
-      checkAndRenewSubscriptions(pool);
-      console.log("checkAndRenewSubscriptions.js가 실행되었습니다.");
+      CheckAndRenewSubscriptions(pool);
+      console.log("CheckAndRenewSubscriptions.js가 실행되었습니다.");
     } catch (error) {
       console.error(
-        "checkAndRenewSubscriptions.js 실행 중 오류가 발생했습니다:",
+        "CheckAndRenewSubscriptions.js 실행 중 오류가 발생했습니다:",
         error.message
       );
     }
