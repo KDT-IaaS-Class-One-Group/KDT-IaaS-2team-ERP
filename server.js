@@ -757,7 +757,7 @@ app.prepare().then(() => {
     try {
       const userId = req.params.userId;
 
-      const [rows] = await db.query("SELECT * FROM users WHERE userId = ?", [
+      const [rows] = await db.query("SELECT * FROM Users WHERE userId = ?", [
         userId,
       ]);
 
@@ -1309,7 +1309,7 @@ app.prepare().then(() => {
         const { userId, password } = req.body;
 
         const [rows, fields] = await db.query(
-          "SELECT * FROM users WHERE userId = ?",
+          "SELECT * FROM Users WHERE userId = ?",
           [userId]
         );
 
