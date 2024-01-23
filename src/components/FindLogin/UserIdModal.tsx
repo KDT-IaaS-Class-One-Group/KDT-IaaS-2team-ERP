@@ -5,6 +5,7 @@ import styles from "@/styles/customer.module.scss";
 const UserIdModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [output, setOutput] = useState<string>('');
 
   const handleFindUsername = async () => {
     // 클라이언트에서 서버로 아이디 찾기 요청 보내기
@@ -22,7 +23,7 @@ const UserIdModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       if (response.ok) {
         // 서버 응답이 성공이면
         if (data.userId) {
-          window.alert(`ID: ${data.userId}`);
+          setOutput(`ID: ${data.userId}`);
         } else {
           window.alert("User not found");
         }
@@ -52,6 +53,8 @@ const UserIdModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </div> 
             <button className={styles.buttonSize} onClick={handleFindUsername}>Find Username</button>
             </div>
+            <hr />
+            <div>{output}</div>
         </div>
       </div>
     </div>
