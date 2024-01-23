@@ -20,12 +20,17 @@
   align-items: center;  
 }
 
+.margin {
+  margin-left: 55px;
+  padding-top: 60px;
+}
+
 .marginRight {
-  margin-right: 50px;
+  margin-right: 25px;
 }
 
 .marginTop {
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 .width {
@@ -38,8 +43,14 @@
 
 .flexSet{
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  height: 170px;
+}
+
+.outline {
+  outline: solid 1px rgb(175, 175, 175);
+  height: 310px;
 }
 
 .spaceBetween {
@@ -81,10 +92,8 @@
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  min-width: 800px;
-  min-height : 600px;
-  max-width: 80vw;
-  max-height: 80vh;
+  width: 600px;
+  height : 400px;
   overflow-y: auto;
   position: relative;
 }
@@ -96,4 +105,23 @@
   font-size: 24px;
   cursor: pointer;
   color: #aaa;
+}
+
+.textLeft {
+  text-align: left;
+}
+
+.textBarSize {
+  width: 250px;
+  height: 33px;
+}
+
+.buttonSize {
+  width: 200px;
+  height: 94px;
+}
+
+.font {
+  font-size: 20px;
+  font-weight: 400;
 }
