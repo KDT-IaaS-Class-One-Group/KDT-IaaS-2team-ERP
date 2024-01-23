@@ -73,7 +73,7 @@ const Login: React.FC = () => {
           </button>
         </form>
         <br />
-      <div className={styles.flex}>
+      <div>
       <button type="button" className={styles.FindInfo} onClick={handleOpenUsernameModal}>아이디 찾기</button>
       <button type="button" className={styles.FindInfo} onClick={handleOpenPasswordModal}>비밀번호 찾기</button>
       </div>
