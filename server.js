@@ -992,6 +992,8 @@ server.get('/user', (req, res) => {
         console.log("가",productName1)
         console.log("문",productName2)
         console.log("제",productName3)
+        console.log('orderName', orderName)
+
       try {
         // 사용자의 캐시 확인
         const checkCashQuery = `SELECT cash FROM Users WHERE User_Index = ?`;
@@ -1022,7 +1024,7 @@ server.get('/user', (req, res) => {
 
         // 사용자의 user_Index 값으로 주문 정보를 추가
         const orderQuery = `
-      INSERT INTO Orderdetails (Subs_Index, User_Index, Subs_Start, Subs_End, address, user_phone, user_phone, postcode
+      INSERT INTO orderdetails (Subs_Index, User_Index, Subs_Start, Subs_End, address, user_name, user_phone, postcode
         ,detailaddress ,Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
     `;
