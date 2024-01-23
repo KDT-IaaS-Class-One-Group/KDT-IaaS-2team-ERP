@@ -6,6 +6,7 @@ const UserIdModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [output, setOutput] = useState<string>('');
+  const [isOutputVisible, setIsOutputVisible] = useState<boolean>(false);
 
   const handleFindUsername = async () => {
     // 클라이언트에서 서버로 아이디 찾기 요청 보내기
@@ -24,6 +25,7 @@ const UserIdModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         // 서버 응답이 성공이면
         if (data.userId) {
           setOutput(`ID: ${data.userId}`);
+          setIsOutputVisible(true);
         } else {
           window.alert("User not found");
         }
@@ -44,17 +46,22 @@ const UserIdModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         
         {/* 아이디 찾기 모달 내용 */}
         <div className={styles.outline}>
-          <div className={`${styles.margin} ${styles.textLeft} ${styles.font}`}>회원 아이디 찾기</div>
-          <div className={styles.flexSet}>
-          <div className={styles.marginRight}>
-            <input type="text" className={styles.textBarSize} placeholder="name" value={name} onChange={(e) => setName(e.target.value)} />
-            <br />
-            <input type="text" className={`${styles.marginTop} ${styles.textBarSize}`} placeholder="phoneNumber" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
-          </div> 
-            <button className={styles.buttonSize} onClick={handleFindUsername}>Find Username</button>
+          {/* isOutputVisible 상태에 따라 동적으로 스타일 적용 */}
+          <div className={isOutputVisible ? styles.hidden : ''}>
+            {/* 기존의 태그들 */}
+            <div className={`${styles.margin} ${styles.textLeft} ${styles.font}`}>회원 아이디 찾기</div>
+            <div className={styles.flexSet}>
+              <div className={styles.marginRight}>
+                <input type="text" className={styles.textBarSize} placeholder="name" value={name} onChange={(e) => setName(e.target.value)} />
+                <br />
+                <input type="text" className={`${styles.marginTop} ${styles.textBarSize}`} placeholder="phoneNumber" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+              </div>
+              <button className={styles.buttonSize} onClick={handleFindUsername}>Find Username</button>
             </div>
-            <hr />
-            <div>{output}</div>
+          </div>
+
+          {/* 출력을 보여줄지 여부에 따라 동적으로 스타일 적용 */}
+          <h3 className={`${styles.centeredContainer} ${isOutputVisible ? '' : styles.hidden}`}>{output}</h3>
         </div>
       </div>
     </div>
