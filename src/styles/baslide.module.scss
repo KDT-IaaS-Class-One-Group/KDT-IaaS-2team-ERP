@@ -1,8 +1,18 @@
 .title > p{
   text-align: center;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #B99470;
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #F2F1EB;
+  border: solid 2px #294B29;
+  color: #294B29;
+  width: 58vw;
+  height: 7vh;
+  line-height: 7vh;
+  border-radius: 20px;
+  margin-left: 23vw;
+  margin-bottom: 9vh;
+  margin-top: 9vh;
+
 }
 
 .swipercontainer {
@@ -52,16 +62,19 @@
 
 .selectedproductinfo {
   flex: 1; /* 우측 세부 정보 영역이 남은 공간을 차지하도록 설정 */
-  padding: 20px; /* 내용 간격 조절을 위한 패딩 추가 */
-  background-color: #f1e4c377;  
+  padding: 50px; /* 내용 간격 조절을 위한 패딩 추가 */
+  background-color: #F2F1EB;  
   height: 60vh;
   border-radius: 10px;
-  text-align: center;
+  // text-align: center;
   box-sizing: border-box;
   margin-left: 50px;
+  text-align: justify;
+  font-size: 1rem;
 }
 
 .selectedproductinfo > p:nth-child(1){
   font-size: 2rem;
+  color: #294B29;
   font-weight: 900;
 }

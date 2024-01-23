@@ -7,18 +7,17 @@
 }
 
 .div1 {
-  width: 13vw;
+  width: 14vw;
   height: 15vh;
   background-color: #495464;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2rem;
+  font-size: 1.7rem;
   font-weight: bold;
   color: #E8E8E8;
   border-radius: 20px;
   margin: 10px;
-  padding-left: 20px;
 }
 
 .div2 {
@@ -27,7 +26,6 @@
   background-color: #E8E8E8;
   display: flex;
   align-items: center;
-  font-size: 1vw;
   border-radius: 20px;
   margin: 10px;
 }
@@ -37,15 +35,16 @@
   height: 15vh;
   display: flex;
   align-items: center;
+  margin: 10px;
   font-size: 1vw;
 }
 
 .logout {
-  width: 80px;
-  height: 40px;
+  width: 70px;
+  height: 35px;
   background-color: #495464;
   border: 0;
-  line-height: 40px;
+  line-height: 35px;
   color: white;
   border-radius: 5px;
   font-weight: bold;

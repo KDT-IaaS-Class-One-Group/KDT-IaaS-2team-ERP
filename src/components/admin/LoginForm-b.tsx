@@ -45,27 +45,25 @@ export default function LoginForm() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.h1}>로그인</h1>
+      <h1 className={styles.h1}>로그인 후 관리자페이지를 이용하세요</h1>
       <form className={styles.form}>
         <label className={styles.label}>
-          아이디:
           <input
             type="text"
             className={styles.input}
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
-            placeholder="ID를 입력하세요"
+            placeholder="아이디를 입력하세요"
           />
         </label>
         <br />
         <label className={styles.label}>
-          비밀번호:
           <input
             type="password"
             className={styles.input}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="PASSWORD를 입력하세요"
+            placeholder="패스워드를 입력하세요"
           />
         </label>
         <br />

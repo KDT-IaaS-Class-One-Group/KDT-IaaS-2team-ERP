@@ -1,24 +1,19 @@
-.sidemenu {
-  width: 20vw;
-  height: 85vh;
-  display: flex;
-}
-
 .sidelink {
-  font-size: 2vw;
   width: 12vw;
-  height: 80vh;
+  height: 77vh;
+  background-color: #E8E8E8;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  position: relative;
-  right: 14vw;
-  text-align: center;
+  align-items: center;
+  border-radius: 20px;  
+  margin : 10px;
 }
 
-.title {
+.main {
   position: relative;
-  left: 23vw;
+  left: 10vw;
+  top:3vh
 }
 
 .select {
@@ -41,4 +36,5 @@
 .graph {
   position: relative;
   right: 9vw;
+  width: 75vw;
 }

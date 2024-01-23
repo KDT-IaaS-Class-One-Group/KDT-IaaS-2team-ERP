@@ -18,13 +18,13 @@ interface BoardInfo {
   reply: string;
 }
 
-const pageSize = 7;
+const pageSize = 9;
 
 export default function QA() {
   const [boards, setBoards] = useState<BoardInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 7,
+    pageSize: 9,
     totalPages: 1,
   });
 

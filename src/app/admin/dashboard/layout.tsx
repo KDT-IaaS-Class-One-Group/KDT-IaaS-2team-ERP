@@ -22,7 +22,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div>
         <Topbar />
       </div>
-      <div className={styles.side}></div>
       <div className={styles.content}>{children}</div>
     </div>
   );

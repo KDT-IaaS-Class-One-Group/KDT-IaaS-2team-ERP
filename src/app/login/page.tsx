@@ -65,7 +65,7 @@ const Login: React.FC = () => {
           로그인
         </button>
       </form>
-      <NaverLogin />
+      {/* <NaverLogin /> */}
     </div>
   </div>
   );

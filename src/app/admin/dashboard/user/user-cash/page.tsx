@@ -12,13 +12,13 @@ interface UserInfo {
   cash: string;
 }
 
-const pageSize = 7; // 페이지당 표시할 항목 수
+const pageSize = 9; // 페이지당 표시할 항목 수
 
 export default function UsercashPage() {
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 7,
+    pageSize: 9,
     totalPages: 1,
   });
 

@@ -1,18 +1,19 @@
 .sidelink {
-  font-size: 2vw;
-  width: 20vw;
-  height: 80vh;
+  width: 12vw;
+  height: 77vh;
+  background-color: #E8E8E8;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  position: relative;
-  right: 12vw;
-  text-align: center;
+  align-items: center;
+  border-radius: 20px;  
+  margin : 10px;
 }
 
-.title {
+.main {
   position: relative;
-  left: 25vw;
+  left: 10vw;
+  top:3vh
 }
 
 .search {
@@ -31,7 +32,7 @@
 .orderContent {
   display: flex;
   flex-direction: column;
-  width: 74vw;
+  width: 79vw;
   position: relative;
   right: 7vw;
   margin-top: 20px;
@@ -53,7 +54,7 @@
   padding: 8px;
   border: 1px solid #f4f4f4;
   text-align: center;
-  height: 35px;
+  height: 25px;
   font-size: 13px;
 }
 
@@ -68,6 +69,89 @@
   background-color: #f4f4f4;
 }
 
+.proudctContent {
+  display: flex;
+  flex-direction: column;
+  width: 79vw;
+  position: relative;
+  right: 7vw;
+  margin-top: 20px;
+}
+
+.proudctTable {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #f4f4f4;
+  table-layout: fixed;
+}
+
+.proudctTable tr:hover {
+  cursor: pointer;
+  background-color: #E8E8E8;
+}
+
+.proudctTable th,
+.proudctTable td {
+  padding: 8px;
+  border: 1px solid #f4f4f4;
+  text-align: center;
+  max-height: max-content;
+  font-size: 13px;
+}
+
+.proudctTable tr > th:nth-child(5) {
+  white-space: normal; /* 텍스트가 칸을 벗어날 경우 줄 바꿈 */
+  word-wrap: break-word;
+  width: 25vw;
+}
+
+
+.proudctTable tr > td:nth-child(5) {
+  white-space: normal; /* 텍스트가 칸을 벗어날 경우 줄 바꿈 */
+  word-wrap: break-word;
+  width: 25vw;
+}
+
+.proudctTable th {
+  background-color: #f4f4f4;
+}
+
+.subTable {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #f4f4f4;
+  table-layout: fixed;
+}
+
+.subTable tr:hover {
+  cursor: pointer;
+  background-color: #E8E8E8;
+}
+
+.subTable th,
+.subTable td {
+  padding: 8px;
+  border: 1px solid #f4f4f4;
+  text-align: center;
+  max-height: max-content;
+  font-size: 13px;
+}
+
+.subTable tr > th:nth-child(6) {
+  white-space: normal; /* 텍스트가 칸을 벗어날 경우 줄 바꿈 */
+  word-wrap: break-word;
+  width: 10vw;
+}
+
+.subTable tr > td:nth-child(5) {
+  white-space: normal; /* 텍스트가 칸을 벗어날 경우 줄 바꿈 */
+  word-wrap: break-word;
+  width: 25vw;
+}
+
+.subTable th {
+  background-color: #f4f4f4;
+}
 
 .paginationButton {
   color: white;
@@ -98,7 +182,7 @@
   right: 4vw;
   display: flex;
   flex-wrap: nowrap;
-  justify-content: center;
+  justify-content: space-around;
 }
 
 .addButton {
@@ -142,12 +226,26 @@
   line-height: 20px;
   border-radius: 2px;
   margin-right: 5px;
+  margin-top: 5px;
+}
+.button {
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: pointer;
+  border: none;
+  width: 50px;
+  height: 25px;
+  background-color: #495464;
+  line-height: 20px;
+  border-radius: 2px;
 }
 
 .addInput {
   margin-right: 4px;
   margin-left: 2px;
-  width: 100px;
+  width: 90px;
 }
 
 .editingRow {
@@ -194,6 +292,8 @@
   font-size: 12px;
   display: flex;
   align-items: center;
+  right: 1vw;
+  bottom: 1vh;
 }
 
 .infoTable {
@@ -228,4 +328,8 @@
 
 .orderTable th:nth-child(9){
   width: 120px;
+}
+
+.addText{
+  height: 12vh;
 }

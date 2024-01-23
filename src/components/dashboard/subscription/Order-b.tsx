@@ -18,7 +18,7 @@ interface OrderInfo {
   detailaddress: string;
   postcode: string;
   auto_renew: number;
-  staus: number;
+  status: number;
   productName1: string;
   productName2: string;
   productName3: string;
@@ -92,7 +92,7 @@ export default function OrderInfoPage() {
     }
 
     const statusCondition =
-      filterStatus === "all" || order.staus.toString() === filterStatus;
+      filterStatus === "all" || order.status.toString() === filterStatus;
     const renewCondition =
       filterRenew === "all" || order.auto_renew.toString() === filterRenew;
 
@@ -206,7 +206,7 @@ export default function OrderInfoPage() {
                   <td>{order.address}</td>
                   <td>{order.detailaddress}</td>
                   <td>{order.auto_renew === 0 ? "갱신" : "미갱신"}</td>
-                  <td>{order.staus === 0 ? "구독" : "해지"}</td>
+                  <td>{order.status === 0 ? "구독" : "해지"}</td>
                 </tr>
               ))}
             </tbody>
@@ -280,7 +280,7 @@ export default function OrderInfoPage() {
                       </tr>
                       <tr>
                         <td>구독여부</td>
-                        <td>{selectedBoard.staus === 1 ? "해지" : "구독"}</td>
+                        <td>{selectedBoard.status === 1 ? "해지" : "구독"}</td>
                       </tr>
                     </tbody>
                   </table>

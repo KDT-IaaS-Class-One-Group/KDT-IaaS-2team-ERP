@@ -10,25 +10,13 @@
   font-family: 'Noto Sans', sans-serif;
 }
 
-.side {
-  width: 13vw;
-  height: 80vh;
-  background-color: #E8E8E8;
-  top: 17vh;
-  justify-content: center;
-  align-items: center;
-  border-radius: 20px;
-  margin: 10px;
-  position: relative;
-}
-
 .content {
-  width: 83vw;
+  width: 100vw;
   height: 80vh;
   background-color: white;
   display: flex;
   border-radius: 20px;
-  margin: 10px;
-  top: 17vh;
   position: relative;
+  margin-top: 17vh;
+  // margin-left: 10vw;
 }

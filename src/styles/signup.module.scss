@@ -1,13 +1,14 @@
 // styles.module.scss
 
 .container {
-  font-family: 'Arial', sans-serif;
   width:45vw;
   margin: 50px auto;
   background-color: #ffffff;
-  padding: 20px;
+  padding: 50px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+
 }
 
 .title {
@@ -59,6 +60,10 @@
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s;
+  width: 150px;
+  position: relative;
+  bottom: 9vh;
+  left: 15vw;
 }
 
 .button:hover {
@@ -119,4 +124,24 @@
   width:35vw;
   height:20vh;
   font-weight: 700;
+}
+
+.duplicateBtn{
+  font-size: 10px;
+  border: 0;
+  background-color: #0070C0;
+  color: white;
+  height: 25px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+.addressBtn{
+  font-size: 10px;
+  border: 0;
+  background-color: #0070C0;
+  color: white;
+  height: 25px;
+  position: relative;
+  right: 90px;
+  cursor: pointer;
 }

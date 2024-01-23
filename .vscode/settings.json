@@ -12,6 +12,19 @@
       "name": "conn",
       "database": "erp",
       "username": "yuan"
+    },
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "previewLimit": 50,
+      "server": "database-1.cvxfnrpds7lh.ap-northeast-2.rds.amazonaws.com",
+      "port": 3306,
+      "driver": "MariaDB",
+      "name": "fdg",
+      "database": "erp",
+      "username": "root"
     }
   ]
 }

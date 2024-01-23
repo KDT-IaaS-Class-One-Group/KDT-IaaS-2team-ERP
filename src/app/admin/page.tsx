@@ -10,10 +10,9 @@ export default function Admin() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        marginTop: "15vh",
+        marginTop: "10vh",
       }}
     >
-      <h1>NTS Admin</h1>
       <LoginForm />
     </div>
   );
