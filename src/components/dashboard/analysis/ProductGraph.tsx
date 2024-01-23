@@ -54,6 +54,8 @@ const ProductGraph = () => {
         >
           <option value="subs_start"> 구독시작월별 </option>
           <option value="currentProducts">상품별</option>
+          <option value="address">지역별</option>
+          <option value="a">test</option>
         </select>
         <div className={styles.graph}>
           <ResponsiveContainer width="101%" height={500}>

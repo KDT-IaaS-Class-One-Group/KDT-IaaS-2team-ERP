@@ -446,6 +446,21 @@ app.prepare().then(() => {
               ORDER BY productCount DESC;
               `;
           break;
+          case "a":
+            query = `
+            SELECT p.product_name, COUNT(*) as salesCount
+            FROM (
+                SELECT Product_Index as productId FROM orderdetails WHERE Subs_Start BETWEEN ? AND ? AND Product_Index IS NOT NULL
+                UNION ALL
+                SELECT Product_Index2 FROM orderdetails WHERE Subs_Start BETWEEN ? AND ? AND Product_Index2 IS NOT NULL
+                UNION ALL
+                SELECT Product_Index3 FROM orderdetails WHERE Subs_Start BETWEEN ? AND ? AND Product_Index3 IS NOT NULL
+            ) as od
+            JOIN product p ON od.productId = p.product_id
+            GROUP BY p.product_name
+            ORDER BY salesCount DESC;
+            `
+          break;
         default:
           res.status(400).send("Invalid xAxis parameter");
           return;
