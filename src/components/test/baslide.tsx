@@ -19,6 +19,7 @@ interface Product {
   id: number;
   name: string;
   info: string;
+  imageUrl: string;
 }
 
 export default function SwiperTest() {
@@ -30,7 +31,6 @@ export default function SwiperTest() {
     try {
       const response = await fetch("/api/products");
       const dataFromServer: Product[] = await response.json();
-      console.log(dataFromServer);
       setProductData(dataFromServer);
     } catch (error) {
       console.error("데이터를 불러오는 도중 오류 발생:", error);
@@ -86,9 +86,10 @@ export default function SwiperTest() {
                   <Image
                     fill={true}
                     style={{ borderRadius: "10%" }}
-                    src={`/productimage/${product.name}.jpg`}
+                    src={product.imageUrl}
                     alt={`${product.name}`}
                   />
+                  
                 </div>
               </SwiperSlide>
             );
@@ -98,7 +99,6 @@ export default function SwiperTest() {
           <div className={styles.selectedproductinfo}>
             <p>{selectedProduct.name}</p>
             <p>{selectedProduct.info}</p>
-            {/* 기타 정보 표시 */}
           </div>
         )}
       </div>

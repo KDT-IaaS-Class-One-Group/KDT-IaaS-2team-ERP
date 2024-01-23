@@ -62,7 +62,7 @@ export default function SubSwiper() {
                       <Image
                         fill={true}
                         className={styles.image}
-                        src={`/productimage/${item.name}.jpg`}
+                        src={item.imageUrl}
                         alt={`${item.name}`}
                       />
                     </div>
