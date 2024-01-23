@@ -53,7 +53,6 @@ const ProductGraph = () => {
           className={styles.select}
         >
           <option value="subs_start"> 구독시작월별 </option>
-          <option value="address">지역별</option>
           <option value="currentProducts">상품별</option>
         </select>
         <div className={styles.graph}>
