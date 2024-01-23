@@ -1,7 +1,6 @@
 'use client';
 import styles from "@/styles/login.module.scss";
 import React, { useState } from 'react';
-import GoogleLogin from '../../components/social/GoogleLogin';
 
 const Login: React.FC = () => {
   const [userId, setUserId] = useState('');
@@ -65,7 +64,6 @@ const Login: React.FC = () => {
           로그인
         </button>
       </form>
-      <GoogleLogin />
     </div>
   </div>
   );
