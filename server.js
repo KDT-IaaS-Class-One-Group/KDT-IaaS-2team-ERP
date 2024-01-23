@@ -9,8 +9,6 @@ const mysql = require("mysql2/promise");
 const multer = require("multer");
 const path = require("path");
 const cron = require("node-cron");
-const passport = require('passport');
-const NaverStrategy = require('passport-naver').Strategy;
 const session = require('express-session');
 
 const {
@@ -19,7 +17,7 @@ const {
 
 const secretKey = "nts9604";
 const pool = mysql.createPool({
-  host: "localhost",
+  host: "database-1.cvxfnrpds7lh.ap-northeast-2.rds.amazonaws.com",
   port: "3306",
   user: "root",
   password: "123123123",
