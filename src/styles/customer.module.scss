@@ -22,7 +22,7 @@
 
 .margin {
   margin-left: 55px;
-  padding-top: 60px;
+  padding-top: 55px;
 }
 
 .marginRight {
@@ -50,7 +50,7 @@
 
 .outline {
   outline: solid 1px rgb(175, 175, 175);
-  height: 310px;
+  height: 300px;
 }
 
 .spaceBetween {
@@ -109,6 +109,7 @@
 
 .textLeft {
   text-align: left;
+  width: 540px;
 }
 
 .textBarSize {
@@ -124,4 +125,17 @@
 .font {
   font-size: 20px;
   font-weight: 400;
+}
+
+// 아이디 비밀번호 찾기 스타일 on/off
+.centeredContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 600px;
+  height: 300px;
+}
+
+.hidden {
+  display: none;
 }
