@@ -1,11 +1,9 @@
 'use client'
-import react, { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import ReactDOM from "react-dom";
 import DaumPostcode from 'react-daum-postcode';
 import { useRouter } from 'next/navigation';
-import { getAddress } from '@/components/test/getadress';
-import styled from 'styled-components';
-import { Text } from '@chakra-ui/react';
+import getAddress from '@/components/test/getadress';
 import styles from "@/styles/Modal.module.scss";
 
 interface ModalProps {
@@ -34,37 +32,29 @@ const Search = ({ open, onClose, onSelectAddress, onSelectZonecode, children }: 
   }, [router]);
 
   const handleComplete = (data: any) => {
-    console.log(data.zonecode)
-    const address = getAddress(data);
-    console.log("두개가나오나",address)
+    const address = getAddress(data)
     onSelectAddress(address);
     onSelectZonecode(data.zonecode);
     // router.push(`/singup/?postcode=${data.zonecode}&address=${encodeURIComponent(address)}`);
-    onClose()
   };
 
+ 
   if (!open) return null;
 
   return ReactDOM.createPortal(
     <>
       <div className={styles.overlayStyle} />
       <div className={styles.modalStyle}>
-      <Container>
-      <Text fontSize="3xl">주소 찾기</Text>
+  
       <DaumPostcode onComplete={handleComplete} />
-    </Container>
+  
     
-        <button onClick={onClose}>모달 닫기</button>
-        {children}
+        <button onClick={onClose}>닫기</button>
+  
       </div>
     </>,
     document.getElementById("global-modal") as HTMLElement
   );
 };
    
-const Container = styled.div`
-  height: 100vh;
-  text-align: center;
-`;
-
 export default Search;

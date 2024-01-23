@@ -1,14 +1,12 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import { NextPage } from 'next';
 import styles from "@/styles/signup.module.scss";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRouter } from 'next/navigation'
-import { Input, Button } from "@chakra-ui/react";
-import { useSearchParams } from "next/navigation"
 import Search from "@/components/test/modal";
+import { ko } from 'date-fns/locale';
 
 interface SignUpProps {
   signup?: {
@@ -24,33 +22,16 @@ interface SignUpProps {
     gender?: string;
   };
 }
-interface FormData {
-  userId: string;
-  password: string;
-  name: string;
-  birthdate: Date;
-  phoneNumber: string;
-  email: string;
-  postcode: string;
-  address: string;
-  detailaddress: string;
-  gender: string;
-}
 
 const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedaddress, setSelectedaddress] = useState<string | null>(null);
-  const [selectedZonecode, setSelectedZonecode] = useState<string | null>(null);
   const [detailaddress, setDetailaddress] = useState<string>("");
   const [address, setaddress] = useState<string>('');
   const [postcode, setPostcode] = useState<string>('');
-
   const [isPasswordValid, setIsPasswordValid] = useState<boolean | null>(null);
-
   const [passwordConfirm, setPasswordConfirm] = useState<string>('');
   const [isPasswordMatch, setIsPasswordMatch] = useState<boolean | null>(null);
-
   const [formData, setFormData] = useState<{
     userId: string;
     password: string;
@@ -81,9 +62,9 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  // const handleCloseModal = () => {
+  //   setIsModalOpen(false);
+  // };
 
   const getaddress = (data : any) => {
     console.log(data)
@@ -95,7 +76,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
   // 모달에서 주소를 선택했을 때 호출되는 함수
   const handleSelectaddress = (data: any) => {
     const address = getaddress(data);
-    setSelectedaddress(address);
+    
     setaddress(address);
     setIsModalOpen(false);
     setFormData((prevFormData) => ({
@@ -107,7 +88,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
 
   const handleSelectZonecode = (data: any) => {
     const postcodeData = getaddress(data);
-    setSelectedZonecode(postcodeData);
+    
     setPostcode(postcodeData);
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -118,9 +99,9 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
 
   const router = useRouter()
 
-  useEffect(() => {
+  // useEffect(() => {
   
-  }, []);
+  // }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | Date) => {
     if (event instanceof Date) {
@@ -178,7 +159,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     const idPattern = /^[a-zA-Z0-9]{4,12}$/;
 
     if (!idPattern.test(formData.userId)) {
-      setIsUserIdValid(false);
+
       alert('아이디는 영어와 숫자로 이루어진 4자 이상 12자 이하이어야 합니다.');
       return;
     }
@@ -197,7 +178,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
       setIsUserIdValid(!data.isDuplicate);
     } catch (error) {
       console.error('Error checking duplicate:', error);
-      setIsUserIdValid(false);
+      // setIsUserIdValid(false);
     }
   };
 
@@ -257,22 +238,20 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>회원가입</h1>
       <form className={styles.form}>
         <table className={styles.userTable}>
           <tbody>
             <tr>
               <td className={styles.labelCell}>아이디</td>
               <td className={styles.labelCell2}>
-                <input type="text" name="userId" value={formData.userId} onChange={handleChange} className={styles.input} />
+                <input type="text" name="userId" value={formData.userId} onChange={handleChange} className={styles.input} 
+                placeholder='영어와 숫자로 이루어진 4자 이상 12자 이하'/>
                 <button type="button" onClick={handleCheckDuplicate} className={styles.duplicateBtn}>중복 확인</button>
                 {isUserIdValid === null ? null : (
                   <span className={styles.validMessage}>
                     {isUserIdValid === true
                       ? '사용 가능한 아이디입니다.'
-                      : isUserIdValid === false
-                      ? '이미 사용 중인 아이디입니다.'
-                      : '중복 확인 중...'}
+                      : '이미 사용 중인 아이디입니다.'}
                   </span>
                 )}
               </td>
@@ -317,10 +296,10 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
                 <DatePicker className={styles.input}
                   selected={formData.birthdate}
                   onChange={(date: Date) => handleChange(date)}
-                  peekNextMonth
+                  locale={ko}
                   showMonthDropdown
                   showYearDropdown
-                  dateFormat="yyyy-MM-dd"
+                  dateFormat="yyyy년 MM월 dd일"
                 />
               </td>
             </tr>
@@ -351,10 +330,12 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
                         onChange={handlePostcodeChange} 
                         readOnly
                       />
-                      <button className={styles.addressBtn} onClick={() => setIsModalOpen(true)}>주소 검색</button>
+                      <div className={styles.addressBtn} onClick={() => setIsModalOpen(true)}>주소 검색</div>
                       <Search
                         open={isModalOpen}
-                        onClose={handleCloseModal}
+                        onClose={() => {
+                          setIsModalOpen(false);
+                        }}
                         onSelectAddress={handleSelectaddress}
                         onSelectZonecode={handleSelectZonecode}
                       >

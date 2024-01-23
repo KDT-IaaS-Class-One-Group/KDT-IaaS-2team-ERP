@@ -5,7 +5,7 @@ async function CheckAndRenewSubscriptions(pool) {
   
       // 종료일로부터 1일 이내의 데이터 가져오기
       const [rows, fields] = await pool.query(
-        "SELECT Order_Index, Subs_Index, User_Index, Subs_Start, Subs_End, address, order_name, order_phone, postcode,detailaddress ,Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3 FROM orderdetails WHERE Subs_End >= NOW() AND Subs_End <= NOW() + INTERVAL 1 DAY AND auto_renew = 1"
+        "SELECT Order_Index, Subs_Index, User_Index, Subs_Start, Subs_End, address, user_name, user_phone, postcode,detailaddress ,Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3 FROM orderdetails WHERE Subs_End >= NOW() AND Subs_End <= NOW() + INTERVAL 1 DAY AND auto_renew = 1"
       );
      
       
@@ -17,7 +17,7 @@ async function CheckAndRenewSubscriptions(pool) {
   
       // 각 데이터에 대해 새로운 Subscription 데이터 추가
       for (const row of rows) {
-        const { Order_Index, Subs_Index, User_Index, Subs_End, address, order_name, order_phone, postcode,detailaddress ,Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3 } = row;
+        const { Order_Index, Subs_Index, User_Index, Subs_End, address, user_name, user_phone, postcode,detailaddress ,Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3 } = row;
   
         // 해당 주문의 구독 주기 조회
         const weekQuery = `SELECT Week FROM subscription WHERE Subs_Index = ?`;
@@ -34,8 +34,8 @@ async function CheckAndRenewSubscriptions(pool) {
 
           // INSERT 쿼리를 통해 새로운 Subscription 데이터를 DB에 추가
           await pool.query(
-            "INSERT INTO orderdetails (Subs_Start, Subs_End, Subs_Index, User_Index, address ,order_name, order_phone, postcode,detailaddress ,Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3) VALUES (?, ?, ?, ?, ?,?,? ,? ,?,?,?,?,?,?,?)",
-            [newDate, endDate, Subs_Index, User_Index, address,order_name, order_phone, postcode,detailaddress ,Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3]
+            "INSERT INTO orderdetails (Subs_Start, Subs_End, Subs_Index, User_Index, address ,user_name, user_phone, postcode,detailaddress ,Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3) VALUES (?, ?, ?, ?, ?,?,? ,? ,?,?,?,?,?,?,?)",
+            [newDate, endDate, Subs_Index, User_Index, address,user_name, user_phone, postcode,detailaddress ,Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3]
           );
 
              // subscription 테이블에서 price 값을 가져오는 쿼리

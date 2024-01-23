@@ -3,24 +3,21 @@
 .container {
   width:45vw;
   margin: 50px auto;
-  background-color: #ffffff;
-  padding: 50px;
+  justify-content: center;
+  align-items: center;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
 
 }
 
-.title {
-  text-align: center;
-  color: #333333;
-}
 
 .userTable{
-  width:45vw;
-  height:100vh;
+  width:40vw;
+  height:95vh;
+  margin-top:5vh;
   tr{
-    width:45vw;
+    width:40vw;
     display:flex;
     font-size:1rem;
     align-items: center;
@@ -33,7 +30,10 @@
 .form {
   display: flex;
   flex-direction: column;
-  width:45vw;
+  width:40vw;
+  margin-left:2.5vw;
+  margin-top:5vh;
+  margin-right: 2.5vw;
 }
 
 .formLabel {

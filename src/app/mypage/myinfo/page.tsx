@@ -192,6 +192,7 @@ export default function MyPageinfo() {
       console.error('서버 에러:', error);
     }
   };
+  
   const handleInputChange = (name: string, value: string) => {
     setUserInfo({
       ...userInfo,
