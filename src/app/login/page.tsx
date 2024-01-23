@@ -28,6 +28,7 @@ const Login: React.FC = () => {
         window.location.href = '/';
       } else {
         // 로그인 실패
+        alert("아이디나 비밀번호가 틀렸습니다.")
         console.error('로그인 실패:', data.error);
       }
     } catch (error) {
