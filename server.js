@@ -931,7 +931,7 @@ app.prepare().then(() => {
         console.log("제",productName3)
       try {
         // 사용자의 캐시 확인
-        const checkCashQuery = `SELECT cash FROM users WHERE User_Index = ?`;
+        const checkCashQuery = `SELECT cash FROM Users WHERE User_Index = ?`;
         const [cashResult] = await connection.query(checkCashQuery, [
           userIndex,
         ]);
@@ -947,7 +947,7 @@ app.prepare().then(() => {
         await connection.beginTransaction();
 
         // 사용자의 캐시 차감
-        const updateCashQuery = `UPDATE users SET cash = cash - ? WHERE User_Index = ?`;
+        const updateCashQuery = `UPDATE Users SET cash = cash - ? WHERE User_Index = ?`;
         const updateCashValues = [price, userIndex];
         await connection.query(updateCashQuery, updateCashValues);
 
@@ -1276,7 +1276,7 @@ app.prepare().then(() => {
         const isWithdrawn = false;
 
         const [rows, fields] = await db.query(
-          `INSERT INTO users (userId, password, name, birthdate, phoneNumber, email, postcode, address, detailaddress, gender, cash, joinDate, isWithdrawn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)`,
+          `INSERT INTO Users (userId, password, name, birthdate, phoneNumber, email, postcode, address, detailaddress, gender, cash, joinDate, isWithdrawn) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)`,
           [
             userId,
             password,
