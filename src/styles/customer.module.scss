@@ -21,12 +21,12 @@
 }
 
 .margin {
-  margin-left: 55px;
-  padding-top: 55px;
+  margin-left: 57px;
+  padding-top: 53px;
 }
 
 .marginRight {
-  margin-right: 25px;
+  margin-right: 14px;
 }
 
 .marginTop {
@@ -35,10 +35,6 @@
 
 .width {
   width: 30vw;
-}
-
-.flex {
-  display: flex;
 }
 
 .flexSet{
@@ -50,7 +46,8 @@
 
 .outline {
   outline: solid 1px rgb(175, 175, 175);
-  height: 300px;
+  
+  height: 280px;
 }
 
 .spaceBetween {
@@ -90,36 +87,43 @@
 .modalContent {
   background-color: #fff;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 3px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   width: 600px;
-  height : 400px;
+  height : 390px;
   overflow-y: auto;
   position: relative;
 }
 
 .closeBtn {
   position: absolute;
-  top: 10px;
+  top: 0px;
   right: 10px;
-  font-size: 24px;
+  font-size: 32px;
   cursor: pointer;
   color: #aaa;
 }
 
 .textLeft {
   text-align: left;
-  width: 540px;
 }
 
 .textBarSize {
-  width: 250px;
-  height: 33px;
+  width: 234px;
+  height: 15px;
+  padding: 10px;
 }
 
 .buttonSize {
   width: 200px;
-  height: 94px;
+  height: 93px;
+  background-color: #0070C0;
+  color: #ffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
 }
 
 .font {
@@ -130,13 +134,22 @@
 // 아이디 비밀번호 찾기 스타일 on/off
 .centeredContainer {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  align-items: start;
   flex-direction: column;
   width: 600px;
-  height: 300px;
+  height: 280px;
+  background-color: #f0f0f0;
+  border: 3px solid #f0f0f0;
 }
 
 .hidden {
   display: none;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 600px;
+  height: 200px;
 }
