@@ -27,7 +27,7 @@ const UserIdModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           setOutput(`ID: ${data.userId}`);
           setIsOutputVisible(true);
         } else {
-          window.alert("User not found");
+          window.alert("회원정보가 존재하지 않습니다.");
         }
       } else {
         // 서버 응답이 실패이면
@@ -61,7 +61,10 @@ const UserIdModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </div>
 
           {/* 출력을 보여줄지 여부에 따라 동적으로 스타일 적용 */}
-          <h3 className={`${styles.centeredContainer} ${isOutputVisible ? '' : styles.hidden}`}>{output}</h3>
+          <h3 className={`${styles.centeredContainer} ${isOutputVisible ? '' : styles.hidden}`}>
+            아이디 찾기가 완료되었습니다.
+          <h2>{output}</h2>
+          </h3>
         </div>
       </div>
     </div>
