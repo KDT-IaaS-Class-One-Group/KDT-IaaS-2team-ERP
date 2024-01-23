@@ -4,36 +4,36 @@
   width: 100vw;
   height: 14vh;
   opacity: 0/5;
-  display:flex;
+  display: flex;
   justify-content: space-between;
   color: #163020;
   background-color: #b6c4b610;
-  max-width:100%;
+  max-width: 100%;
   position: fixed;
   align-items: center;
   z-index: 100;
 }
 
 .div1 {
-  width:20vw;
-  height:12vh;
+  width: 20vw;
+  height: 12vh;
   margin-left: 10px;
 }
 
 .div2 {
-  width:20vw;
-  height:12vh;
+  width: 20vw;
+  height: 12vh;
   font-weight: bolder;
-  font-size:4rem;
-  display:flex;
+  font-size: 4rem;
+  display: flex;
   justify-content: center;
   align-items: center;
-  color:#638889;
+  color: #638889;
   cursor: pointer;
   font-family: 'Grandiflora One';
-  
-  a{
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+
+  a {
+    text-shadow: 0 0 5px #d5f5f6;
     color: #163020;
     text-decoration-line: none;
   }
@@ -49,9 +49,10 @@
 
   p {
     width: 16vw;
-    font-size: 1rem;
+    font-size: 1.3rem;
     margin: 0;
     padding: 0;
+    font-weight: 800;
     text-align: center;
   }
 
@@ -69,12 +70,16 @@
     border-radius: 5px;
     border: 0;
 
+    &:hover {
+      background-color: #F1EFEF;
+      color: #18271d;
+    }
   }
 }
 
 
-.link{
+.link {
   text-decoration: none;
-  color:white;
-  margin-left:2vw;
+  color: white;
+  margin-left: 2vw;
 }
