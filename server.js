@@ -434,7 +434,18 @@ app.prepare().then(() => {
               GROUP BY label
               ORDER BY productCount DESC;`;
           break;
-
+        case "currentProducts":
+          query = `
+              SELECT p.product_name AS label, COUNT(*) as productCount
+              FROM (
+              SELECT Product_Index as productId FROM orderdetails WHERE NOW() BETWEEN Subs_Start AND Subs_End AND Product_Index IS NOT NULL UNION ALL
+              SELECT Product_Index2 FROM orderdetails WHERE NOW() BETWEEN Subs_Start AND Subs_End AND Product_Index2 IS NOT NULL UNION ALL
+              SELECT Product_Index3 FROM orderdetails WHERE NOW() BETWEEN Subs_Start AND Subs_End AND Product_Index3 IS NOT NULL) as od
+              JOIN product p ON od.productId = p.product_id
+              GROUP BY label
+              ORDER BY productCount DESC;
+              `;
+          break;
         default:
           res.status(400).send("Invalid xAxis parameter");
           return;
