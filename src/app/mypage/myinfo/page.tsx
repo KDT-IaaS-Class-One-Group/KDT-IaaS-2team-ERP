@@ -18,11 +18,24 @@ interface UserInfo {
   gender: string;
 }
 
+interface MyInfo {
+  userId: string;
+  name: string;
+  birthdate: string;
+  phoneNumber: string;
+  email: string;
+  postcode: string;
+  address: string;
+  detailaddress: string,
+  gender: string;
+}
+
 export default function MyPageinfo() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [myInfo, setMyInfo] = useState<MyInfo | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const handleSearch = () => {
@@ -119,60 +132,37 @@ export default function MyPageinfo() {
 
   const handleSaveChanges = async () => {
     // 서버에 수정된 정보 전송 및 데이터베이스 업데이트 로직 추가
-    
+      
     if (!userInfo) {
       console.error('사용자 정보가 없습니다.');
       return;
     }
-
+  
     const currentToken = token || '';
     try {
-      const response = await fetch('/api/updateUser',{
+      const response = await fetch('/api/updateUser', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${currentToken}`
         },
-
         body: JSON.stringify({
           name: userInfo.name,
           birthdate: userInfo.birthdate,
           phoneNumber: userInfo.phoneNumber,
           email: userInfo.email,
-          postcode: userInfo.postcode,           
+          postcode: userInfo.postcode,
           address: userInfo.address,
-          detailadress: userInfo.detailaddress,        
-          gender: userInfo.gender,           
+          detailaddress: userInfo.detailaddress,
+          gender: userInfo.gender,
         }),
       });
-
+  
       if (response.ok) {
         // 수정 모드 종료 및 변경된 사용자 정보 다시 불러오기
         setIsEditMode(false);
-
-        const { token: newToken } = await response.json();
-
-        // 새로운 토큰을 사용하여 로컬 상태 업데이트
-        setToken(newToken);
-  
-        // 서버로부터 새로운 토큰을 발급받기
-        const newTokenResponse = await fetch('/api/refreshToken', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${newToken}`
-          },
-        });
-  
-        if (newTokenResponse.ok) {
-          const { token: newToken } = await newTokenResponse.json();
-          localStorage.setItem('token', newToken);
-          // 새로운 토큰을 사용하여 사용자 정보를 다시 불러오기
-          loadUserFromToken(newToken);
-
-        } else {
-          console.error('토큰 갱신 실패:', newTokenResponse.statusText);
-        }
+        console.log('사용자 정보 업데이트 성공');
+        fetchMyInfo();
       } else {
         console.error('사용자 정보 업데이트 실패:', response.statusText);
       }
@@ -219,6 +209,42 @@ export default function MyPageinfo() {
     const { value } = event.target;
     handleInputChange('address', value);
   };
+
+
+
+  const fetchMyInfo = async () => {
+    try {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        console.error('Token not found');
+        return;
+      }
+
+      const response = await fetch('/api/my-info', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const {myinfo} = await response.json();
+        
+        setMyInfo(myinfo);
+      } else {
+        console.error('Failed to fetch user info:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+    }
+  };
+
+  useEffect(() => {
+    // 토큰에서 사용자 정보를 가져오도록 수정
+    fetchMyInfo();
+  }, []); // 최초 렌더링 시에만 실행
 
   return (
       <div className={styles.myinfo}>
@@ -392,51 +418,51 @@ export default function MyPageinfo() {
                     </tr>
                   </tbody>
                 </table>
-                <button onClick={handleSaveChanges}>저장</button>
+                <button className={styles.btn} onClick={handleSaveChanges}>저장</button>
               </div>
             ) : (
               <div>
                 <table className={styles.userinfo}>
                   <tr>
                       <td className={styles.item}>사용자 ID</td>
-                      <td className={styles.info}>{userInfo.userId}</td>
+                      <td className={styles.info}>{myInfo && myInfo.userId ? myInfo.userId : 'N/A'}</td>
                   </tr>
                   <tr>
                       <td className={styles.item}>이름</td>
-                      <td className={styles.info}>{userInfo.name}</td>
+                      <td className={styles.info}>{myInfo && myInfo.name ? myInfo.name : 'N/A'}</td>
                   </tr>
                   <tr>
                       <td className={styles.item}>생년월일</td>
-                      <td className={styles.info}>{userInfo.birthdate}</td>
+                      <td className={styles.info}> {myInfo ? (myInfo.birthdate && new Date(myInfo.birthdate).toLocaleDateString('ko-KR')) : 'N/A'}</td>
                   </tr>
                   <tr>
                       <td className={styles.item}>전화번호</td>
-                      <td className={styles.info}>{userInfo.phoneNumber}</td>
+                      <td className={styles.info}>{myInfo && myInfo.phoneNumber ? myInfo.phoneNumber: 'N/A'}</td>
                   </tr>
                   <tr>
                       <td className={styles.item}>이메일</td>
-                      <td className={styles.info}>{userInfo.email}</td>
+                      <td className={styles.info}>{myInfo && myInfo.email? myInfo.email : 'N/A'}</td>
                   </tr>
                   <tr>
                       <td className={styles.item}>우편번호</td>
-                      <td className={styles.info}>{userInfo.postcode}</td>
+                      <td className={styles.info}>{myInfo && myInfo.postcode ? myInfo.postcode : 'N/A'}</td>
                   </tr>
                   <tr>
                       <td className={styles.item}>주소</td>
-                      <td className={styles.info}>{userInfo.address}</td>
+                      <td className={styles.info}>{myInfo && myInfo.address ? myInfo.address : 'N/A'}</td>
                   </tr>
                   <tr>
                       <td className={styles.item}>상세주소</td>
-                      <td className={styles.info}>{userInfo.detailaddress}</td>
+                      <td className={styles.info}>{myInfo && myInfo.detailaddress ? myInfo.detailaddress : 'N/A'}</td>
                   </tr>
                   <tr>
                       <td className={styles.item}>성별</td>
-                      <td className={styles.info}>{userInfo.gender}</td>
+                      <td className={styles.info}>{myInfo && myInfo.gender ? myInfo.gender : 'N/A'}</td>
                   </tr>
               </table>
 
-              <button onClick={handleEditModeToggle}>수정</button>
-              <button onClick={handleWithdrawal}>회원 탈퇴</button>
+              <button  className={styles.btn} onClick={handleEditModeToggle}>수정</button>
+              <button  className={styles.btn} onClick={handleWithdrawal}>회원 탈퇴</button>
               </div>
             )}
           </div>

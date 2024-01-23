@@ -53,7 +53,7 @@ function Topbar() {
         {isLoggedIn ? (
           <>
             <p>{`${name} 님`}</p>
-            <Link href="/mypage" >MYPAGE</Link>
+            <Link href="/mypage/myinfo" >MYPAGE</Link>
             <button className={styles.link} onClick={handleLogout}>LOGOUT</button>
           </>
         ) : (

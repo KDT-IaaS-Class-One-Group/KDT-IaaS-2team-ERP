@@ -9,18 +9,17 @@
 .top{
   display:flex;
   width:100vw;
-  height:12vh;
+  height:14vh;
 }
 .side{
   width: 13vw;
-  height: 88vh;
+  height: 86vh;
   justify-content: center;
   align-items: center;
-
-
+  background-color: rgb(247, 245, 245);
 }
 .content{
   width:87vw;
-  height:88vh;
+  height:86vh;
  
 }

@@ -16,8 +16,8 @@ interface DataItem {
   productName2:string,
   productName3:string,
   status:number,
-  order_name:string,
-  order_phone:string,
+  user_name:string,
+  user_phone:string,
 }
 
 interface UserInfo {
@@ -41,7 +41,6 @@ export default function MyPagesub() {
   const [subsStart, setSubsStart] = useState<string | null>(null);
   const [subsEnd, setSubsEnd] = useState<string | null>(null);
   const [data, setData]  = useState<DataItem | null>(null);
- 
 
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [selectedCashAmount, setSelectedCashAmount] = useState<number>(0);
@@ -59,43 +58,51 @@ export default function MyPagesub() {
     }
   }, [router]);
 
-  const loadUserFromToken = (token: string) => {
+  const loadUserFromToken = async (token: string) => {
     try {
       const decodedToken = jwt.decode(token) as JwtPayload;
 
       if (decodedToken) {
-        const { userId, name, birthdate, phoneNumber, email, postcode , address, detailaddress, gender ,cash} = decodedToken;
+        const { User_Index, userId, name, birthdate, phoneNumber, email, postcode , address, detailaddress, gender } = decodedToken;
+  
+        // 서버에서 사용자 정보를 가져오기 위한 요청 생성
+        const userResponse = await fetch(`/api/cashInfo?userIndex=${User_Index}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        const birthdateDate = new Date(birthdate);
-
-      // 로컬 시간으로 변환된 문자열 얻기
-        const birthdateLocalString = birthdateDate.toLocaleDateString();
-
-        const userInformation: UserInfo = {
-          userId,
-          name,
-          birthdate: birthdateLocalString,
-          phoneNumber,
-          email,
-          postcode,
-          address,
-          detailaddress,
-          gender,
-          cash,
-        };
-
-        setUserInfo(userInformation);
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+  
+          const userInfomation: UserInfo = {
+            userId,
+            name: userData.name,
+            cash: userData.cash,
+            birthdate: userData.birthdate,
+            phoneNumber: userData.phoneNumber,
+            email: userData.email,
+            postcode: userData.postcode,
+            address: userData.address,
+            detailaddress: userData.detailaddress,
+            gender: userData.gender,
+          };
+        console.log(userInfomation)
+        setUserInfo(userInfomation);
       } else {
-        console.error('토큰이 유효하지 않습니다.');
-        // userInfo가 null인 경우 초기화
+        console.error('사용자 정보를 가져오는데 실패했습니다:', userResponse.statusText);
         setUserInfo(null);
       }
-    } catch (error) {
-      console.error('토큰 해석 오류:', error);
-      // userInfo가 null인 경우 초기화
+    } else {
+      console.error('유효하지 않은 토큰입니다.');
       setUserInfo(null);
     }
-  };
+  } catch (error) {
+    console.error('토큰 해독 오류:', error);
+    setUserInfo(null);
+  }
+};
 
 
   const handleCashSelection = (amount: number) => {
@@ -236,33 +243,16 @@ const logout = () => {
   return (
     <div className={styles.root}>
       <div className={styles.subinfo}>
-            <h1 className={`mb-4 text-xl md:text-2xl`}>현재 구독중인 상품</h1>
-
+            <p className={styles.title} >현재 구독중인 상품</p>
             {token && !subscriptionData && (
-            <p>현재 구독 중인 상품이 없습니다.</p>
+            <p className={styles.title}  >현재 구독 중인 상품이 없습니다.</p>
             )}
-          
             {subscriptionData && (
               <div>
                 {/* Render subscription data as needed */}
                 <p>구독상품명: {subscriptionData.name}</p>
                 <p>구독 상품 가격: {subscriptionData.price}</p>
                 {/* Add more details based on your subscription data structure */}
-              </div>
-            )}
-
-            {productData && productData.length > 0 && (
-              <div>
-                <h2>구독에 포함된 상품목록</h2>
-                <ul>
-                  {productData.map((product: any, index: number) => (
-                    <li key={index}>
-                      {/* Render product data as needed */}
-                      <p>상품명: {product.productName}</p>
-                      {/* Add more details based on your product data structure */}
-                    </li>
-                  ))}
-                </ul>
               </div>
             )}
 
@@ -285,7 +275,25 @@ const logout = () => {
               <p>현재 구독이 자동 갱신되고 있지 않습니다.</p>
             )}
       </div>
-
+      <div className={styles.productinfo}>
+        {productData && productData.length > 0 && (
+          <div>
+            <p className={styles.title}>구독에 포함된 상품목록</p>
+            <ul>
+              {productData.map((product: any, index: number) => (
+                // productName이 null이 아닌 경우에만 렌더링
+                product.productName && (
+                  <li key={index}>
+                    {/* Render product data as needed */}
+                    <p>상품명: {product.productName}</p>
+                    {/* Add more details based on your product data structure */}
+                  </li>
+                )
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
       <div className={styles.cashinfo}>
         <div className={styles.userinfo}>
           {/* 사용자 정보를 표시하는 부분 */}
@@ -306,7 +314,7 @@ const logout = () => {
               <option value="30000">30,000원</option>
               <option value="50000">50,000원</option>
             </select>
-            <button onClick={handlePayment} disabled={!isPaymentEnabled}>
+            <button className={styles.btn} onClick={handlePayment} disabled={!isPaymentEnabled}>
               결제
             </button>
           </div>

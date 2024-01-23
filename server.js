@@ -19,10 +19,10 @@ const {
 
 const secretKey = "nts9604";
 const pool = mysql.createPool({
-  host: "localhost",
+  host: "database-1.cvxfnrpds7lh.ap-northeast-2.rds.amazonaws.com",
   port: "3306",
   user: "root",
-  password: "723546",
+  password: "123123123",
   database: "erp",
   connectionLimit: 5,
 });
@@ -613,6 +613,36 @@ server.get('/logout', (req, res) => {
     }
   });
 
+  server.get("/api/cashInfo", async (req, res) => {
+    try {
+      const token = req.headers.authorization?.replace("Bearer ", "");
+  
+      if (!token) {
+        return res.status(401).json({ error: "토큰이 제공되지 않았습니다." });
+      }
+  
+      const decodedToken = jwt.verify(token, secretKey);
+  
+      if (!decodedToken) {
+        throw new JsonWebTokenError("jwt malformed");
+      }
+  
+      const userIndex = decodedToken.User_Index;
+  
+      // userIndex를 사용하여 users 테이블에서 사용자 정보 가져오기
+      const userData = await db.query("SELECT * FROM users WHERE User_Index = ?", [userIndex]);
+  
+      if (userData.length > 0) {
+        res.status(200).json(userData[0][0]);
+      } else {
+        res.status(404).json({ error: "사용자 정보를 찾을 수 없습니다." });
+      }
+    } catch (error) {
+      console.error("Error fetching user information:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
   server.get("/api/admin/order", async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;
@@ -763,12 +793,12 @@ server.get('/logout', (req, res) => {
       console.log(orderIndex)
       // orderIndex를 사용하여 orderdetails 테이블에서 subs_index, Subs_Start, Subs_End를 가져오기
       const orderDetailsData = await db.query(
-        "SELECT Subs_Index, Subs_Start, Subs_End , auto_renew , order_name, order_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 FROM orderdetails WHERE order_Index = ?",
+        "SELECT Subs_Index, Subs_Start, Subs_End , auto_renew , user_name, user_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 FROM orderdetails WHERE order_Index = ?",
         [orderIndex]
       );
         
       if (orderDetailsData.length > 0) {
-        const { Subs_Index, Subs_Start, Subs_End ,auto_renew , order_name, order_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 } = orderDetailsData[0][0];
+        const { Subs_Index, Subs_Start, Subs_End ,auto_renew , user_name, user_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 } = orderDetailsData[0][0];
 
         // Subs_Index를 사용하여 subscription 테이블에서 데이터를 가져오기
         const subscriptionData = await db.query(
@@ -782,8 +812,8 @@ server.get('/logout', (req, res) => {
             Subs_Start: Subs_Start.toISOString(),
             Subs_End: Subs_End.toISOString(),
             auto_renew,
-            order_name,
-            order_phone,
+            user_name,
+            user_phone,
             postcode,
             address,
             detailaddress,
@@ -883,6 +913,8 @@ server.get('/logout', (req, res) => {
   /**
    * ! 끝
    */
+
+  
 
   server.get("/api/productss", async (req, res) => {
     try {
@@ -1282,7 +1314,39 @@ server.get('/logout', (req, res) => {
   // });
 
 
-  //토스 실험
+  //user info 수정
+
+
+  server.get("/api/my-info", async (req, res) => {
+    try {
+      const token = req.headers.authorization?.replace("Bearer ", "");
+  
+      if (!token) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const decodedToken = jwt.verify(token, secretKey);
+  
+      if (!decodedToken || !decodedToken.User_Index) {
+        return res.status(401).json({ error: "Invalid token" });
+      }
+  
+      const userIndex = decodedToken.User_Index;
+  
+      const [myInfo] = await db.query("SELECT * FROM users WHERE User_Index = ?", [
+        userIndex,
+      ]);
+  
+      if (myInfo.length === 0) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      const myinfo = myInfo[0]
+      res.json( {myinfo} );
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
 
   
 
