@@ -24,7 +24,7 @@ const UserIdModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       if (response.ok) {
         // 서버 응답이 성공이면
         if (data.userId) {
-          setOutput(`ID: ${data.userId}`);
+          setOutput(`아이디는 ${data.userId}입니다.`);
           setIsOutputVisible(true);
         } else {
           window.alert("회원정보가 존재하지 않습니다.");
@@ -41,7 +41,7 @@ const UserIdModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   return (
     <div className={styles.modalBackdrop}>
       <div className={styles.modalContent}>
-          <h1 className={styles.textLeft}>아이디 찾기</h1>
+          <h2 className={styles.textLeft}>아이디 찾기</h2>
         <span className={styles.closeBtn} onClick={onClose}>&times;</span>
         
         {/* 아이디 찾기 모달 내용 */}
@@ -56,15 +56,15 @@ const UserIdModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <br />
                 <input type="text" className={`${styles.marginTop} ${styles.textBarSize}`} placeholder="phoneNumber" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
               </div>
-              <button className={styles.buttonSize} onClick={handleFindUsername}>Find Username</button>
+              <button type="button"  className={styles.buttonSize} onClick={handleFindUsername}>아이디 찾기</button>
             </div>
           </div>
 
           {/* 출력을 보여줄지 여부에 따라 동적으로 스타일 적용 */}
-          <h3 className={`${styles.centeredContainer} ${isOutputVisible ? '' : styles.hidden}`}>
-            아이디 찾기가 완료되었습니다.
-          <h2>{output}</h2>
-          </h3>
+          <div className={`${styles.centeredContainer} ${isOutputVisible ? '' : styles.hidden}`}>
+          <div>아이디 찾기 결과입니다.</div>
+          <h2 className={styles.flex}>{output}</h2>
+          </div>
         </div>
       </div>
     </div>
