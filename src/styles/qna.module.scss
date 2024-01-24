@@ -150,7 +150,7 @@
 .modal {
   display: none;
   position: fixed;
-  top: 50%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: rgba(0, 0, 0, 0.5);
@@ -254,18 +254,21 @@
 }
 
 .writePassword {
+  box-sizing: border-box;
   font-size: 15px;
   color: #222222;
   width: 160px;
-  border: none;
+  height: 40px;
+  line-height: 40px;
+  border:none;
   border-bottom: solid #aaaaaa 1px;
   padding-bottom: 10px;
   padding-left: 10px;
   position: relative;
   background: none;
   z-index: 5;
-  font-size: 18px;
-  
+  font-size: 16px;
+  margin-top: 2vh;
 }
 
 .writePassword::placeholder {
@@ -280,15 +283,15 @@
 .writeTitle {
   font-size: 15px;
   color: #222222;
+  border:none;
   width: 50vw;
-  border: none;
-  border: solid #aaaaaa 1px;
+  border-bottom: solid #aaaaaa 1px;
   padding-bottom: 10px;
   padding-left: 10px;
   position: relative;
   background: none;
   z-index: 5;
-  font-size: 19px;
+  font-size: 16px;
   line-height: 35px;
 
 }
@@ -306,14 +309,13 @@
   font-size: 15px;
   color: #222222;
   width: 50vw;
-  border: none;
   border: solid #aaaaaa 1px;
   padding: 10px;
   position: relative;
   background: none;
   z-index: 5;
-  font-size: 19px;
-  height: 45vh;
+  font-size: 16px;
+  height: 40vh;
 }
 
 .writeContent::placeholder {
@@ -327,10 +329,10 @@
 
 .delButton {
   position: relative;
-  left: 25vw;
+  left: 23vw;
   border: 0;
   width: 70px;
   height: 30px;
-  font-weight: bold;
-  font-size: 18px;
+  font-size: 15px;
+  border-radius: 10px;
 }
