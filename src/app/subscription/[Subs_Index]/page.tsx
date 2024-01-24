@@ -169,7 +169,7 @@ export default function SubscriptionClientSide() {
                 onChange={(e) => handleSelectChange(e, index)}
                 className={styles.input}
               >
-                <option value="">상품을 선택하세요</option>
+                <option value="">{`${index + 1}. 상품을 선택하세요`}</option>
                 {productList.map((product) => (
                   <option key={product.id} value={product.id}>
                     {product.name}
