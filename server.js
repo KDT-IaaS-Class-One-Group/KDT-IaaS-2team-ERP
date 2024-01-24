@@ -18,10 +18,8 @@ const {
 const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "database-1.cvxfnrpds7lh.ap-northeast-2.rds.amazonaws.com",
-  host: "database-1.cvxfnrpds7lh.ap-northeast-2.rds.amazonaws.com",
   port: "3306",
   user: "root",
-  password: "123123123",
   password: "123123123",
   database: "erp",
   connectionLimit: 5,
@@ -69,44 +67,6 @@ app.prepare().then(() => {
   const server = express();
   server.use(bodyParser.json());
 
-  // 세션 설정
-server.use(require('express-session')({ secret: 'nts9604', resave: true, saveUninitialized: true }));
-
-// Passport 초기화 및 세션 유지
-server.use(passport.initialize());
-server.use(passport.session());
-
-// Google OAuth 2.0 설정
-passport.use(new GoogleStrategy({
-  clientID: '787289858978-efnpg04d2bnikb1g8bv2hf0qsgl9tf85.apps.googleusercontent.com',
-  clientSecret: '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',
-  callbackURL: 'http://localhost:3000/auth/google/callback',
-},
-(accessToken, refreshToken, profile, done) => {
-  // 로그인 성공 시 처리 (이 부분에서 데이터베이스에 사용자 정보를 저장할 수 있습니다.)
-  console.log('Logged in:', profile);
-  return done(null, profile);
-}));
-
-// 세션에 사용자 정보 저장
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((obj, done) => {
-  done(null, obj);
-});
-
-// Google 로그인 라우트
-server.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-// Google 로그인 콜백 라우트
-server.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/' }),
-  (req, res) => {
-    res.redirect('/');
-  }
-);
 
 // 사용자 정보 라우트
 server.get('/user', (req, res) => {
