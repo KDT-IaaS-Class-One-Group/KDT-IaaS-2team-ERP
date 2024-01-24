@@ -114,58 +114,6 @@ server.get('/user', (req, res) => {
   res.json(req.user);
 });
 
-  // cron.schedule('15 * * * *', async () => {
-  //   try {
-  //     // 구독을 확인하고 갱신하는 함수 호출
-  //     await checkAndRenewSubscriptions();
-  //   } catch (error) {
-  //     console.error('구독 갱신 오류:', error);
-  //   }
-  // });
-
-  // async function checkAndRenewSubscriptions() {
-  //   const currentDate = new Date();
-
-  //   // 구독 갱신이 필요한 주문 조회
-  //   const dueSubscriptionsQuery = `
-  //     SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
-  //     FROM Orderdetails
-  //     WHERE Subs_End <= ?;
-  //   `;
-
-  //   const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
-
-  //   for (const subscription of dueSubscriptionsResult) {
-  //     const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
-
-  //     // 해당 주문의 구독 주기 조회
-  //     const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
-  //     const [weekResult] = await pool.query(weekQuery, [subs_index]);
-
-  //     if (weekResult.length > 0) {
-  //       const week = weekResult[0].Week;
-
-  //       // 새로운 시작일 결정 (예: 이전 구독의 종료일)
-  //       const newStartDate = Subs_End;
-
-  //       // 새로운 종료일 결정 (예: week * 7일 연장)
-  //       const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
-
-  //       // 데이터베이스에서 구독 정보 업데이트
-  //       const updateSubscriptionQuery = `
-  //         UPDATE Orderdetails
-  //         SET Subs_Start = ?, Subs_End = ?
-  //         WHERE Order_Index = ?;
-  //       `;
-
-  //       await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
-
-  //       // 갱신된 구독에 대한 로그 또는 알림
-  //       console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
-  //     }
-  //   }
-  // }
-
   const verifyToken = (token) => {
     return new Promise((resolve, reject) => {
       jwt.verify(token, secretKey, (err, decoded) => {
@@ -302,52 +250,6 @@ server.get('/user', (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
-
-  // // ! 테스트 목적 즉시 실행되게
-  // checkAndRenewSubscriptions(pool);
-
-  // async function checkAndRenewSubscriptions() {
-  //   const currentDate = new Date();
-
-  //   // 구독 갱신이 필요한 주문 조회
-  //   const dueSubscriptionsQuery = `
-  //     SELECT Order_Index, subs_index, user_Index, Subs_Start, Subs_End
-  //     FROM Orderdetails
-  //     WHERE Subs_End <= ?;
-  //   `;
-
-  //   const [dueSubscriptionsResult] = await pool.query(dueSubscriptionsQuery, [currentDate]);
-
-  //   for (const subscription of dueSubscriptionsResult) {
-  //     const { Order_Index, subs_index, user_Index, Subs_Start, Subs_End } = subscription;
-
-  //     // 해당 주문의 구독 주기 조회
-  //     const weekQuery = `SELECT Week FROM subscription WHERE subs_index = ?`;
-  //     const [weekResult] = await pool.query(weekQuery, [subs_index]);
-
-  //     if (weekResult.length > 0) {
-  //       const week = weekResult[0].Week;
-
-  //       // 새로운 시작일 결정 (예: 이전 구독의 종료일)
-  //       const newStartDate = Subs_End;
-
-  //       // 새로운 종료일 결정 (예: week * 7일 연장)
-  //       const newEndDate = new Date(Subs_End.getTime() + week * 7 * 24 * 60 * 60 * 1000);
-
-  //       // 데이터베이스에서 구독 정보 업데이트
-  //       const updateSubscriptionQuery = `
-  //         UPDATE Orderdetails
-  //         SET Subs_Start = ?, Subs_End = ?
-  //         WHERE Order_Index = ?;
-  //       `;
-
-  //       await pool.query(updateSubscriptionQuery, [newStartDate, newEndDate, Order_Index]);
-
-  //       // 갱신된 구독에 대한 로그 또는 알림
-  //       console.log(`사용자 ${user_Index}의 구독이 갱신되었습니다. 시작일: ${newStartDate}, 종료일: ${newEndDate}`);
-  //     }
-  //   }
-  // }
 
   server.get("/api/classroom", async (req, res) => {
     try {
@@ -1288,24 +1190,6 @@ server.get('/user', (req, res) => {
     }
   });
 
-  // server.get("/customer/getData", async (req, res) => {
-  //   try {
-  //     const connection = await pool.getConnection();
-  //     const [rows, fields] = await connection.query(
-  //       "SELECT Board_Index, userId, title, content, date, password, image, email, phoneNumber, name, reply FROM board"
-  //     );
-
-  //     // 데이터베이스에서 가져온 정보를 클라이언트에게 반환합니다.
-  //     res.json(rows);
-
-  //     // 연결 해제
-  //     connection.release();
-  //   } catch (error) {
-  //     console.error("Error fetching posts:", error);
-  //     res.status(500).json({ error: "Internal Server Error" });
-  //   }
-  // });
-
 
   //user info 수정
 
@@ -1476,34 +1360,6 @@ server.get('/user', (req, res) => {
     }
   });
 
-  // ! 회원탈퇴 승인 로직 삭제
-  // server.post("/api/approveUser/:userId", async (req, res) => {
-  //   try {
-  //     if (req.method === "POST") {
-  //       const { userId } = req.params;
-
-  //       // 데이터베이스에서 사용자 정보 삭제
-  //       const [result] = await db.query("DELETE FROM users WHERE userId = ?", [
-  //         userId,
-  //       ]);
-
-  //       if (result.affectedRows === 1) {
-  //         // 성공적으로 삭제된 경우
-  //         res.status(200).json({ message: "사용자 승인 성공" });
-  //       } else {
-  //         // 삭제 실패 시
-  //         res.status(404).json({ error: "사용자를 찾을 수 없습니다." });
-  //       }
-  //     } else {
-  //       // 허용되지 않은 메서드
-  //       res.status(405).json({ error: "허용되지 않은 메서드" });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error approving user:", error);
-  //     res.status(500).json({ error: "Internal Server Error" });
-  //   }
-  // });
-
   server.post("/api/insertData", async (req, res) => {
     try {
       if (req.method === "POST") {
@@ -1558,31 +1414,6 @@ server.get('/user', (req, res) => {
       res.status(500).json({ error: "내부 서버 오류" });
     }
   });
-
-  // server.delete("/api/subs-product/:Subs_Index", async (req, res) => {
-  //   const { Subs_Index } = req.params;
-  //   try {
-  //     if (req.method === "DELETE") {
-  //       const [result] = await db.query(
-  //         "DELETE FROM subscription WHERE Subs_Index = ?",
-  //         [Subs_Index]
-  //       );
-
-  //       if (result.affectedRows === 1) {
-  //         res.status(200).json({ message: "subscription 삭제 성공" });
-  //       } else {
-  //         // 추가 실패
-  //         res.status(500).json({ error: "subscription 삭제 실패" });
-  //       }
-  //     } else {
-  //       // 허용되지 않은 메서드
-  //       res.status(405).json({ error: "허용되지 않은 메서드" });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error deleting subscription:", error);
-  //     res.status(500).json({ error: "Internal Server Error" });
-  //   }
-  // });
 
   server.put("/api/subs-productSale/:Subs_Index", async (req, res) => {
     const { Subs_Index } = req.params;
@@ -1663,31 +1494,6 @@ server.get('/user', (req, res) => {
       res.status(500).json({ error: "내부 서버 오류" });
     }
   });
-
-  // server.delete("/api/admin/product/:product_id", async (req, res) => {
-  //   const { product_id } = req.params;
-  //   try {
-  //     if (req.method === "DELETE") {
-  //       const [result] = await db.query(
-  //         "DELETE FROM product WHERE product_id = ?",
-  //         [product_id]
-  //       );
-
-  //       if (result.affectedRows === 1) {
-  //         res.status(200).json({ message: "product 삭제 성공" });
-  //       } else {
-  //         // 추가 실패
-  //         res.status(500).json({ error: "product 삭제 실패" });
-  //       }
-  //     } else {
-  //       // 허용되지 않은 메서드
-  //       res.status(405).json({ error: "허용되지 않은 메서드" });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error deleting product:", error);
-  //     res.status(500).json({ error: "Internal Server Error" });
-  //   }
-  // });
 
   server.put("/api/admin/product/:product_id", async (req, res) => {
     const { product_id } = req.params;
@@ -2054,54 +1860,6 @@ server.get('/user', (req, res) => {
     }
   });
 
-  // server.post("/customer/writingPage/create-post", async (req, res) => {
-  //   const formData = req.body;
-  //   console.log(formData);
-
-  //   try {
-  //     // users 테이블에서 해당 User_Index 값이 존재하는지 확인
-  //     const [userResult] = await db.query(
-  //       "SELECT * FROM users WHERE User_Index = ?",
-  //       [formData.User_Index]
-  //     );
-  //     console.log(formData.User_Index);
-  //     // User_Index 값이 존재하는 경우에만 게시글을 삽입
-  //     if (userResult.length === 1) {
-  //       // 데이터베이스에 데이터 삽입
-  //       const [result] = await db.query(
-  //         "INSERT INTO board (User_Index, userID, email, title, content, date, password) VALUES (?, ?, ?, ?, ?, NOW(), ?)",
-  //         [
-  //           formData.User_Index,
-  //           formData.userID,
-  //           formData.email,
-  //           formData.title,
-  //           formData.content,
-  //           formData.password,
-  //         ]
-  //       );
-
-  //       // 삽입 성공 시 클라이언트에 응답
-  //       if (result.affectedRows === 1) {
-  //         console.log("Board created successfully!");
-  //         res.status(200).json({ message: "Board created successfully!" });
-  //       } else {
-  //         console.error("Failed to create board");
-  //         res.status(500).json({ error: "Failed to create board" });
-  //       }
-  //     } else {
-  //       // User_index 값이 존재하지 않는 경우 클라이언트에 오류 응답
-  //       console.error(
-  //         "User not found for given User_Index:",
-  //         formData.User_Index
-  //       );
-  //       res.status(404).json({ error: "User not found for given User_Index" });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creating board:", error);
-  //     res.status(500).json({ error: "Internal Server Error" });
-  //   }
-  // });
-
   server.post("/api/service", async (req, res) => {
     try {
       const token = req.headers.authorization?.replace("Bearer ", "");
@@ -2210,6 +1968,46 @@ server.get('/user', (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
+
+// 아이디 찾기 루트
+server.post('/api/find-username', async (req, res) => {
+  const { name, phoneNumber } = req.body;
+
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query('SELECT userId FROM Users WHERE name = ? AND phoneNumber = ?', [name, phoneNumber]);
+    connection.release();
+
+    if (rows.length > 0) {
+      res.json({ userId: rows[0].userId });
+    } else {
+      res.json({ error: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// 비밀번호 찾기 루트
+server.post('/api/find-password', async (req, res) => {
+  const { userId, email } = req.body;
+
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query('SELECT password FROM Users WHERE userId = ? AND email = ?', [userId, email]);
+    connection.release();
+
+    if (rows.length > 0) {
+      res.json({ password: rows[0].password });
+    } else {
+      res.json({ error: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
   const PORT = process.env.PORT || 3000;
