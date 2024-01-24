@@ -682,7 +682,7 @@ server.get('/user', (req, res) => {
       const orderIndex = decodedToken.order_Index;
       // orderIndex를 사용하여 orderdetails 테이블에서 subs_index, Subs_Start, Subs_End를 가져오기
       const orderDetailsData = await db.query(
-        "SELECT Subs_Index, Subs_Start, Subs_End, address, user_name, user_phone, postcode, detailaddress, auto_renew, status, Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3 FROM orderdetails WHERE order_Index = ?",
+        "SELECT Subs_Index, Subs_Start, Subs_End, address, user_name, user_phone, postcode, detailaddress, auto_renew, status, Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3 FROM orderdetails WHERE Order_Index = ?",
         [orderIndex]
       );
         
@@ -754,7 +754,7 @@ server.get('/user', (req, res) => {
   server.get("/api/data", async (req, res) => {
     try {
       const [rows] = await db.execute(
-        "SELECT Subs_Index, name, price, week, imageUrl FROM subscription"
+        "SELECT Subs_Index, name, price, week, imageUrl, sale_status FROM subscription"
       );
       const dataFromDB = rows.map((row) => ({
         Subs_Index: row.Subs_Index,
@@ -762,6 +762,7 @@ server.get('/user', (req, res) => {
         price: row.price,
         week: row.week,
         imageUrl: row.imageUrl,
+        sale_status: row.sale_status
       }));
       res.json(dataFromDB);
     } catch (error) {
@@ -782,7 +783,7 @@ server.get('/user', (req, res) => {
   server.get("/api/products", async (req, res) => {
     try {
       const [rows] = await db.execute(
-        "SELECT product_id , product_name, stock_quantity , imageUrl, info FROM product"
+        "SELECT product_id , product_name, stock_quantity , imageUrl, info, sale_status FROM product"
       );
       const dataFromDB = rows.map((row) => ({
         id: row.product_id,
@@ -790,6 +791,7 @@ server.get('/user', (req, res) => {
         stock: row.stock_quantity,
         info: row.info,
         imageUrl: row.imageUrl,
+        sale_status: row.sale_status
       }));
 
       res.json(dataFromDB);
@@ -914,7 +916,7 @@ server.get('/user', (req, res) => {
         // 사용자의 user_Index 값으로 주문 정보를 추가
         const orderQuery = `
       INSERT INTO orderdetails (Subs_Index, User_Index, Subs_Start, Subs_End, address, user_name, user_phone, postcode, detailaddress, Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
         const orderValues = [
           subsIndex,
@@ -1408,7 +1410,7 @@ server.get('/user', (req, res) => {
     try {
       if (req.method === "PUT") {
         const [result] = await db.query(
-          "UPDATE Subscription SET sale_status = IF(sale_status = 0, 1, 0) WHERE Subs_Index = ?",
+          "UPDATE subscription SET sale_status = IF(sale_status = 0, 1, 0) WHERE Subs_Index = ?",
           [Subs_Index]
         );
 
@@ -1542,8 +1544,8 @@ server.get('/user', (req, res) => {
         const { reply } = req.body;
         // 데이터베이스에서 게시판 정보 수정
         const [result] = await db.query(
-          "UPDATE Board SET reply = ? WHERE userId = ?",
-          [reply, userId]
+          "UPDATE Board LEFT JOIN Users ON Board.User_Index = Users.User_Index SET reply = ? WHERE Users.userId LIKE ?",
+[reply, userId]
         );
 
         if (result.affectedRows === 1) {
