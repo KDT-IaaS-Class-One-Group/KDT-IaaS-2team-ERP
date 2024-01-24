@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import NavLinks from "@/components/dashboard/user/User-nav-links-b";
+import NavLinks from "@/components/dashboard/User-nav-links-b";
 import styles from "@/styles/adminuser.module.scss";
 
 interface UserInfo {
