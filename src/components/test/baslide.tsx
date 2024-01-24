@@ -20,6 +20,7 @@ interface Product {
   name: string;
   info: string;
   imageUrl: string;
+  sale_status:number;
 }
 
 export default function SwiperTest() {
@@ -47,7 +48,7 @@ export default function SwiperTest() {
 
   return (
     <div className={styles.title}>
-      <p>세계의 맛을 담은 원두의 독특한 이야기와 풍미를 만나보세요 👇</p>
+      <p>세계의 맛을 담은 원두의 이미지를 클릭해보세요 👇</p>
       <div className={styles.swipercontainer}>
         <Swiper
           onSwiper={(swiper) => {
@@ -78,20 +79,19 @@ export default function SwiperTest() {
         >
           {productData.map((product, index) => {
             return (
-              <SwiperSlide key={product.id} className={styles.card}>
-                <div
-                  className={styles.image}
-                  onClick={() => handleSlideClick(index)}
-                >
-                  <Image
-                    fill={true}
-                    style={{ borderRadius: "10%" }}
-                    src={product.imageUrl}
-                    alt={`${product.name}`}
-                  />
-                  
-                </div>
-              </SwiperSlide>
+<SwiperSlide key={product.id} className={styles.card} style={product.sale_status !== 1 ? { display: 'none' } : {}}>
+  <div
+    className={styles.image}
+    onClick={() => handleSlideClick(index)}
+  >
+    <Image
+      fill={true}
+      style={{ borderRadius: "10%" }}
+      src={product.imageUrl}
+      alt={`${product.name}`}
+    />
+  </div>
+</SwiperSlide>
             );
           })}
         </Swiper>
