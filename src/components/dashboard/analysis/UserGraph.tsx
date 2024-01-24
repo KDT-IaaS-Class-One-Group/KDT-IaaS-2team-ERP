@@ -45,6 +45,7 @@ const UserGraph = () => {
       <div className={styles.main}>
         <label htmlFor="selectElement"></label>
         <select
+          title="selectElement"
           id="selectElement"
           name="selectElement"
           value={selectedXAxis}

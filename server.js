@@ -9,9 +9,6 @@ const mysql = require("mysql2/promise");
 const multer = require("multer");
 const path = require("path");
 const cron = require("node-cron");
-const passport = require('passport');
-const NaverStrategy = require('passport-naver').Strategy;
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
 
 const {
@@ -70,44 +67,6 @@ app.prepare().then(() => {
   const server = express();
   server.use(bodyParser.json());
 
-  // 세션 설정
-server.use(require('express-session')({ secret: 'nts9604', resave: true, saveUninitialized: true }));
-
-// Passport 초기화 및 세션 유지
-server.use(passport.initialize());
-server.use(passport.session());
-
-// Google OAuth 2.0 설정
-passport.use(new GoogleStrategy({
-  clientID: '787289858978-efnpg04d2bnikb1g8bv2hf0qsgl9tf85.apps.googleusercontent.com',
-  clientSecret: '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',
-  callbackURL: 'http://localhost:3000/auth/google/callback',
-},
-(accessToken, refreshToken, profile, done) => {
-  // 로그인 성공 시 처리 (이 부분에서 데이터베이스에 사용자 정보를 저장할 수 있습니다.)
-  console.log('Logged in:', profile);
-  return done(null, profile);
-}));
-
-// 세션에 사용자 정보 저장
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((obj, done) => {
-  done(null, obj);
-});
-
-// Google 로그인 라우트
-server.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-// Google 로그인 콜백 라우트
-server.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/' }),
-  (req, res) => {
-    res.redirect('/');
-  }
-);
 
 // 사용자 정보 라우트
 server.get('/user', (req, res) => {
@@ -379,7 +338,23 @@ server.get('/user', (req, res) => {
               GROUP BY label
               ORDER BY productCount DESC;`;
           break;
-
+        case "currentProducts":
+          query = `
+              SELECT p.product_name AS label, COUNT(*) as productCount
+              FROM (
+              SELECT Product_Index as productId FROM orderdetails WHERE NOW() BETWEEN Subs_Start AND Subs_End AND Product_Index IS NOT NULL UNION ALL
+              SELECT Product_Index2 FROM orderdetails WHERE NOW() BETWEEN Subs_Start AND Subs_End AND Product_Index2 IS NOT NULL UNION ALL
+              SELECT Product_Index3 FROM orderdetails WHERE NOW() BETWEEN Subs_Start AND Subs_End AND Product_Index3 IS NOT NULL) as od
+              JOIN product p ON od.productId = p.product_id
+              GROUP BY label
+              ORDER BY productCount DESC;
+              `;
+          break;
+          case "a":
+            query = `
+            
+            `
+          break;
         default:
           res.status(400).send("Invalid xAxis parameter");
           return;

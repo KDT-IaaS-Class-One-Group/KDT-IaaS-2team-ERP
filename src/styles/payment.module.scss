@@ -1,0 +1,23 @@
+.container {
+    width: 100vw;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.button {
+    width:8vw;
+    height:6vh;
+    border:0;
+    border-radius: 20px;
+    background-color: #eed8b0b9;
+    color: #135206;
+    margin: 1vw;
+    &:hover {
+      background-color: #135206;
+      color: #f9efdbb9;
+      cursor: pointer;
+    }
+}

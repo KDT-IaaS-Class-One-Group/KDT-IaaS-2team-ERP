@@ -5,6 +5,8 @@ import axios from "axios";
 const jwt = require("jsonwebtoken");
 import PaymentInfo from "../../components/payment/PaymentInfo";
 import OrderDetailsList from "../../components/payment/OrderDetailsList";
+import Link from "next/link";
+import styles from "@/styles/payment.module.scss";
 
 const PaymentPage = () => {
   const [orderIndexData, setOrderIndexData] = useState([]);
@@ -95,9 +97,17 @@ const PaymentPage = () => {
   };
 
   return (
-    <div>
+    <div className={styles.container}>
       <PaymentInfo userName={userName} />
-      <OrderDetailsList orderDetails={orderDetails} />
+      <div>
+      <Link href="/">
+        <button className={styles.button} >홈으로</button>
+      </Link>
+
+      <Link href="/mypage/subscription">
+        <button className={styles.button}>구독 정보</button>
+      </Link>
+      </div>
     </div>
   );
 };
