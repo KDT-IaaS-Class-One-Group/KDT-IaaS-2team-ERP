@@ -64,6 +64,30 @@
   }
 }
 
+.button2 {
+  background-color: #0070C0;
+  color: #ffff;
+  padding: 10px;
+  border: none;
+  display:flex;
+  width:23vw;
+  justify-content: center;
+  margin-top: 5vh;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+
+  a { 
+    text-decoration-line: none;
+    color:white;
+  }
+
+  &:hover {
+    background-color: #005499;
+  }
+}
+
 .FindInfo {
   border: 0px;
   color:black;

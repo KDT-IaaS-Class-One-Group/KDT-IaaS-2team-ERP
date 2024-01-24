@@ -40,7 +40,7 @@ export default function Page() {
             <div className={styles.card} key={index}>         
               <Link href={`/subscription/${item.Subs_Index}`}>
               <div className={styles.image}> 
-                <Image fill={true} className={styles.image} src={`/productimage/${item.name}.jpg`} alt={`${item.name}`} />
+                <Image fill={true} className={styles.image} src={`${item.imageUrl}`} alt={`${item.name}`} />
               </div>
               </Link>
               {/* <p style={{ margin: 0 }}>{item.name}</p>

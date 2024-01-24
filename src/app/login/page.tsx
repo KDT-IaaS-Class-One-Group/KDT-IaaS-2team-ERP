@@ -3,6 +3,7 @@ import styles from "@/styles/login.module.scss";
 import React, { useState } from "react";
 import UsernameModal from "@/components/FindLogin/UserIdModal";
 import UserPasswordModal from "@/components/FindLogin/UserPasswordModal";
+import Link from "next/link";
 
 const Login: React.FC = () => {
   const [userId, setUserId] = useState("");
@@ -71,6 +72,12 @@ const Login: React.FC = () => {
           <br />
           <button type="button" className={styles.button} onClick={handleLogin}>
             로그인
+          </button>
+          
+          <button type="button" className={styles.button2}>
+          <Link href={`/signup`}>
+            회원가입
+          </Link>
           </button>
         </form>
         <br />
