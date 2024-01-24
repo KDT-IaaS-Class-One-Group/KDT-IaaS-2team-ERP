@@ -20,6 +20,7 @@ interface Product {
   name: string;
   stock: number;
   imageUrl: string;
+  sale_status: number;
 }
 interface Products {
   id: number;
@@ -38,7 +39,13 @@ export default function SubscriptionClientSide() {
   );
   const [radioOptions, setRadioOptions] = useState<Products[]>([]); // 라디오 상자 옵션 데이터
   const Subs_Index = useParams();
+  const [token, setToken] = useState<string | null>(null);
   const subs_index = Subs_Index.Subs_Index;
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,7 +55,6 @@ export default function SubscriptionClientSide() {
         setData(dataFromServer);
         const productListResponse = await fetch("/api/products");
         const productListFromServer = await productListResponse.json();
-        console.log(productListFromServer);
         const productNames = productListFromServer.map(
           (product: any) => product.name
         );
@@ -70,7 +76,6 @@ export default function SubscriptionClientSide() {
     setSelectedProducts(updatedSelectedProducts);
 
     const updatedSelectedProductImages = [...selectedProductImages];
-    console.log(updatedSelectedProductImages);
     updatedSelectedProductImages[index] = getProductImageById(
       parseInt(e.target.value, 10)
     );
@@ -81,7 +86,6 @@ export default function SubscriptionClientSide() {
     const selectedProduct = productList.find(
       (product) => product.id === productId
     );
-    console.log(selectedProduct);
     return selectedProduct ? selectedProduct.imageUrl : "";
   };
 
@@ -95,6 +99,11 @@ export default function SubscriptionClientSide() {
 
   const handleOrderButtonClick = async () => {
     try {
+      if (!token) {
+        alert('로그인 후 이용해주세요')
+        return;
+      }
+
       if (
         selectedProducts.length !==
         Math.floor(data.reduce((acc, item) => acc + item.size, 0))
@@ -139,7 +148,9 @@ export default function SubscriptionClientSide() {
                 alt={`sub ${index + 1}`}
               />
             </div>
-            <p>{item.Week} 주 / {item.Price}원</p>
+            <p>
+              {item.Week} 주 / {item.Price}원
+            </p>
             <p>일주일에 받는 원두 : {item.size} 개 </p>
             <p>구독 기간 종료일 : {calculateEndDate(item.Week)}</p>
           </div>
@@ -153,7 +164,7 @@ export default function SubscriptionClientSide() {
                   src={getProductImageById(productId)}
                   fill
                   alt={`선택한 제품 ${index + 1}`}
-                  style={{ borderRadius: '5%' }}
+                  style={{ borderRadius: "5%" }}
                 />
               </div>
             ))}
@@ -162,7 +173,10 @@ export default function SubscriptionClientSide() {
           {Array.from({
             length: Math.floor(data.reduce((acc, item) => acc + item.size, 0)),
           }).map((_, index) => (
-            <div key={index} className={`${styles.input} ${styles.customSelect}`}>
+            <div
+              key={index}
+              className={`${styles.input} ${styles.customSelect}`}
+            >
               <select
                 title="selectProduct"
                 value={selectedProducts[index]}
@@ -170,17 +184,24 @@ export default function SubscriptionClientSide() {
                 className={styles.input}
               >
                 <option value="">{`${index + 1}. 상품을 선택하세요`}</option>
-                {productList.map((product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.name}
-                  </option>
-                ))}
+                {productList
+                  .filter((product) => {
+                    // sale_status가 1인 경우만 필터링
+                    return product.sale_status === 1;
+                  })
+                  .map((product) => (
+                    <option key={product.id} value={product.id}>
+                      {product.name}
+                    </option>
+                  ))}
               </select>
             </div>
           ))}
 
           <Link href="#">
-            <button onClick={handleOrderButtonClick} className={styles.button}>주문하기</button>
+            <button onClick={handleOrderButtonClick} className={styles.button}>
+              주문하기
+            </button>
           </Link>
         </div>
       </div>

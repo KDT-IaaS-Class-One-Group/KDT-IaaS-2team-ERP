@@ -951,7 +951,7 @@ server.get('/user', (req, res) => {
 
     try {
       const [rows] = await db.execute(
-        "SELECT Subs_Index, name, week, size, price, imageUrl FROM subscription WHERE Subs_Index = ?",
+        "SELECT Subs_Index, name, week, size, price, imageUrl, sale_status FROM subscription WHERE Subs_Index = ?",
         [Subs_Index]
       );
 
@@ -962,6 +962,7 @@ server.get('/user', (req, res) => {
         Week: row.week,
         size: row.size,
         imageUrl: row.imageUrl,
+        sale_status: row.sale_status
       }));
       res.json(dataFromDB);
     } catch (error) {
