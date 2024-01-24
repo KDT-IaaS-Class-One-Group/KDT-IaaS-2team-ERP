@@ -11,13 +11,12 @@ const OrderInfoInput = ({ label, value, onChange }) => {
         onChange={(e) => onChange(e.target.value)}
         style={{
           padding: "8px",
-          fontSize: "14px",
-          width: "100%",
+          fontSize: "13px",
+          width: "40%",
           boxSizing: "border-box",
           border: "1px solid #ccc",
           borderRadius: "4px",
-          marginTop: "1vh",
-          marginBottom: "1vh"
+          margin: "1.5vh",
         }}
       />
     </div>

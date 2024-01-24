@@ -1,14 +1,14 @@
 .myinfo{
   display: flex;
   flex-direction: column;
-  width:87vw;
+  width:80vw;
   height:50vh;
   align-items: center;
 }
 
 .userinfo {
   border-collapse: collapse;
-  width: 70vw;
+  width: 60vw;
   margin-top:10vh;
 }
 
@@ -16,6 +16,8 @@
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+  height: 4vh;
+  line-height: 4vh;
 }
 
 .userinfo th {
@@ -23,7 +25,7 @@
 }
 
 .item{
-  width:15vw;
+  width:10vw;
   display:flex;
   justify-content: center;
   background-color: rgb(247, 245, 245);
@@ -36,22 +38,20 @@
 }
 
 .btn {
-  margin: 10%;
   text-align: center;
-  width: 200px;
-  font-size: 16px;
+  width: 100px;
+  font-size: 13px;
   font-weight: 600;
-  color: #fff;
+  color: #61677A;
   cursor: pointer;
-  margin: 20px;
-  height: 55px;
+  margin: 20px 10px 0 0;
+  height: 35px;
   text-align:center;
   border: none;
   background-size: 300% 100%;
-  background-image: linear-gradient(to right, #667eea, #764ba2, #6B8DD6, #8E37D7);
-  box-shadow: 0 4px 15px 0 rgba(116, 79, 168, 0.75);
-  border-radius: 50px;
-
+  background-image: linear-gradient(to right, #EFEAD8, #D0C9C0, #D6D2C4, #D6D2C4);
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 #E5E1DA;
   -o-transition: all .4s ease-in-out;
   -webkit-transition: all .4s ease-in-out;
   transition: all .4s ease-in-out;
@@ -60,7 +60,6 @@
 
 .btn:hover {
   background-position: 100% 0;
-  // moz-transition: all .4s ease-in-out;
   -o-transition: all .4s ease-in-out;
   -webkit-transition: all .4s ease-in-out;
   transition: all .4s ease-in-out;

@@ -12,8 +12,8 @@
 
 .main {
   position: relative;
-  left: 10vw;
-  top:3vh
+  left: 8vw;
+  top:4vh
 }
 
 .search {
@@ -97,18 +97,16 @@
   text-align: center;
   max-height: max-content;
   font-size: 13px;
+  white-space: normal; /* 텍스트가 칸을 벗어날 경우 줄 바꿈 */
+  word-wrap: break-word;
 }
 
 .proudctTable tr > th:nth-child(5) {
-  white-space: normal; /* 텍스트가 칸을 벗어날 경우 줄 바꿈 */
-  word-wrap: break-word;
   width: 25vw;
 }
 
 
 .proudctTable tr > td:nth-child(5) {
-  white-space: normal; /* 텍스트가 칸을 벗어날 경우 줄 바꿈 */
-  word-wrap: break-word;
   width: 25vw;
 }
 
@@ -135,17 +133,15 @@
   text-align: center;
   max-height: max-content;
   font-size: 13px;
+  white-space: normal; /* 텍스트가 칸을 벗어날 경우 줄 바꿈 */
+  word-wrap: break-word;
 }
 
 .subTable tr > th:nth-child(6) {
-  white-space: normal; /* 텍스트가 칸을 벗어날 경우 줄 바꿈 */
-  word-wrap: break-word;
   width: 10vw;
 }
 
 .subTable tr > td:nth-child(5) {
-  white-space: normal; /* 텍스트가 칸을 벗어날 경우 줄 바꿈 */
-  word-wrap: break-word;
   width: 25vw;
 }
 
@@ -195,7 +191,7 @@
   border-radius: 5px;
   font-weight: bold;
   position: relative;
-  left: 63vw;
+  left: 67vw;
 }
 
 .corrButton {
@@ -292,8 +288,6 @@
   font-size: 12px;
   display: flex;
   align-items: center;
-  right: 1vw;
-  bottom: 1vh;
 }
 
 .infoTable {

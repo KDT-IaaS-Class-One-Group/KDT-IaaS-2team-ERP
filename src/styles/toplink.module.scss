@@ -5,9 +5,13 @@
   font-size: 1rem;
   text-decoration: none;
   color: #18271d;
-  background-color: #eef0e55e;
+  background-color: #eef0e5;
   border-radius: 5px;
   margin: 5px;
   text-align: center;
   font-weight: 700;
+  &:hover {
+    background-color: #F1F0E8;
+    color: #18271d;
+  }
 }

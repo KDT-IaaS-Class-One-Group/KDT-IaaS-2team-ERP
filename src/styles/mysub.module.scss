@@ -1,117 +1,97 @@
 .root{
-  width:100%;
+  width:87vw;
   height:100%;
   display:flex;
- 
+  align-items: center;
+  justify-content: space-around;
+  box-sizing: border-box;
 }
+
 .subinfo{
   width:20vw;
-  margin-left: 5vw;
-  margin-top: 3vh;
-  height:77vh;
+  height:60vh;
   display:flex;
   flex-direction: column;
   font-size:1rem;
-  align-items: center;
-  background-color: rgb(247, 245, 245);
-  border-radius: 10%;
-  box-shadow: 5px 5px 5px 1px #dadce0;
-
-  .title{
-    font-weight: 700;
-  }
+  align-items: flex-start;
+  background-color: #F3EEEA;
+  border-radius: 10px;
+  box-shadow: 3px 3px 3px 1px #dadce0;
+  box-sizing: border-box;
+  padding: 2vw;
 }
 
 
 .productinfo{
   width:20vw;
-  margin-left: 5vw;
-  margin-top: 3vh;
-  height:77vh;
+  height:60vh;
   display:flex;
   flex-direction: column;
   font-size:1rem;
-  align-items: center;
-  background-color: rgb(247, 245, 245);
-  border-radius: 10%;
-  box-shadow: 5px 5px 5px 1px #dadce0;
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding: 2vw;
+  background-color: #F3EEEA;
+  border-radius: 10px;
+  box-shadow: 3px 3px 3px 1px #dadce0;
   text-align: center;
-  .title{
-    font-weight: 700;
-  }
   ul{
-    list-style: none;
-    margin-right: 5vw;
-    margin-top:5vh;
+    list-style:decimal;
+    position: relative;
+    right: 2vw;   
   }
 }
 
 
 .cashinfo{
   width:20vw;
-  height:77vh;
-  margin-left: 5vw;
-  margin-top: 3vh;
-  background-color: rgb(247, 245, 245);
+  height:60vh;  
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding: 2vw;
   display:flex;
   flex-direction: column;
   font-size:1.5rem;
-  align-items: center;
-  border-radius: 10%;
-  box-shadow: 5px 5px 5px 1px #dadce0;
+  background-color: #F3EEEA;
+  border-radius: 10px;
+  box-shadow: 3px 3px 3px 1px #dadce0;
 }
-.userinfo{
-  width:15vw;
-  display: flex;
-}
+
 .addcash{
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width:15vw;
   flex-wrap: wrap;
-  p{
-    width:15vw;
-    height:5vh;
-  }
+
   select{
     width:10vw;
     height:4vh;
   }
   button{
-    width:8vw;
+    width:6vw;
     height:4vh;
   }
 }
 
 .btn {
-  margin: 10%;
   text-align: center;
   width: 200px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #fff;
   cursor: pointer;
-  margin: 20px;
+  margin-top: 20px;
   height: 55px;
   text-align:center;
   border: none;
-  background-size: 300% 100%;
-  background-image: linear-gradient(to right, #667eea, #764ba2, #6B8DD6, #8E37D7);
-  box-shadow: 0 4px 15px 0 rgba(116, 79, 168, 0.75);
-  border-radius: 50px;
-
-  -o-transition: all .4s ease-in-out;
-  -webkit-transition: all .4s ease-in-out;
-  transition: all .4s ease-in-out;
+  background-color: #4b4b4b;
+  border-radius: 20px;
 }
 
 
 .btn:hover {
-  background-position: 100% 0;
-  // moz-transition: all .4s ease-in-out;
-  -o-transition: all .4s ease-in-out;
-  -webkit-transition: all .4s ease-in-out;
-  transition: all .4s ease-in-out;
+  background-color: white;
+color: #4b4b4b;
 }
 
 .btn:focus {

@@ -139,11 +139,9 @@ export default function SubscriptionClientSide() {
                 alt={`sub ${index + 1}`}
               />
             </div>
-            <p>Name: {item.Name}</p>
-            <p>Price: {item.Price}</p>
-            <p>배송받는 기간: {item.Week} 주</p>
-            <p>일주일에 받는 원두: {item.size} 개 </p>
-            <p>구독 기간 종료일: {calculateEndDate(item.Week)}</p>
+            <p>{item.Week} 주 / {item.Price}원</p>
+            <p>일주일에 받는 원두 : {item.size} 개 </p>
+            <p>구독 기간 종료일 : {calculateEndDate(item.Week)}</p>
           </div>
         ))}
 
@@ -155,6 +153,7 @@ export default function SubscriptionClientSide() {
                   src={getProductImageById(productId)}
                   fill
                   alt={`선택한 제품 ${index + 1}`}
+                  style={{ borderRadius: '5%' }}
                 />
               </div>
             ))}
@@ -185,7 +184,7 @@ export default function SubscriptionClientSide() {
           </Link>
         </div>
       </div>
-      <div>
+      <div className={styles.swiper}>
         <SwiperTest />
       </div>
     </div>

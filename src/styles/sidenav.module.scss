@@ -2,7 +2,6 @@
   width: 13vw;
   height: 85vh;
   display: flex;
-  color: brown;
 }
 
 .sidelink{
@@ -15,13 +14,12 @@
   align-items: center;
 
   a{
-    color: brown;
     text-decoration: none;
     
   }
 
   a:hover{
-    background-color: lightgray
+    background-color: #D8D9DA;
   }
 
 }

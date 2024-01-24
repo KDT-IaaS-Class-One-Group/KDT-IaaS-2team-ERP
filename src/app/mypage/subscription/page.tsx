@@ -88,7 +88,6 @@ export default function MyPagesub() {
             detailaddress: userData.detailaddress,
             gender: userData.gender,
           };
-        console.log(userInfomation)
         setUserInfo(userInfomation);
       } else {
         console.error('사용자 정보를 가져오는데 실패했습니다:', userResponse.statusText);
@@ -195,7 +194,6 @@ export default function MyPagesub() {
       },
     ];
 
-    console.log("확인", data)
     setData(data)
     setproductData(products);
     setSubsStart(formatDateString(data.Subs_Start));
@@ -220,45 +218,34 @@ const cancelSubscription = async () => {
       return;
     }
 
-    // Update subscriptionData after cancellation
     const updatedData = await response.json();
-    console.log(updatedData)
-    console.log('Subscription canceled successfully');
-
-    // Show notification that subscription is canceled
-    alert('구독이 갱신이 취소되었습니다! 다시 로그인해주세요.');
+    alert('구독 서비스가 종료일에 해지됩니다. 다시 로그인해주세요.');
     logout();
-    // Redirect to login page or perform any other necessary actions
-    // router.push('/login');
   } catch (error) {
     console.error('Error canceling subscription:', error);
   }
 };
 
 const logout = () => {
-  
   localStorage.removeItem('token'); 
 };
 
   return (
     <div className={styles.root}>
       <div className={styles.subinfo}>
-            <p className={styles.title} >현재 구독중인 상품</p>
+            <h2 className={styles.title}>구독중인 서비스</h2>
             {token && !subscriptionData && (
-            <p className={styles.title}  >현재 구독 중인 상품이 없습니다.</p>
+            <p className={styles.title}>현재 구독 중인 서비스가 없습니다.</p>
             )}
             {subscriptionData && (
               <div>
-                {/* Render subscription data as needed */}
-                <p>구독상품명: {subscriptionData.name}</p>
-                <p>구독 상품 가격: {subscriptionData.price}</p>
-                {/* Add more details based on your subscription data structure */}
+                <p>{subscriptionData.name}</p>
+                <p>{subscriptionData.week}주 / {subscriptionData.price}원</p>
               </div>
             )}
 
             {subsStart && subsEnd && (
               <div>
-                {/* Render subs_start and subs_end */}
                 <p>구독 시작일: {subsStart}</p>
                 <p>구독 종료일: {subsEnd}</p>
               </div>
@@ -267,46 +254,40 @@ const logout = () => {
     
             {data && data.auto_renew === 1 ? (
               <div>
-                <p>현재 구독이 자동 갱신 중입니다.</p>
-                <p>다음 결제일: {subsEnd && formatDateString(new Date(new Date(subsEnd).getTime() - 24 * 60 * 60 * 1000).toString())}</p>
+                <p>{subsEnd && formatDateString(new Date(new Date(subsEnd).getTime() - 24 * 60 * 60 * 1000).toString())}에 결제 예정</p>
                 <button className={styles.btn} onClick={cancelSubscription}>구독 취소</button>
               </div>
             ) : (
-              <p>현재 구독이 자동 갱신되고 있지 않습니다.</p>
+              <p>{subsEnd}에 서비스 해지 예정</p>
             )}
       </div>
       <div className={styles.productinfo}>
         {productData && productData.length > 0 && (
-          <div>
-            <p className={styles.title}>구독에 포함된 상품목록</p>
+          <>
+            <h2 className={styles.title}>구독 상품 목록</h2>
             <ul>
               {productData.map((product: any, index: number) => (
                 // productName이 null이 아닌 경우에만 렌더링
                 product.productName && (
                   <li key={index}>
-                    {/* Render product data as needed */}
-                    <p>상품명: {product.productName}</p>
-                    {/* Add more details based on your product data structure */}
+                    <p>{product.productName}</p>
                   </li>
                 )
               ))}
             </ul>
-          </div>
+          </>
         )}
       </div>
       <div className={styles.cashinfo}>
-        <div className={styles.userinfo}>
-          {/* 사용자 정보를 표시하는 부분 */}
           {userInfo && (
             <div>
-              <p>이름: {userInfo.name}</p>
-              <p>남은캐쉬: {userInfo.cash}</p>
+              <h3>{userInfo.name} 님</h3>
+              <p>나의 캐쉬 : {userInfo.cash}</p>
             </div>
           )}
-        </div>
 
         <div className={styles.addcash}>
-            <p>캐쉬 추가</p>
+            <h3>캐쉬 충전</h3>
             <select onChange={(e) => handleCashSelection(Number(e.target.value))}>
               <option value="0">선택하세요</option>
               <option value="5000">5,000원</option>

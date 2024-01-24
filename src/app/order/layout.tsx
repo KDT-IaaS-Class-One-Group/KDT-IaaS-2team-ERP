@@ -3,13 +3,11 @@ import Topbar from "@/components/Topbar/Topbar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-  <html lang="en">
     <div className={styles.main}>
       <div className={styles.topbar} ><Topbar/></div>
       <div className={styles.content}>{children}
         <div id="global-modal"></div>
       </div>
     </div>
-    </html>
   );
 }

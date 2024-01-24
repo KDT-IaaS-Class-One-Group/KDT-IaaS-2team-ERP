@@ -157,32 +157,34 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
 
   const handleCheckDuplicate = async () => {
     const idPattern = /^[a-zA-Z0-9]{4,12}$/;
-
+  
     if (!idPattern.test(formData.userId)) {
 
       alert('아이디는 영어와 숫자로 이루어진 4자 이상 12자 이하이어야 합니다.');
       return;
     }
-
+  
     try {
       const url = new URL(`/api/signup/checkDuplicate/${formData.userId}`, window.location.origin);
       // formData를 URLSearchParams로 변환하여 쿼리 문자열로 추가
       Object.keys(formData).forEach(key => url.searchParams.append(key, (formData as any)[key]));
   
       const response = await fetch(url);
-  
-      console.log('Server Response:', response);
-  
       const data = await response.json();
   
       setIsUserIdValid(!data.isDuplicate);
+      if (isUserIdValid === true) {
+        alert('사용 가능한 아이디입니다.');
+      } else if (isUserIdValid === false) {
+        alert('이미 사용 중인 아이디입니다.');
+      }
     } catch (error) {
       console.error('Error checking duplicate:', error);
       // setIsUserIdValid(false);
     }
   };
+  
 
- 
   const handleSubmitClick = async () => {
     console.log(JSON.stringify(formData));
     if (!isUserIdValid) {

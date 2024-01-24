@@ -209,16 +209,12 @@ server.get('/user', (req, res) => {
       // 토큰에서 user_Index 추출
       const token = req.headers.authorization.split(" ")[1];
       const decodedToken = jwt.verify(token, secretKey);
-      console.log("decodedToken: ", decodedToken); // 디버그용 로그
-
       if (!decodedToken || !decodedToken.user_Index) {
         console.error("Invalid token or user index not found");
         return res.status(401).json({ error: "Unauthorized" });
       }
 
       const userIndex = decodedToken.user_Index;
-      console.log("userIndex: ", userIndex);
-
       // 사용자의 주문 정보 가져오기
       const [rows, fields] = await pool.query(
         "SELECT * FROM orderdetails WHERE User_Index = ?",
@@ -680,20 +676,18 @@ server.get('/user', (req, res) => {
       }
 
       const decodedToken = jwt.verify(token, secretKey);
-      // console.log(decodedToken)
       if (!decodedToken) {
         throw new JsonWebTokenError("jwt malformed");
       }
       const orderIndex = decodedToken.order_Index;
-      console.log(orderIndex)
       // orderIndex를 사용하여 orderdetails 테이블에서 subs_index, Subs_Start, Subs_End를 가져오기
       const orderDetailsData = await db.query(
-        "SELECT Subs_Index, Subs_Start, Subs_End , auto_renew , user_name, user_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 FROM orderdetails WHERE order_Index = ?",
+        "SELECT Subs_Index, Subs_Start, Subs_End, address, user_name, user_phone, postcode, detailaddress, auto_renew, status, Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3 FROM orderdetails WHERE order_Index = ?",
         [orderIndex]
       );
         
       if (orderDetailsData.length > 0) {
-        const { Subs_Index, Subs_Start, Subs_End ,auto_renew , user_name, user_phone , postcode , address , detailaddress, status, Product_Index , Product_Index2 , Product_Index3 , productName1 , productName2 , productName3 } = orderDetailsData[0][0];
+        const { Subs_Index, Subs_Start, Subs_End, address, user_name, user_phone, postcode, detailaddress, auto_renew, status, Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3 } = orderDetailsData[0][0];
 
         // Subs_Index를 사용하여 subscription 테이블에서 데이터를 가져오기
         const subscriptionData = await db.query(
@@ -862,7 +856,6 @@ server.get('/user', (req, res) => {
       const orderName = req.body.user_name; // 주문자 이름
       const orderPhone = req.body.user_phone; // 주문자 전화번호
       const postcode = req.body.postcode; // 우편번호
-      console.log("무ㅡ슨오류 : ", subsIndex);
       // 토큰 해독
       const productIds = ids.split(",").map((id) => parseInt(id, 10));
   
@@ -886,14 +879,10 @@ server.get('/user', (req, res) => {
         for (const row of productNamesResult) {
           productNames[row.product_id] = row.product_name;
         }
-        console.log("뭐",productNames)
         // Orderdetails에 추가할 product_names 생성
         const productName1 = productNames[productIds[0]] || null;
         const productName2 = productNames[productIds[1]] || null;
         const productName3 = productNames[productIds[2]] || null;
-        console.log("가",productName1)
-        console.log("문",productName2)
-        console.log("제",productName3)
       try {
         // 사용자의 캐시 확인
         const checkCashQuery = `SELECT cash FROM Users WHERE User_Index = ?`;
@@ -924,9 +913,8 @@ server.get('/user', (req, res) => {
 
         // 사용자의 user_Index 값으로 주문 정보를 추가
         const orderQuery = `
-      INSERT INTO Orderdetails (Subs_Index, User_Index, Subs_Start, Subs_End, address, user_phone, user_phone, postcode
-        ,detailaddress ,Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
+      INSERT INTO orderdetails (Subs_Index, User_Index, Subs_Start, Subs_End, address, user_name, user_phone, postcode, detailaddress, Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
         const orderValues = [
           subsIndex,
@@ -986,13 +974,13 @@ server.get('/user', (req, res) => {
 
     try {
       const [rows] = await db.execute(
-        "SELECT Subs_Index, Name, price, week, size, imageUrl FROM subscription WHERE Subs_Index = ?",
+        "SELECT Subs_Index, name, week, size, price, imageUrl FROM subscription WHERE Subs_Index = ?",
         [Subs_Index]
       );
 
       const dataFromDB = rows.map((row) => ({
         Subs_Index: row.Subs_Index,
-        Name: row.Name,
+        Name: row.name,
         Price: row.price,
         Week: row.week,
         size: row.size,
@@ -1359,7 +1347,7 @@ server.get('/user', (req, res) => {
       res.status(500).json({ error: "서버 에러" });
     }
   });
-
+  
   server.post("/api/insertData", async (req, res) => {
     try {
       if (req.method === "POST") {
@@ -1642,7 +1630,6 @@ server.get('/user', (req, res) => {
             { expiresIn: "1h" }
           );
           const newDecodedToken = jwt.verify(newToken, secretKey);
-          console.log(newDecodedToken);
           res.status(200).json({ token: newToken });
         } else {
           console.error("사용자를 찾을 수 없습니다.");
@@ -1942,12 +1929,9 @@ server.get('/user', (req, res) => {
         }
         
         const decodedToken = jwt.verify(token, secretKey);
-        console.log(decodedToken)
         // 토큰에서 User_Index 추출
         const userIndex = decodedToken.User_Index;
         const orderIndex = decodedToken.order_Index;
-        console.log(userIndex)
-        console.log(orderIndex)
         // order_index를 기반으로 해당 구독을 찾아서 auto_renew 상태를 0으로 업데이트
         const updateQuery = "UPDATE orderdetails SET auto_renew = 0 WHERE Order_Index = ? AND User_Index = ?";
         const [updateResult] = await db.query(updateQuery, [orderIndex, userIndex]);
