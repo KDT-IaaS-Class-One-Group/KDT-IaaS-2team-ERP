@@ -9,9 +9,6 @@ const mysql = require("mysql2/promise");
 const multer = require("multer");
 const path = require("path");
 const cron = require("node-cron");
-const passport = require('passport');
-const NaverStrategy = require('passport-naver').Strategy;
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
 
 const {
@@ -21,8 +18,10 @@ const {
 const secretKey = "nts9604";
 const pool = mysql.createPool({
   host: "database-1.cvxfnrpds7lh.ap-northeast-2.rds.amazonaws.com",
+  host: "database-1.cvxfnrpds7lh.ap-northeast-2.rds.amazonaws.com",
   port: "3306",
   user: "root",
+  password: "123123123",
   password: "123123123",
   database: "erp",
   connectionLimit: 5,
@@ -379,7 +378,23 @@ server.get('/user', (req, res) => {
               GROUP BY label
               ORDER BY productCount DESC;`;
           break;
-
+        case "currentProducts":
+          query = `
+              SELECT p.product_name AS label, COUNT(*) as productCount
+              FROM (
+              SELECT Product_Index as productId FROM orderdetails WHERE NOW() BETWEEN Subs_Start AND Subs_End AND Product_Index IS NOT NULL UNION ALL
+              SELECT Product_Index2 FROM orderdetails WHERE NOW() BETWEEN Subs_Start AND Subs_End AND Product_Index2 IS NOT NULL UNION ALL
+              SELECT Product_Index3 FROM orderdetails WHERE NOW() BETWEEN Subs_Start AND Subs_End AND Product_Index3 IS NOT NULL) as od
+              JOIN product p ON od.productId = p.product_id
+              GROUP BY label
+              ORDER BY productCount DESC;
+              `;
+          break;
+          case "a":
+            query = `
+            
+            `
+          break;
         default:
           res.status(400).send("Invalid xAxis parameter");
           return;

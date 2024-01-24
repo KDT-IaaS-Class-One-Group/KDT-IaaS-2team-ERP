@@ -45,6 +45,7 @@ const ProductGraph = () => {
       <div className={styles.main}>
         <label htmlFor="selectElement"></label>
         <select
+          title="selectElement"
           id="selectElement"
           name="selectElement"
           value={selectedXAxis}
@@ -52,6 +53,7 @@ const ProductGraph = () => {
           className={styles.select}
         >
           <option value="subs_start"> 구독시작월별 </option>
+          <option value="currentProducts">상품별</option>
           <option value="address">지역별</option>
         </select>
         <div className={styles.graph}>
