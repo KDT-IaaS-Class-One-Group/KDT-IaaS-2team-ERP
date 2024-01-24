@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
 import Topbar from "@/components/Topbar/Topbar";
 import { useRouter } from "next/navigation";
-import jwt, { JwtPayload } from "jsonwebtoken";
 import styles from "@/styles/qna.module.scss";
 
 interface BoardInfo {
@@ -18,7 +17,7 @@ interface BoardInfo {
   phoneNumber: string;
   name: string;
   reply: string;
-  replyStatus: number;
+  replyStatus: string;
 }
 
 const pageSize = 8;
@@ -48,7 +47,7 @@ export default function QA() {
     phoneNumber: "",
     name: "",
     reply: "",
-    replyStatus: 1,
+    replyStatus: "",
   });
   const [showForm, setShowForm] = useState(false);
   const resetForm = () => {
@@ -64,7 +63,7 @@ export default function QA() {
       phoneNumber: "",
       name: "",
       reply: "",
-      replyStatus: 1,
+      replyStatus: "",
     });
   };
   useEffect(() => {
@@ -84,7 +83,6 @@ export default function QA() {
 
         const response = await fetch(apiUrl);
         const data = await response.json();
-
         setBoards(data.boards);
         setPageInfo({
           currentPage: data.pageInfo.currentPage,
@@ -144,6 +142,16 @@ export default function QA() {
 
   const handleSubmit = async () => {
     try {
+      if (!BoardInfo.title.trim()) {
+        alert("제목을 입력하세요.");
+        return;
+      }
+
+      if (!BoardInfo.password.trim()) {
+        alert("비밀번호를 입력하세요.");
+        return;
+      }
+
       const updatedBoardinfo = {
         ...BoardInfo,
       };
@@ -232,13 +240,13 @@ export default function QA() {
             onChange={(e) => setSearchOption(e.target.value)}
             className={styles.select}
           >
-            <option value="userId">ID</option>
+            <option value="userId">아이디</option>
             <option value="title">제목</option>
           </select>
           <input
             type="text"
             placeholder={`${
-              searchOption === "userId" ? "ID로 검색" : "제목으로 검색"
+              searchOption === "userId" ? "작성자 아이디로 검색" : "제목으로 검색"
             }`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -269,7 +277,7 @@ export default function QA() {
                   <td>{board.title}</td>
                   <td>{board.userId}</td>
                   <td>{formatDateTime(board.date)}</td>
-                  <td>{board.replyStatus === 0 ? "미답변" : "답변완료"}</td>
+                  <td>{board.replyStatus ==="0" ? "미답변" : "답변완료"}</td>
                 </tr>
               ))}
             </tbody>
@@ -334,7 +342,7 @@ export default function QA() {
                           value={BoardInfo.password}
                           onChange={handleChange}
                           className={styles.writePassword}
-                          placeholder="password"
+                          placeholder="비밀번호"
                           required
                         />
                       </td>
