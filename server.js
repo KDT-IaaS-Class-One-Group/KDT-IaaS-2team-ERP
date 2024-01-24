@@ -184,7 +184,7 @@ app.prepare().then(() => {
 
       // 데이터베이스에서 user_Index를 기반으로 name 조회
       const [rows] = await pool.query(
-        "SELECT name FROM users WHERE User_Index = ?",
+        "SELECT name FROM Users WHERE User_Index = ?",
         [userIndex]
       );
 
