@@ -29,7 +29,6 @@ export default function SubSwiper() {
         // API 호출
         const response = await fetch("/api/data");
         const dataFromServer = await response.json();
-        console.log(dataFromServer);
         setData(dataFromServer);
       } catch (error) {
         console.error("데이터를 불러오는 도중 오류 발생:", error);
