@@ -132,6 +132,7 @@ export default function QA() {
 
   const handleAdd = () => {
     if (!token) {
+      alert('로그인 후 글쓰기를 이용할 수 있습니다.')
       router.push("/login");
       return;
     }
