@@ -258,10 +258,10 @@ export default function MyPagesub() {
         )}
         {subscriptionData && (
           <div>
-            <p>{subscriptionData.name}</p>
-            <p>
+            <h3>{subscriptionData.name}</h3>
+            <h3>
               {subscriptionData.week}주 / {subscriptionData.price}원
-            </p>
+            </h3>
           </div>
         )}
 
@@ -275,13 +275,15 @@ export default function MyPagesub() {
         {token && subscriptionData ? (
   <div>
     <p>
-      {subsEnd &&
-        formatDateString(
-          new Date(
-            new Date(subsEnd).getTime() - 24 * 60 * 60 * 1000
-          ).toString()
-        )}
-      에 {data && data.auto_renew === 1 ? '결제 예정' : '서비스 해지 예정'}
+    {subsEnd &&
+    (data && data.auto_renew === 1 ? 
+      `${formatDateString(
+        new Date(
+          new Date(subsEnd).getTime() - 24 * 60 * 60 * 1000
+        ).toString()
+      )}에 결제 예정` : 
+      `${subsEnd}에 서비스 해지 예정`
+    )}
     </p>
     {data && data.auto_renew === 1 && (
       <button className={styles.btn} onClick={cancelSubscription}>
