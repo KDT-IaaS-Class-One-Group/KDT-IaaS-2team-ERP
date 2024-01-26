@@ -654,12 +654,13 @@ server.get('/user', (req, res) => {
       if (!decodedToken) {
         throw new JsonWebTokenError("jwt malformed");
       }
-      const orderIndex = decodedToken.order_Index;
-      // orderIndex를 사용하여 orderdetails 테이블에서 subs_index, Subs_Start, Subs_End를 가져오기
-      const orderDetailsData = await db.query(
-        "SELECT Subs_Index, Subs_Start, Subs_End, address, user_name, user_phone, postcode, detailaddress, auto_renew, status, Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3 FROM orderdetails WHERE Order_Index = ?",
-        [orderIndex]
-      );
+      const userIndex = decodedToken.User_Index;
+
+        // Fetch data from orderdetails table based on User_Index and status
+        const orderDetailsData = await db.query(
+          "SELECT Subs_Index, Subs_Start, Subs_End, address, user_name, user_phone, postcode, detailaddress, auto_renew, status, Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3 FROM orderdetails WHERE User_Index = ? AND status = 1",
+          [userIndex]
+        );
         
       if (orderDetailsData.length > 0) {
         const { Subs_Index, Subs_Start, Subs_End, address, user_name, user_phone, postcode, detailaddress, auto_renew, status, Product_Index, Product_Index2, Product_Index3, productName1, productName2, productName3 } = orderDetailsData[0][0];
