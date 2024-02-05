@@ -184,9 +184,8 @@ export default function QA() {
       console.error("Error adding board:", error);
     }
   };
-
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setBoardInfo((prevInfo) => ({
@@ -278,7 +277,7 @@ export default function QA() {
                   <td>{board.title}</td>
                   <td>{board.userId}</td>
                   <td>{formatDateTime(board.date)}</td>
-                  <td>{board.replyStatus ==="0" ? "미답변" : "답변완료"}</td>
+                  <td>{board.replyStatus ==="0" ? "답변완료" : "미답변"}</td>
                 </tr>
               ))}
             </tbody>
@@ -303,22 +302,22 @@ export default function QA() {
                         <td>{selectedBoard.userId}</td>
                       </tr>
                       <tr>
-                        <th colSpan="6">제목</th>
+                        <th colSpan={6}>제목</th>
                       </tr>
                       <tr>
-                        <td colSpan="6">{selectedBoard.title}</td>
+                        <td colSpan={6}>{selectedBoard.title}</td>
                       </tr>
                       <tr>
-                        <th colSpan="6">내용</th>
+                        <th colSpan={6}>내용</th>
                       </tr>
                       <tr>
-                        <td colSpan="6">{selectedBoard.content}</td>
+                        <td colSpan={6}>{selectedBoard.content}</td>
                       </tr>
                       <tr>
-                        <th colSpan="6">답변</th>
+                        <th colSpan={6}>답변</th>
                       </tr>
                       <tr>
-                        <td colSpan="6">{selectedBoard.reply}</td>
+                        <td colSpan={6}>{selectedBoard.reply}</td>
                       </tr>
                     </tbody>
                   </table>

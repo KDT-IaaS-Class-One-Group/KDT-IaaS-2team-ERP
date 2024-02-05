@@ -164,12 +164,12 @@ export default function OrderClientSide() {
 
   const handlePayment = async () => {
     try {
-      // if (userInfo && userInfo.order_Index !== null) {
-      //   console.log("이미 구독 중입니다.");
-      //   alert("이미 구독 중입니다.");
-      //   router.push("/");
-      //   return;
-      // }
+      if (userInfo && userInfo.order_Index !== null) {
+        console.log("이미 구독 중입니다.");
+        alert("이미 구독 중입니다.");
+        router.push("/");
+        return;
+      }
 
       const response = await fetch("/api/payment", {
         method: "POST",

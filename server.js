@@ -17,10 +17,10 @@ const {
 
 const secretKey = "nts9604";
 const pool = mysql.createPool({
-  host: "database-1.cvxfnrpds7lh.ap-northeast-2.rds.amazonaws.com",
+  host: 'localhost',
   port: "3306",
-  user: "root",
-  password: "123123123",
+  user: 'root',
+  password: '723546',
   database: "erp",
   connectionLimit: 5,
 });
@@ -730,7 +730,7 @@ server.get('/user', (req, res) => {
   server.get("/api/data", async (req, res) => {
     try {
       const [rows] = await db.execute(
-        "SELECT Subs_Index, name, price, week, imageUrl, sale_status FROM subscription"
+        "SELECT Subs_Index, name, price, week, imageUrl,sale_status FROM subscription"
       );
       const dataFromDB = rows.map((row) => ({
         Subs_Index: row.Subs_Index,
@@ -1973,7 +1973,7 @@ server.post('/api/find-password', async (req, res) => {
 });
 
 
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 5000;
 
   server.listen(PORT, (err) => {
     if (err) throw err;

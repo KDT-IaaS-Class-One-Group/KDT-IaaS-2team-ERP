@@ -104,13 +104,13 @@ export default function SubscriptionClientSide() {
         return;
       }
 
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      if (decodedToken.order_Index) {
-        alert('이미 구독 중입니다.');
-        // Redirect to the main page or any other desired page
-        window.location.href = '/';
-        return;
-      }
+      // const decodedToken = JSON.parse(atob(token.split('.')[1]));
+
+      // if (decodedToken.order_Index) {
+      //   alert('이미 구독 중입니다.');
+      //   window.location.href = '/';
+      //   return;
+      // }
 
       if (
         selectedProducts.length !==
