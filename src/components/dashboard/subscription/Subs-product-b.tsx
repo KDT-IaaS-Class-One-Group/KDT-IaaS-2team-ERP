@@ -15,7 +15,7 @@ interface SubscriptionInfo {
   sale_status: number;
 }
 
-const pageSize = 5; // 페이지당 표시할 항목 수
+const pageSize = 4; // 페이지당 표시할 항목 수
 
 export default function SubsProduct(): React.ReactNode {
   const [showForm, setShowForm] = useState(false);
@@ -25,7 +25,7 @@ export default function SubsProduct(): React.ReactNode {
   const [imageurl, setImageurl] = useState<string | null>(null);
   const [pageInfo, setPageInfo] = useState({
     currentPage: 1,
-    pageSize: 5,
+    pageSize: 4,
     totalPages: 1,
   });
 
@@ -380,7 +380,11 @@ export default function SubsProduct(): React.ReactNode {
                   <td>{sub.week}</td>
                   <td>{sub.size}</td>
                   <td>{sub.price}</td>
-                  <td>{sub.imageUrl}</td>
+                  <td><img
+                        src={sub.imageUrl}
+                        alt={sub.name}
+                        style={{ width: "4vw", height: "6vw"}}
+                      /></td>
                   <td>{sub.sale_status === 0 ? "판매중지" : "판매중"}</td>
                   <td>{formatdate(sub.timestamp)}</td>
                   <td>
