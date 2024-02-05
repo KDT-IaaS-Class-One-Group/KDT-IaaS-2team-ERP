@@ -335,7 +335,11 @@ export default function Product(): React.ReactNode {
                   <td>{product.product_id}</td>
                   <td>{product.product_name}</td>
                   <td>{product.stock_quantity}</td>
-                  <td>{product.imageUrl}</td>
+                  <td><img
+                        src={product.imageUrl}
+                        alt={product.product_name}
+                        style={{ width: "4vw", height: "7vw"}}
+                      /></td>
                   <td className={styles.truncate}>{product.info}</td>
                   <td>{product.sale_status === 0 ? "판매중지" : "판매중"}</td>
                   <td>{formatdate(product.timestamp)}</td>
