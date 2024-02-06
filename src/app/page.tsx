@@ -35,7 +35,7 @@ function Index() {
             autoPlay={true}
             muted={true}
             loop={true}
-            src={require("../../public/video/배경테스트.mp4")}
+            controls src="/video/배경테스트.mp4"
           />
         )}
         <div className={styles.box1}>

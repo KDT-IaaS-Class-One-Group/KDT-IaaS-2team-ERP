@@ -839,7 +839,7 @@ server.get('/user', (req, res) => {
   
       // 데이터베이스 연결
       const connection = await pool.getConnection();
-
+     
       const placeholders = Array(productIds.length).fill('?').join(', ');
       const getProductNamesQuery = `
           SELECT product_id, product_name
@@ -1973,7 +1973,7 @@ server.post('/api/find-password', async (req, res) => {
 });
 
 
-  const PORT = process.env.PORT || 5000;
+  const PORT = process.env.PORT || 3000;
 
   server.listen(PORT, (err) => {
     if (err) throw err;

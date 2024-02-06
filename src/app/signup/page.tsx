@@ -62,18 +62,13 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     setIsModalOpen(true);
   };
 
-  // const handleCloseModal = () => {
-  //   setIsModalOpen(false);
-  // };
 
   const getaddress = (data : any) => {
     console.log(data)
     const  address1 = data;
-    // 필요한 주소 정보를 조합하여 주소 문자열 반환
     return address1
   };
 
-  // 모달에서 주소를 선택했을 때 호출되는 함수
   const handleSelectaddress = (data: any) => {
     const address = getaddress(data);
     
@@ -99,10 +94,6 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
 
   const router = useRouter()
 
-  // useEffect(() => {
-  
-  // }, []);
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | Date) => {
     if (event instanceof Date) {
       setFormData({
@@ -115,7 +106,6 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
       if (target.name === 'password') {
         const password = target.value;
         
-        // 비밀번호 유효성 검사
         const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$/;
         const isValid = passwordPattern.test(password);
   
@@ -142,7 +132,6 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
           [target.name]: target.value,
         });
       } else {
-        // 나머지 필드는 기존과 동일하게 처리
         setFormData({
           ...formData,
           [target.name]: target.value,
@@ -166,7 +155,6 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
   
     try {
       const url = new URL(`/api/signup/checkDuplicate/${formData.userId}`, window.location.origin);
-      // formData를 URLSearchParams로 변환하여 쿼리 문자열로 추가
       Object.keys(formData).forEach(key => url.searchParams.append(key, (formData as any)[key]));
   
       const response = await fetch(url);
@@ -180,7 +168,6 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
       }
     } catch (error) {
       console.error('Error checking duplicate:', error);
-      // setIsUserIdValid(false);
     }
   };
   
@@ -225,13 +212,11 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     });
   };
   
-  // 예를 들어, postcode 변경 시
   const handlePostcodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     handleInputChange('postcode', value);
   };
   
-  // 예를 들어, address 변경 시
   const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     handleInputChange('address', value);

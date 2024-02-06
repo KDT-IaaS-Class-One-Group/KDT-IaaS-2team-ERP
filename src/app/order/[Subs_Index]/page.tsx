@@ -161,7 +161,7 @@ export default function OrderClientSide() {
       setUserInfo(null);
     }
   };
-
+  console.log(userInfo)
   const handlePayment = async () => {
     try {
       if (userInfo && userInfo.order_Index !== null) {
@@ -170,7 +170,7 @@ export default function OrderClientSide() {
         router.push("/");
         return;
       }
-
+      
       const response = await fetch("/api/payment", {
         method: "POST",
         headers: {
@@ -186,9 +186,9 @@ export default function OrderClientSide() {
           address: selectedAddressType === 1 ? userInfo?.address : address,
           detailaddress:
             selectedAddressType === 1 ? userInfo?.detailaddress : detailaddress,
-          order_name:
+          user_name:
             selectedAddressType === 1 ? userInfo?.name : orderNameInput,
-          order_phone:
+          user_phone:
             selectedAddressType === 1 ? userInfo?.phoneNumber : orderPhoneInput,
         }),
       });

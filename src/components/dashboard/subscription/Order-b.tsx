@@ -153,7 +153,7 @@ export default function OrderInfoPage() {
                 <th>구독 시작일</th>
                 <th>구독 만료일</th>
                 <th>구독자 ID</th>
-                <th>구독 이름</th>
+                <th>구독자 이름</th>
                 <th>핸드폰</th>
                 <th>우편번호</th>
                 <th>주소</th>
@@ -205,8 +205,8 @@ export default function OrderInfoPage() {
                   <td>{order.postcode}</td>
                   <td>{order.address}</td>
                   <td>{order.detailaddress}</td>
-                  <td>{order.auto_renew === 0 ? "갱신" : "미갱신"}</td>
-                  <td>{order.status === 0 ? "구독" : "해지"}</td>
+                  <td>{order.auto_renew === 0 ? "미갱신" : "갱신"}</td>
+                  <td>{order.status === 0 ? "해지" : "구독"}</td>
                 </tr>
               ))}
             </tbody>
@@ -275,12 +275,12 @@ export default function OrderInfoPage() {
                       <tr>
                         <td>갱신여부</td>
                         <td>
-                          {selectedBoard.auto_renew === 1 ? "미갱신" : "갱신"}
+                          {selectedBoard.auto_renew === 1 ? "갱신" : "미갱신"}
                         </td>
                       </tr>
                       <tr>
                         <td>구독여부</td>
-                        <td>{selectedBoard.status === 1 ? "해지" : "구독"}</td>
+                        <td>{selectedBoard.status === 1 ? "구독" :"해지"}</td>
                       </tr>
                     </tbody>
                   </table>
