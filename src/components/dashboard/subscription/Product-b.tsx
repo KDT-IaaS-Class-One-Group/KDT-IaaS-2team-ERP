@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent,TextareaHTMLAttributes } from "react";
 import styles from "@/styles/adminorder.module.scss";
 import NavLinks from "@/components/dashboard/subscription/Subscription-nav-links-b";
 import ImageUploadp from "@/components/test/ImageUploadp";
@@ -81,7 +81,7 @@ export default function Product(): React.ReactNode {
     sale_status: 1
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setProductInfo((prevInfo) => ({
       ...prevInfo,
@@ -178,12 +178,19 @@ export default function Product(): React.ReactNode {
 
   const handleUpdate = async (product_id: string) => {
     try {
+      const { product_name, stock_quantity, info, imageUrl } = productInfo
+    const updatedproduct = { product_name, stock_quantity, info, imageUrl};
+
+    const updatedproductInfo = {
+      ...updatedproduct ,
+      imageUrl: imageurl, // 이미지 URL 추가
+    };
       const response = await fetch(`/api/admin/product/${product_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(productInfo),
+        body: JSON.stringify(updatedproductInfo),
       });
   
       if (response.ok) {
@@ -253,7 +260,7 @@ export default function Product(): React.ReactNode {
             </label>
             <label className={styles.addLabel}>
               <textarea
-                type="text"
+
                 name="info"
                 value={productInfo.info}
                 onChange={handleChange}
@@ -293,7 +300,6 @@ export default function Product(): React.ReactNode {
             </label>
             <label className={styles.addLabel}>
               <textarea
-                type="text"
                 name="info"
                 value={productInfo.info}
                 onChange={handleChange}

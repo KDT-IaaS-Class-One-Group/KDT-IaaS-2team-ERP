@@ -1467,22 +1467,16 @@ server.get('/user', (req, res) => {
     try {
       if (req.method === "PUT") {
         const { product_name, stock_quantity, imageUrl, info } = req.body;
-
-        // 데이터베이스에서 구독 정보 업데이트
         const [result] = await db.query(
           "UPDATE product SET product_name = ?, stock_quantity = ?, imageUrl = ?, info = ? WHERE product_id = ?",
           [product_name, stock_quantity, imageUrl, info, product_id]
         );
-
         if (result.affectedRows === 1) {
-          // 성공적으로 수정된 경우
           res.status(200).json({ message: "product 수정 성공" });
         } else {
-          // 삭제 실패 시
           res.status(404).json({ error: "product_id 찾을 수 없습니다." });
         }
       } else {
-        // 허용되지 않은 메서드
         res.status(405).json({ error: "허용되지 않은 메서드" });
       }
     } catch (error) {
@@ -1763,7 +1757,7 @@ server.get('/user', (req, res) => {
         return res.status(400).json({ error: "이미지 파일이 없습니다." });
       }
 
-      const imageUrl = `/proudctimage/${req.file.filename}`;
+      const imageUrl = `/productimage/${req.file.filename}`;
       res.status(200).json({ imageUrl });
     } catch (error) {
       console.error("이미지 업로드 중 오류:", error);
@@ -1776,17 +1770,17 @@ server.get('/user', (req, res) => {
       if (req.method === "POST") {
         const { name, week, size, price, imageUrl } = req.body;
 
-        // 데이터베이스에서 subscription 정보 추가
+        const sale_status = 1;
+
+       
         const [result] = await db.query(
-          "INSERT INTO subscription (name, week, size, price, imageUrl) VALUES (?, ?, ?, ?, ?)",
-          [name, week, size, price, imageUrl]
+          "INSERT INTO subscription (name, week, size, price, imageUrl, timestamp, sale_status) VALUES (?, ?, ?, ?, ?, STR_TO_DATE(?, '%Y-%m-%dT%H:%i:%s.%fZ'), ?)",
+          [name, week, size, price, imageUrl, new Date().toISOString(), sale_status]
         );
 
         if (result.affectedRows === 1) {
-          // 성공적으로 추가된 경우
           res.status(200).json({ message: "subscription 정보 추가 성공" });
         } else {
-          // 추가 실패
           res.status(500).json({ error: "subscription 정보 추가 실패" });
         }
       } else {
@@ -1802,11 +1796,11 @@ server.get('/user', (req, res) => {
   server.post("/api/admin/product", async (req, res) => {
     try {
       if (req.method === "POST") {
-        const { product_name, stock_quantity, imageUrl, info } = req.body; // 변경된 부분
+        const { product_name, stock_quantity, imageUrl, info } = req.body; 
 
         const [result] = await db.query(
           "INSERT INTO product (product_name, stock_quantity, imageUrl, info) VALUES (?, ?, ?, ?)",
-          [product_name, stock_quantity, imageUrl, info] // 변경된 부분
+          [product_name, stock_quantity, imageUrl, info] 
         );
 
         if (result.affectedRows === 1) {

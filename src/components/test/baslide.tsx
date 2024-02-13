@@ -13,7 +13,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Image from "next/image";
 import styles from "@/styles/baslide.module.scss";
-import { Card } from "@chakra-ui/react";
+
 
 interface Product {
   id: number;
