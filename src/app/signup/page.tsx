@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NextPage } from 'next';
 import styles from "@/styles/signup.module.scss";
 import DatePicker from 'react-datepicker';
@@ -55,6 +55,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
     detailaddress: signup.detailaddress || '',
     gender: signup.gender || '',
   });
+  
   const [isUserIdValid, setIsUserIdValid] = useState<'unknown' | boolean | null>(null);
 
  
