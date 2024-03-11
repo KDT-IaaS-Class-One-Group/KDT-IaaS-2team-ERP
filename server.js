@@ -9,7 +9,7 @@ const mysql = require("mysql2/promise");
 const multer = require("multer");
 const path = require("path");
 const cron = require("node-cron");
-const session = require('express-session');
+const prod = process.env.NODE_ENV === 'productuin';
 
 const {
   CheckAndRenewSubscriptions,
@@ -1967,10 +1967,8 @@ server.post('/api/find-password', async (req, res) => {
 });
 
 
-  const PORT = process.env.PORT || 3000;
 
-  server.listen(PORT, (err) => {
-    if (err) throw err;
-    console.log(`Server is running on http://localhost:${PORT}`);
+  server.listen(prod ? process.env.PORT : 3000, () =>{
+    console.log(`next+express runing on port ${prod ? process.env.PORT : 3000}`)
   });
 });

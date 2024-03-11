@@ -8,22 +8,24 @@ import { useRouter } from 'next/navigation'
 import Search from "@/components/test/modal";
 import { ko } from 'date-fns/locale';
 
-interface SignUpProps {
-  signup?: {
-    userId?: string;
-    password?: string;
-    name?: string;
-    birthdate?: string;
-    phoneNumber?: string;
-    email?: string;
-    postcode?: string;
-    address?: string;
-    detailaddress?: string;
-    gender?: string;
-  };
+interface SignUpFormData {
+  userId: string;
+  password: string;
+  name: string;
+  birthdate: Date;
+  phoneNumber: string;
+  email: string;
+  postcode: string;
+  address: string;
+  detailaddress: string;
+  gender: string;
 }
 
-const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
+interface SignUpProps {
+  signup: Partial<SignUpFormData>;
+}
+
+const SignUp: NextPage<SignUpProps> = ({ signup={}}) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [detailaddress, setDetailaddress] = useState<string>("");
@@ -32,18 +34,7 @@ const SignUp: NextPage<SignUpProps> = ({ signup = {} }) => {
   const [isPasswordValid, setIsPasswordValid] = useState<boolean | null>(null);
   const [passwordConfirm, setPasswordConfirm] = useState<string>('');
   const [isPasswordMatch, setIsPasswordMatch] = useState<boolean | null>(null);
-  const [formData, setFormData] = useState<{
-    userId: string;
-    password: string;
-    name: string;
-    birthdate: Date;
-    phoneNumber: string;
-    email: string;
-    postcode: string;
-    address: string;
-    detailaddress: string;
-    gender: string;
-  }>({
+  const [formData, setFormData] = useState<SignUpFormData>({
     userId: signup.userId || '',
     password: signup.password || '',
     name: signup.name || '',
